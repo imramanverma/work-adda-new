@@ -68,6 +68,77 @@ export default function JobsDiscoveryPage() {
     "INTERNSHIP",
   ];
 
+  const categoryTranslations: Record<string, string> = {
+    "All": "सभी काम",
+    "Delivery": "डिलीवरी",
+    "Retail": "दुकान व रीटेल",
+    "Logistics": "लॉजिस्टिक्स",
+    "Hospitality": "हॉस्पिटैलिटी",
+    "Events": "इवेंट व कैटरिंग",
+    "Office Assistance": "कार्यालय सहायता",
+    "Data Entry": "डेटा एंट्री",
+    "Sales": "सेल्स व काउंटर",
+    "Marketing": "मार्केटिंग",
+    "IT & Technology": "आईटी व टेक",
+    "Repair & Maintenance": "मरम्मत व मेंटेनेंस",
+    "Construction": "निर्माण",
+    "General Labour": "सामान्य मजदूरी",
+  };
+
+  const skillTranslations: Record<string, string> = {
+    "Two-Wheeler Driving": "टू-व्हीलर ड्राइविंग",
+    "Order Packing": "ऑर्डर पैकिंग",
+    "Inventory Stocking": "इन्वेंट्री स्टॉकिंग",
+    "Forklift Handling": "फोर्कलिफ्ट संचालन",
+    "Route Navigation": "रूट नेविगेशन",
+    "Counter Sales": "काउंटर सेल्स",
+    "Billing & Cashiering": "बिलिंग व कैशियर",
+    "Customer Service": "ग्राहक सेवा",
+    "Store Display Setup": "स्टोर डिस्प्ले सेटअप",
+    "Telecalling & Leads": "टेलीकॉल्लिंग",
+    "Event Setup & Ushering": "इवेंट सेटअप व स्वागत",
+    "Food Serving": "फूड सर्विंग",
+    "Kitchen Assistance": "किचन सहायता",
+    "Barista Skills": "बरिस्ता स्किल्स",
+    "Catering Support": "कैटरिंग सहायता",
+    "Data Entry & Excel": "डेटा एंट्री व एक्सेल",
+    "Basic Receptionist": "रिसेप्शनिस्ट",
+    "Social Media Posting": "सोशल मीडिया",
+    "Graphic Design (Canva)": "ग्राफिक डिजाइनिंग",
+    "Computer Troubleshooting": "कंप्यूटर रिपेयर",
+    "Residential Wiring": "वायरिंग व बिजली",
+    "Plumbing & Pipe Repair": "प्लंबिंग काम",
+    "Appliance Repair": "उपकरण मरम्मत",
+    "Carpentry & Furniture Assembly": "बढ़ई व फर्नीचर",
+    "Painting & Wall Finish": "पेंटिंग व पुट्टी",
+    "General Physical Labour": "सामान्य शारीरिक काम",
+  };
+
+  const formatPayType = (payType: string) => {
+    if (language !== "hi") return `/${payType.toLowerCase()}`;
+    switch (payType.toUpperCase()) {
+      case "DAILY": return "/दैनिक";
+      case "MONTHLY": return "/माह";
+      case "HOURLY": return "/घंटा";
+      case "WEEKLY": return "/सप्ताह";
+      case "FIXED": return "/काम";
+      default: return `/${payType.toLowerCase()}`;
+    }
+  };
+
+  const formatJobType = (jobType: string) => {
+    if (language !== "hi") return jobType.replace("_", " ");
+    switch (jobType.toUpperCase()) {
+      case "FULL_TIME": return "फुल टाइम";
+      case "PART_TIME": return "पार्ट टाइम";
+      case "GIG": return "गिग";
+      case "TEMPORARY": return "अस्थायी";
+      case "FLEXIBLE": return "लचीला";
+      case "INTERNSHIP": return "इंटर्नशिप";
+      default: return jobType.replace("_", " ");
+    }
+  };
+
   const fetchJobs = useCallback(async () => {
     setLoading(true);
     try {
@@ -229,7 +300,7 @@ export default function JobsDiscoveryPage() {
                 }}
                 className="text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1"
               >
-                <X className="w-3.5 h-3.5" /> Reset Filters
+                <X className="w-3.5 h-3.5" /> {language === "hi" ? "फ़िल्टर हटाएं" : "Reset Filters"}
               </button>
             )}
           </div>
@@ -246,7 +317,7 @@ export default function JobsDiscoveryPage() {
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
-                {cat}
+                {language === "hi" ? (categoryTranslations[cat] || cat) : cat}
               </button>
             ))}
           </div>
@@ -255,12 +326,22 @@ export default function JobsDiscoveryPage() {
         {/* Results Count Bar */}
         <div className="flex items-center justify-between text-xs text-slate-500 px-1">
           <span>
-            Showing <strong>{jobs.length}</strong> {jobs.length === 1 ? "opportunity" : "opportunities"}
+            {language === "hi" ? (
+              <>
+                <strong>{jobs.length}</strong> {jobs.length === 1 ? "अवसर दिखाया जा रहा है" : "अवसर दिखाए जा रहे हैं"}
+              </>
+            ) : (
+              <>
+                Showing <strong>{jobs.length}</strong> {jobs.length === 1 ? "opportunity" : "opportunities"}
+              </>
+            )}
           </span>
           {user?.role === "WORKER" && (
             <span className="flex items-center gap-1 text-brand-700 font-medium">
               <Sparkles className="w-3.5 h-3.5 text-accent-500" />
-              Smart match scores customized to your profile
+              {language === "hi"
+                ? "आपकी प्रोफाइल के अनुसार स्मार्ट मिलान स्कोर"
+                : "Smart match scores customized to your profile"}
             </span>
           )}
         </div>
@@ -277,9 +358,13 @@ export default function JobsDiscoveryPage() {
             <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-3">
               <MapPin className="w-6 h-6" />
             </div>
-            <h3 className="font-bold text-base text-slate-900">No work found nearby</h3>
+            <h3 className="font-bold text-base text-slate-900">
+              {language === "hi" ? "आस-पास कोई काम नहीं मिला" : "No work found nearby"}
+            </h3>
             <p className="text-xs text-slate-500 mt-1">
-              Try increasing your search radius or selecting another category to see more listings.
+              {language === "hi"
+                ? "अधिक काम देखने के लिए अपनी खोज का दायरा बढ़ाएं या कोई अन्य श्रेणी चुनें।"
+                : "Try increasing your search radius or selecting another category to see more listings."}
             </p>
             <Button
               size="sm"
@@ -291,7 +376,7 @@ export default function JobsDiscoveryPage() {
                 setSearchQuery("");
               }}
             >
-              Reset Search Radius
+              {language === "hi" ? "दायरा रीसेट करें" : "Reset Search Radius"}
             </Button>
           </div>
         ) : (
@@ -308,7 +393,7 @@ export default function JobsDiscoveryPage() {
                       <span className="text-lg font-black text-slate-900">
                         {formatCurrency(job.payAmount)}
                       </span>
-                      <span className="text-xs text-slate-500 lowercase"> /{job.payType.toLowerCase()}</span>
+                      <span className="text-xs text-slate-500 lowercase"> {formatPayType(job.payType)}</span>
                     </div>
 
                     {job.matchScore !== null && job.matchScore !== undefined ? (
@@ -322,14 +407,14 @@ export default function JobsDiscoveryPage() {
                             ? "bg-blue-50 text-brand-800 border border-brand-200"
                             : "bg-slate-100 text-slate-700 border border-slate-200"
                         }`}
-                        title="Click to view match explanation"
+                        title={language === "hi" ? "मिलान विवरण देखने के लिए क्लिक करें" : "Click to view match explanation"}
                       >
                         <Sparkles className="w-3 h-3 text-accent-500" />
-                        {job.matchScore}% Match
+                        {job.matchScore}% {language === "hi" ? "मिलान" : "Match"}
                       </button>
                     ) : (
                       <Badge variant="outline" className="text-[10px]">
-                        {job.jobType.replace("_", " ")}
+                        {formatJobType(job.jobType)}
                       </Badge>
                     )}
                   </div>
@@ -371,12 +456,12 @@ export default function JobsDiscoveryPage() {
                         key={idx}
                         className="px-2 py-0.5 rounded-lg bg-slate-100 text-[11px] font-medium text-slate-600"
                       >
-                        {skill}
+                        {language === "hi" ? (skillTranslations[skill] || skill) : skill}
                       </span>
                     ))}
                     {(job.requiredSkills || []).length > 3 && (
                       <span className="text-[10px] text-slate-400 self-center">
-                        +{job.requiredSkills.length - 3} more
+                        +{job.requiredSkills.length - 3} {language === "hi" ? "और" : "more"}
                       </span>
                     )}
                   </div>
@@ -411,9 +496,15 @@ export default function JobsDiscoveryPage() {
                 <div>
                   <h4 className="font-extrabold text-base text-slate-900 flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4 text-accent-500" />
-                    Match Score: {activeMatchReasonModal.matchScore}%
+                    {language === "hi"
+                      ? `मिलान स्कोर: ${activeMatchReasonModal.matchScore}%`
+                      : `Match Score: ${activeMatchReasonModal.matchScore}%`}
                   </h4>
-                  <p className="text-xs text-slate-500">Why this job is recommended for you</p>
+                  <p className="text-xs text-slate-500">
+                    {language === "hi"
+                      ? "यह काम आपके लिए क्यों अनुशंसित है"
+                      : "Why this job is recommended for you"}
+                  </p>
                 </div>
                 <button
                   onClick={() => setActiveMatchReasonModal(null)}
@@ -424,7 +515,9 @@ export default function JobsDiscoveryPage() {
               </div>
 
               <div className="space-y-2.5">
-                <p className="text-xs font-bold text-slate-700">Algorithm breakdown components:</p>
+                <p className="text-xs font-bold text-slate-700">
+                  {language === "hi" ? "एल्गोरिदम घटक विश्लेषण:" : "Algorithm breakdown components:"}
+                </p>
                 <ul className="space-y-2 text-xs text-slate-600">
                   {activeMatchReasonModal.matchReasons?.map((reason: string, i: number) => (
                     <li key={i} className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
@@ -436,7 +529,9 @@ export default function JobsDiscoveryPage() {
               </div>
 
               <div className="pt-2 text-[11px] text-slate-400">
-                Formula: 40% Skills + 20% Distance + 15% Availability + 15% Experience + 10% Reputation.
+                {language === "hi"
+                  ? "फॉर्मूला: 40% हुनर + 20% दूरी + 15% उपलब्धता + 15% अनुभव + 10% प्रतिष्ठा।"
+                  : "Formula: 40% Skills + 20% Distance + 15% Availability + 15% Experience + 10% Reputation."}
               </div>
 
               <Button
@@ -445,7 +540,7 @@ export default function JobsDiscoveryPage() {
                 className="w-full"
                 onClick={() => setActiveMatchReasonModal(null)}
               >
-                Close Breakdown
+                {language === "hi" ? "बंद करें" : "Close Breakdown"}
               </Button>
             </div>
           </div>

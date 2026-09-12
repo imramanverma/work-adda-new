@@ -25,10 +25,12 @@ import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { formatDistance } from "@/lib/location";
+import { useLanguage } from "@/context/language-context";
 
 export default function JobDetailsPage() {
   const { id } = useParams() as { id: string };
   const { user } = useAuth();
+  const { t, language } = useLanguage();
   const router = useRouter();
   const toast = useToast();
 
@@ -183,7 +185,7 @@ export default function JobDetailsPage() {
           href="/jobs"
           className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-brand-600 transition"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Job Marketplace
+          <ArrowLeft className="w-4 h-4" /> {language === "hi" ? "वापस काम खोजें" : "Back to Job Marketplace"}
         </Link>
 
         {/* Main Job Card */}
@@ -197,7 +199,7 @@ export default function JobDetailsPage() {
                 {job.matchScore !== null && (
                   <Badge variant="success" className="font-bold">
                     <Sparkles className="w-3 h-3 text-accent-500 mr-1" />
-                    {job.matchScore}% Match
+                    {job.matchScore}% {language === "hi" ? "मिलान" : "Match"}
                   </Badge>
                 )}
               </div>
@@ -227,9 +229,13 @@ export default function JobDetailsPage() {
               <p className="text-2xl font-black text-brand-700">
                 {formatCurrency(job.payAmount)}
               </p>
-              <p className="text-xs text-slate-500 lowercase font-medium">per {job.payType}</p>
+              <p className="text-xs text-slate-500 lowercase font-medium">
+                {language === "hi"
+                  ? (job.payType === "DAILY" ? "प्रति दिन" : job.payType === "MONTHLY" ? "प्रति माह" : `प्रति ${job.payType}`)
+                  : `per ${job.payType}`}
+              </p>
               <p className="text-[11px] text-slate-400 mt-1">
-                {job.workersRequired} {job.workersRequired === 1 ? "opening" : "openings"}
+                {job.workersRequired} {language === "hi" ? "पद रिक्त" : (job.workersRequired === 1 ? "opening" : "openings")}
               </p>
             </div>
           </div>
@@ -237,7 +243,9 @@ export default function JobDetailsPage() {
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 text-xs">
             <div>
-              <span className="text-slate-400 block font-medium">Location</span>
+              <span className="text-slate-400 block font-medium">
+                {language === "hi" ? "स्थान" : "Location"}
+              </span>
               <span className="font-bold text-slate-800 flex items-center gap-1 mt-0.5">
                 <MapPin className="w-3.5 h-3.5 text-brand-600 shrink-0" />
                 {job.location}
@@ -250,7 +258,9 @@ export default function JobDetailsPage() {
             </div>
 
             <div>
-              <span className="text-slate-400 block font-medium">Start Date</span>
+              <span className="text-slate-400 block font-medium">
+                {language === "hi" ? "आरंभ तिथि" : "Start Date"}
+              </span>
               <span className="font-bold text-slate-800 flex items-center gap-1 mt-0.5">
                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
                 {formatDate(job.startDate || job.createdAt)}
@@ -258,18 +268,22 @@ export default function JobDetailsPage() {
             </div>
 
             <div>
-              <span className="text-slate-400 block font-medium">Applicants</span>
+              <span className="text-slate-400 block font-medium">
+                {language === "hi" ? "आवेदक" : "Applicants"}
+              </span>
               <span className="font-bold text-slate-800 flex items-center gap-1 mt-0.5">
                 <Users className="w-3.5 h-3.5 text-slate-400" />
-                {job.applicantsCount} Applied
+                {job.applicantsCount} {language === "hi" ? "आवेदन आए" : "Applied"}
               </span>
             </div>
 
             <div>
-              <span className="text-slate-400 block font-medium">Status</span>
+              <span className="text-slate-400 block font-medium">
+                {language === "hi" ? "स्थिति" : "Status"}
+              </span>
               <span className="font-bold text-emerald-700 flex items-center gap-1 mt-0.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                {job.status}
+                {language === "hi" && job.status === "OPEN" ? "सक्रिय / खुला" : job.status}
               </span>
             </div>
           </div>
@@ -279,7 +293,9 @@ export default function JobDetailsPage() {
             <div className="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-200 text-xs space-y-2">
               <h4 className="font-bold text-emerald-900 flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-accent-500" />
-                Why this matches your profile ({job.matchScore}% Score):
+                {language === "hi"
+                  ? `आपकी प्रोफाइल से मिलान कारण (${job.matchScore}% स्कोर):`
+                  : `Why this matches your profile (${job.matchScore}% Score):`}
               </h4>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-emerald-800">
                 {job.matchReasons.map((r: string, idx: number) => (
@@ -294,7 +310,9 @@ export default function JobDetailsPage() {
 
           {/* Job Description */}
           <div>
-            <h3 className="text-base font-bold text-slate-900 mb-2">About the Work</h3>
+            <h3 className="text-base font-bold text-slate-900 mb-2">
+              {language === "hi" ? "काम का विवरण" : "About the Work"}
+            </h3>
             <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
               {job.description}
             </p>
@@ -302,7 +320,9 @@ export default function JobDetailsPage() {
 
           {/* Required Skills */}
           <div>
-            <h3 className="text-base font-bold text-slate-900 mb-2">Required Skills & Attributes</h3>
+            <h3 className="text-base font-bold text-slate-900 mb-2">
+              {language === "hi" ? "आवश्यक हुनर व योग्यताएं" : "Required Skills & Attributes"}
+            </h3>
             <div className="flex flex-wrap gap-2">
               {job.requiredSkills.map((skill: string, idx: number) => (
                 <span
@@ -318,14 +338,16 @@ export default function JobDetailsPage() {
           {/* Employer Verification Profile Box */}
           <div className="p-5 bg-gradient-to-r from-slate-50 to-blue-50/30 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span className="text-xs text-slate-400 uppercase font-bold tracking-wider">Posted by Employer</span>
+              <span className="text-xs text-slate-400 uppercase font-bold tracking-wider">
+                {language === "hi" ? "नियोक्ता द्वारा पोस्ट" : "Posted by Employer"}
+              </span>
               <h4 className="text-base font-extrabold text-slate-900">{job.employer?.businessName}</h4>
               <p className="text-xs text-slate-500 mt-0.5">{job.employer?.businessType} • {job.employer?.location}</p>
             </div>
 
             {user?.role === "WORKER" && (
               <Button size="sm" variant="secondary" onClick={startChatWithEmployer}>
-                <MessageSquare className="w-4 h-4 mr-1.5" /> Message Employer
+                <MessageSquare className="w-4 h-4 mr-1.5" /> {language === "hi" ? "मैसेज करें" : "Message Employer"}
               </Button>
             )}
           </div>
@@ -336,7 +358,7 @@ export default function JobDetailsPage() {
               onClick={() => setIsReportModalOpen(true)}
               className="text-xs text-slate-400 hover:text-red-600 flex items-center gap-1 transition"
             >
-              <Flag className="w-3.5 h-3.5" /> Report suspicious job
+              <Flag className="w-3.5 h-3.5" /> {language === "hi" ? "संदिग्ध काम की रिपोर्ट करें" : "Report suspicious job"}
             </button>
 
             <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -344,19 +366,19 @@ export default function JobDetailsPage() {
                 <div className="flex items-center gap-2">
                   <div className="px-4 py-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-amber-600" />
-                    Application Submitted ({userApplication.status})
+                    {language === "hi" ? `आवेदन जमा हो गया (${userApplication.status})` : `Application Submitted (${userApplication.status})`}
                   </div>
                   {userApplication.status === "ACCEPTED" && (
                     <Link href="/worker/work">
                       <Button size="sm" variant="primary">
-                        View Active Work Contract
+                        {language === "hi" ? "सक्रिय काम अनुबंध देखें" : "View Active Work Contract"}
                       </Button>
                     </Link>
                   )}
                 </div>
               ) : user?.role === "EMPLOYER" ? (
                 <span className="text-xs text-slate-400 italic">
-                  Employers cannot apply for jobs.
+                  {language === "hi" ? "नियोक्ता नौकरियों के लिए आवेदन नहीं कर सकते।" : "Employers cannot apply for jobs."}
                 </span>
               ) : (
                 <Button
@@ -364,7 +386,7 @@ export default function JobDetailsPage() {
                   onClick={() => setIsApplyModalOpen(true)}
                   className="w-full sm:w-auto font-bold px-8 shadow-md shadow-brand-500/20"
                 >
-                  Apply Now
+                  {language === "hi" ? "आवेदन करें" : "Apply Now"}
                 </Button>
               )}
             </div>

@@ -166,7 +166,7 @@ async function main() {
     },
     {
       name: "Amitabh Mehra",
-      email: "amitabh@amritsarcloth.com",
+      email: "amitabh@Sirsacloth.com",
       phone: "+919811100007",
       businessName: "Mehra Textiles & Garment Emporium",
       businessType: "Retail & Wholesale",
@@ -438,7 +438,7 @@ async function main() {
       expectedPay: 15000,
       rating: 4.7,
       completedJobs: 8,
-      location: "Phase 3B2, Mohali",
+      location: "Phase 3B2, Fatehabad",
       latitude: 29.5349,
       longitude: 75.4542,
     },
@@ -456,7 +456,7 @@ async function main() {
       expectedPay: 900,
       rating: 4.9,
       completedJobs: 29,
-      location: "Chaura Bazar, Ludhiana",
+      location: "Chaura Bazar, Sirsa",
       latitude: 29.5186,
       longitude: 75.856,
     },
@@ -717,7 +717,7 @@ async function main() {
     {
       employerIndex: 0, // Haryana Logistics (Chandigarh)
       title: "Hyperlocal Delivery Assistant (Fatehabad Hub)",
-      description: "Looking for punctual two-wheeler riders to deliver local e-commerce packages across Chandigarh Sector 17, 22, and Mohali. Fuel allowance and performance incentives provided daily.",
+      description: "Looking for punctual two-wheeler riders to deliver local e-commerce packages across Chandigarh Sector 17, 22, and Fatehabad. Fuel allowance and performance incentives provided daily.",
       category: "Delivery",
       requiredSkills: ["Two-Wheeler Driving", "Order Packing", "Route Navigation"],
       jobType: "PART_TIME",
@@ -745,13 +745,13 @@ async function main() {
       status: "OPEN",
     },
     {
-      employerIndex: 1, // Verma Departmental (Ludhiana)
+      employerIndex: 1, // Verma Departmental (Sirsa)
       title: "Store Helper & Grocery Shelf Stocker",
       description: "Stock fresh groceries and packaged goods on supermarket shelves, assist customers in locating items, and maintain clean display aisles.",
       category: "Retail",
       requiredSkills: ["Inventory Stocking", "Customer Service", "Store Display Setup"],
       jobType: "FULL_TIME",
-      location: "Model Town Market, Ludhiana",
+      location: "Model Town Market, Sirsa",
       latitude: 29.5349,
       longitude: 75.8273,
       payAmount: 14000,
@@ -766,7 +766,7 @@ async function main() {
       category: "Retail",
       requiredSkills: ["Billing & Cashiering", "Customer Service", "Data Entry & Excel"],
       jobType: "PART_TIME",
-      location: "Model Town Market, Ludhiana",
+      location: "Model Town Market, Sirsa",
       latitude: 29.5349,
       longitude: 75.8273,
       payAmount: 600,
@@ -805,13 +805,13 @@ async function main() {
       status: "OPEN",
     },
     {
-      employerIndex: 3, // GreenCity Artisan Bakery & Cafe (Mohali)
+      employerIndex: 3, // GreenCity Artisan Bakery & Cafe (Fatehabad)
       title: "Cafe Barista & Beverage Host",
       description: "Brew espresso drinks, pour specialty teas, serve warm croissants to morning guests, and maintain espresso station hygiene.",
       category: "Hospitality",
       requiredSkills: ["Barista Skills", "Food Serving", "Customer Service"],
       jobType: "PART_TIME",
-      location: "Barnala Road, Sirsa, Mohali",
+      location: "Barnala Road, Sirsa, Fatehabad",
       latitude: 29.5349,
       longitude: 75.0289,
       payAmount: 650,
@@ -826,7 +826,7 @@ async function main() {
       category: "Hospitality",
       requiredSkills: ["Kitchen Assistance", "Order Packing", "Food Serving"],
       jobType: "FLEXIBLE",
-      location: "Barnala Road, Sirsa, Mohali",
+      location: "Barnala Road, Sirsa, Fatehabad",
       latitude: 29.5186,
       longitude: 75.4542,
       payAmount: 600,
@@ -835,13 +835,13 @@ async function main() {
       status: "OPEN",
     },
     {
-      employerIndex: 4, // Malhotra Electronics (Ludhiana)
+      employerIndex: 4, // Malhotra Electronics (Sirsa)
       title: "Electronics Showroom Sales Executive",
       description: "Demonstrate LED smart TVs, refrigerators, and washing machines to walk-in families. Explain festive cashback offers and warranty details.",
       category: "Sales",
       requiredSkills: ["Counter Sales", "Customer Service", "Telecalling & Leads"],
       jobType: "FULL_TIME",
-      location: "Chaura Bazar, Ludhiana",
+      location: "Chaura Bazar, Sirsa",
       latitude: 29.5349,
       longitude: 75.8541,
       payAmount: 18000,
@@ -856,7 +856,7 @@ async function main() {
       category: "Repair & Maintenance",
       requiredSkills: ["Appliance Repair", "Residential Wiring", "General Physical Labour"],
       jobType: "FULL_TIME",
-      location: "Chaura Bazar, Ludhiana",
+      location: "Chaura Bazar, Sirsa",
       latitude: 29.5349,
       longitude: 75.8541,
       payAmount: 800,
@@ -865,13 +865,13 @@ async function main() {
       status: "OPEN",
     },
     {
-      employerIndex: 5, // Zenith Digital (Mohali)
+      employerIndex: 5, // Zenith Digital (Fatehabad)
       title: "Data Entry Operator (E-Commerce Catalog)",
       description: "Upload product specs, prices, and vendor descriptions into excel sheets and CMS portal. High accuracy and basic typing required.",
       category: "Data Entry",
       requiredSkills: ["Data Entry & Excel", "Computer Troubleshooting"],
       jobType: "PART_TIME",
-      location: "Sector 66, Mohali",
+      location: "Sector 66, Fatehabad",
       latitude: 29.5349,
       longitude: 75.0289,
       payAmount: 550,
@@ -886,7 +886,7 @@ async function main() {
       category: "Marketing",
       requiredSkills: ["Social Media Posting", "Graphic Design (Canva)"],
       jobType: "FLEXIBLE",
-      location: "Sector 66, Mohali",
+      location: "Sector 66, Fatehabad",
       latitude: 29.5186,
       longitude: 75.0289,
       payAmount: 750,
@@ -1111,7 +1111,7 @@ async function main() {
       category: "Sales",
       requiredSkills: ["Telecalling & Leads", "Customer Service"],
       jobType: "PART_TIME",
-      location: "Sector 66, Mohali",
+      location: "Sector 66, Fatehabad",
       latitude: 29.5349,
       longitude: 75.4542,
       payAmount: 600,
@@ -1141,7 +1141,7 @@ async function main() {
       category: "Delivery",
       requiredSkills: ["Two-Wheeler Driving", "Route Navigation", "Customer Service"],
       jobType: "PART_TIME",
-      location: "Model Town Market, Ludhiana",
+      location: "Model Town Market, Sirsa",
       latitude: 29.5349,
       longitude: 75.8273,
       payAmount: 550,
@@ -1171,7 +1171,7 @@ async function main() {
       category: "Retail",
       requiredSkills: ["Customer Service", "Basic Receptionist"],
       jobType: "FULL_TIME",
-      location: "Chaura Bazar, Ludhiana",
+      location: "Chaura Bazar, Sirsa",
       latitude: 29.5186,
       longitude: 75.8541,
       payAmount: 13500,
@@ -1249,7 +1249,7 @@ async function main() {
     },
   });
 
-  // Application 3: Demo Worker applied to Job 6 (Cafe Barista in Mohali)
+  // Application 3: Demo Worker applied to Job 6 (Cafe Barista in Fatehabad)
   await prisma.application.create({
     data: {
       jobId: createdJobs[6].id,
