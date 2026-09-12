@@ -103,10 +103,21 @@ export async function POST(req: NextRequest) {
     });
 
     // Dispatch Real SMS directly to the user's mobile carrier
-    await sendRealSmsOtp({
+    const smsResult = await sendRealSmsOtp({
       phone: normalizedPhone,
       otp,
     });
+
+    if (!smsResult.success) {
+      return NextResponse.json(
+        {
+          error:
+            smsResult.error ||
+            "Unable to deliver SMS. Please check your SMS gateway configuration.",
+        },
+        { status: 503 }
+      );
+    }
 
     return NextResponse.json({
       success: true,

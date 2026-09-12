@@ -2,9 +2,9 @@
  * Real-Life SMS Delivery Gateway for Work Adda
  *
  * Supports:
- * 1. Fast2SMS (India's leading instant OTP SMS gateway)
- * 2. Twilio (Global SMS Gateway)
- * 3. Secure backend gateway logger (when keys are pending configuration in .env)
+ * 1. Fast2SMS (India's leading instant OTP SMS gateway - https://www.fast2sms.com)
+ * 2. 2Factor (Indian cellular OTP gateway - https://2factor.in)
+ * 3. Twilio (Global SMS Gateway)
  */
 
 interface SendSmsOptions {
@@ -24,8 +24,8 @@ export async function sendRealSmsOtp({ phone, otp }: SendSmsOptions): Promise<Sm
   const indian10Digits = digits.slice(-10);
   const e164Phone = `+91${indian10Digits}`;
 
-  // 1. FAST2SMS (Direct Indian cellular carrier delivery)
-  const fast2SmsKey = process.env.FAST2SMS_API_KEY;
+  // 1. FAST2SMS (Direct Indian cellular carrier delivery to Jio, Airtel, Vi, BSNL)
+  const fast2SmsKey = process.env.FAST2SMS_API_KEY?.trim();
   if (fast2SmsKey && fast2SmsKey !== "your_fast2sms_key_here") {
     try {
       const response = await fetch("https://www.fast2sms.com/dev/bulkV2", {
@@ -50,17 +50,62 @@ export async function sendRealSmsOtp({ phone, otp }: SendSmsOptions): Promise<Sm
           messageId: data.request_id || "sent",
         };
       } else {
-        console.error(`[Fast2SMS] Gateway response:`, data);
+        console.error(`[Fast2SMS Gateway Error]:`, data);
+        const errMsg = Array.isArray(data.message) ? data.message.join(", ") : data.message;
+        return {
+          success: false,
+          provider: "FAST2SMS",
+          error: errMsg || "Fast2SMS gateway rejected delivery. Please check credits or API key.",
+        };
       }
     } catch (err: any) {
       console.error("[Fast2SMS Network Error]:", err.message);
+      return {
+        success: false,
+        provider: "FAST2SMS",
+        error: `Fast2SMS network failure: ${err.message}`,
+      };
     }
   }
 
-  // 2. TWILIO SMS (International & Indian delivery)
-  const twilioSid = process.env.TWILIO_ACCOUNT_SID;
-  const twilioToken = process.env.TWILIO_AUTH_TOKEN;
-  const twilioFrom = process.env.TWILIO_PHONE_NUMBER;
+  // 2. 2FACTOR.IN (Indian OTP cellular service)
+  const twoFactorKey = process.env.TWOFACTOR_API_KEY?.trim();
+  if (twoFactorKey && twoFactorKey !== "your_2factor_key_here") {
+    try {
+      const response = await fetch(
+        `https://2factor.in/API/V1/${twoFactorKey}/SMS/${indian10Digits}/${otp}`,
+        { method: "GET" }
+      );
+      const data = await response.json();
+      if (data.Status === "Success") {
+        console.log(`[2Factor] Successfully sent live OTP to ${e164Phone}`);
+        return {
+          success: true,
+          provider: "2FACTOR",
+          messageId: data.Details,
+        };
+      } else {
+        console.error(`[2Factor Error]:`, data);
+        return {
+          success: false,
+          provider: "2FACTOR",
+          error: data.Details || "2Factor gateway error.",
+        };
+      }
+    } catch (err: any) {
+      console.error("[2Factor Network Error]:", err.message);
+      return {
+        success: false,
+        provider: "2FACTOR",
+        error: `2Factor network failure: ${err.message}`,
+      };
+    }
+  }
+
+  // 3. TWILIO SMS (International & Indian cellular delivery)
+  const twilioSid = process.env.TWILIO_ACCOUNT_SID?.trim();
+  const twilioToken = process.env.TWILIO_AUTH_TOKEN?.trim();
+  const twilioFrom = process.env.TWILIO_PHONE_NUMBER?.trim();
 
   if (twilioSid && twilioToken && twilioFrom && twilioSid.startsWith("AC")) {
     try {
@@ -93,25 +138,36 @@ export async function sendRealSmsOtp({ phone, otp }: SendSmsOptions): Promise<Sm
         };
       } else {
         console.error(`[Twilio Error]:`, data);
+        return {
+          success: false,
+          provider: "TWILIO",
+          error: data.message || "Twilio delivery failed.",
+        };
       }
     } catch (err: any) {
       console.error("[Twilio Network Error]:", err.message);
+      return {
+        success: false,
+        provider: "TWILIO",
+        error: `Twilio network failure: ${err.message}`,
+      };
     }
   }
 
-  // 3. SECURE BACKEND CARRIER LOGGING
-  // The OTP is logged on the secure backend server console only.
-  // It is NEVER exposed to the frontend, client browser, or API response.
-  console.log(
-    `\n==================== [WORK ADDA LIVE SMS GATEWAY] ====================\n` +
-    `To: ${e164Phone}\n` +
-    `Message: Your Work Adda verification code is ${otp}. Valid for 10 minutes.\n` +
-    `Status: Dispatched\n` +
-    `========================================================================\n`
+  // 4. NO REAL SMS GATEWAY CONFIGURED IN ENVIRONMENT
+  // To send real SMS to an actual phone, an SMS service provider is required.
+  console.warn(
+    `\n==================== [WORK ADDA SMS GATEWAY NOT CONFIGURED] ====================\n` +
+    `Target Mobile: ${e164Phone}\n` +
+    `Generated OTP: ${otp}\n` +
+    `Reason: No SMS API key found in .env (FAST2SMS_API_KEY, TWOFACTOR_API_KEY, or TWILIO)\n` +
+    `Action: Please add your FAST2SMS_API_KEY in .env or Vercel Environment Variables to transmit live SMS.\n` +
+    `=================================================================================\n`
   );
 
   return {
-    success: true,
-    provider: "SERVER_GATEWAY",
+    success: false,
+    provider: "NONE",
+    error: "SMS Gateway not configured yet. To send real SMS to your phone, please add FAST2SMS_API_KEY in your .env or Vercel settings.",
   };
 }
