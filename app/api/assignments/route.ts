@@ -59,7 +59,12 @@ export async function GET(req: NextRequest) {
             },
           },
         },
-        payment: true,
+        payment: {
+          include: {
+            ledger: true,
+            disputes: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });

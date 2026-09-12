@@ -197,6 +197,20 @@ export default function AdminOverviewPage() {
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-brand-600 group-hover:translate-x-0.5 transition" />
                 </Link>
+
+                <Link
+                  href="/admin/payments"
+                  className="flex items-center justify-between p-3 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-brand-50 hover:border-brand-200 transition group"
+                >
+                  <div className="flex items-center gap-3">
+                    <CreditCard className="w-5 h-5 text-emerald-600" />
+                    <div>
+                      <span className="font-bold text-xs text-slate-900 block">Escrow Vault & Disputes</span>
+                      <span className="text-[10px] text-slate-500">Arbitration, escrow balances, ledger</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-brand-600 group-hover:translate-x-0.5 transition" />
+                </Link>
               </div>
             </div>
 

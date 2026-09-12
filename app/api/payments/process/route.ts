@@ -60,12 +60,15 @@ export async function POST(req: NextRequest) {
     // Persist Payment record
     const payment = await db.payment.create({
       data: {
+        jobId: assignment.jobId,
         assignmentId: assignment.id,
         payerId: assignment.employerId,
         receiverId: assignment.workerId,
         amount: breakdown.grossAmount,
         platformFee: breakdown.platformFee,
+        workerAmount: breakdown.workerPayout,
         status: "SUCCESS",
+        escrowStatus: "RELEASED",
         paymentMethod,
         transactionId: providerResult.transactionId,
       },

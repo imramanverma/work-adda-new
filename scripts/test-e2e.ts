@@ -232,12 +232,15 @@ async function runE2EWorkflow() {
 
   const payment = await prisma.payment.create({
     data: {
+      jobId: approvedAssignment.jobId,
       assignmentId: approvedAssignment.id,
       payerId: employerUser.id,
       receiverId: workerUser.id,
       amount: breakdown.grossAmount,
       platformFee: breakdown.platformFee,
+      workerAmount: breakdown.workerPayout,
       status: providerResult.status,
+      escrowStatus: "RELEASED",
       paymentMethod: "UPI",
       transactionId: providerResult.transactionId,
     },

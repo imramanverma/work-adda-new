@@ -32,6 +32,7 @@ model User {
   assignmentsEmployer     WorkAssignment[] @relation("EmployerAssignments")
   paymentsPaid            Payment[]        @relation("PayerPayments")
   paymentsReceived        Payment[]        @relation("ReceiverPayments")
+  disputesRaised          Dispute[]        @relation("DisputesRaised")
   reviewsGiven            Review[]         @relation("ReviewsGiven")
   reviewsReceived         Review[]         @relation("ReviewsReceived")
   notifications           Notification[]
@@ -118,6 +119,8 @@ model Job {
   conversations   Conversation[]
   reviews         Review[]
   reports         Report[]
+  payments        Payment[]
+  disputes        Dispute[]
 
   @@index([category])
   @@index([status])
@@ -163,21 +166,102 @@ model WorkAssignment {
 }
 
 model Payment {
-  id            String         @id @default(cuid())
-  assignmentId  String         @unique
-  assignment    WorkAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  payerId       String
-  payer         User           @relation("PayerPayments", fields: [payerId], references: [id], onDelete: Cascade)
-  receiverId    String
-  receiver      User           @relation("ReceiverPayments", fields: [receiverId], references: [id], onDelete: Cascade)
-  amount        Float          // Gross amount
-  platformFee   Float          @default(0.0) // Platform deduction (e.g. 5%)
-  status        String         @default("PENDING") // PENDING, PROCESSING, SUCCESS, FAILED, REFUNDED
-  paymentMethod String         @default("UPI") // UPI, BANK_TRANSFER, WALLET, CASH
-  transactionId String         @unique
-  createdAt     DateTime       @default(now())
+  id                 String            @id @default(cuid())
+  jobId              String
+  job                Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  payerId            String
+  payer              User              @relation("PayerPayments", fields: [payerId], references: [id], onDelete: Cascade)
+  receiverId         String
+  receiver           User              @relation("ReceiverPayments", fields: [receiverId], references: [id], onDelete: Cascade)
+  assignmentId       String?           @unique
+  assignment         WorkAssignment?   @relation(fields: [assignmentId], references: [id], onDelete: SetNull)
+  amount             Float             // Gross amount in INR
+  currency           String            @default("INR")
+  platformFee        Float             @default(0.0)
+  workerAmount       Float             // Net amount allocated to worker
+  razorpayOrderId    String?           @unique
+  razorpayPaymentId  String?           @unique
+  razorpaySignature  String?
+  razorpayTransferId String?
+  status             String            @default("CREATED") // CREATED, PAYMENT_PENDING, PAYMENT_PROCESSING, PAID, HELD, WORK_IN_PROGRESS, WORK_COMPLETED, RELEASE_PENDING, RELEASED, SETTLED, FAILED, CANCELLED, REFUND_PENDING, REFUNDED, DISPUTED
+  escrowStatus       String            @default("PENDING") // PENDING, HELD, RELEASE_ELIGIBLE, RELEASED, REFUNDED, DISPUTED
+  paymentMethod      String            @default("RAZORPAY") // RAZORPAY, UPI, NETBANKING, CARD
+  transactionId      String            @unique @default(cuid()) // Internal transaction reference
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  paidAt             DateTime?
+  heldAt             DateTime?
+  releasedAt         DateTime?
+  refundedAt         DateTime?
+  failureReason      String?
+  metadata           String?           // JSON string for extra audit info
+
+  ledger             EscrowLedger?
+  disputes           Dispute[]
+  auditLogs          PaymentAuditLog[]
 
   @@index([status])
+  @@index([escrowStatus])
+  @@index([jobId])
+  @@index([payerId])
+  @@index([receiverId])
+}
+
+model EscrowLedger {
+  id             String   @id @default(cuid())
+  paymentId      String   @unique
+  payment        Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  jobAmount      Float
+  platformFee    Float    @default(0.0)
+  workerAmount   Float
+  heldAmount     Float    @default(0.0)
+  releasedAmount Float    @default(0.0)
+  refundedAmount Float    @default(0.0)
+  currency       String   @default("INR")
+  isReconciled   Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Dispute {
+  id           String    @id @default(cuid())
+  jobId        String
+  job          Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  paymentId    String
+  payment      Payment   @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  raisedById   String
+  raisedBy     User      @relation("DisputesRaised", fields: [raisedById], references: [id], onDelete: Cascade)
+  reason       String
+  description  String
+  evidence     String?
+  status       String    @default("OPEN") // OPEN, UNDER_REVIEW, RESOLVED, REJECTED
+  resolution   String?
+  resolvedAt   DateTime?
+  resolvedById String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([status])
+  @@index([jobId])
+  @@index([paymentId])
+}
+
+model PaymentAuditLog {
+  id         String   @id @default(cuid())
+  paymentId  String
+  payment    Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  jobId      String
+  actorId    String?  // user ID or "SYSTEM" or "WEBHOOK"
+  actorRole  String?  // "HIRER", "WORKER", "ADMIN", "SYSTEM", "WEBHOOK"
+  eventType  String   // ORDER_CREATED, PAYMENT_INITIATED, PAYMENT_VERIFIED, ESCROW_HELD, WORK_STARTED, WORK_COMPLETED, RELEASE_INITIATED, RELEASE_COMPLETED, REFUND_INITIATED, REFUND_COMPLETED, DISPUTE_OPENED, DISPUTE_RESOLVED
+  fromStatus String?
+  toStatus   String?
+  metadata   String?  // JSON string
+  createdAt  DateTime @default(now())
+
+  @@index([paymentId])
+  @@index([jobId])
+  @@index([eventType])
 }
 
 model Review {

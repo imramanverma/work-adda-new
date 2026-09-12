@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireAuth } from "@/lib/session";
 
@@ -18,21 +18,27 @@ export async function GET(req: NextRequest) {
     const payments = await db.payment.findMany({
       where,
       include: {
+        job: {
+          select: {
+            id: true,
+            title: true,
+            category: true,
+            location: true,
+          },
+        },
         assignment: {
-          include: {
-            job: {
-              select: {
-                id: true,
-                title: true,
-                category: true,
-              },
-            },
+          select: {
+            id: true,
+            status: true,
+            completionStatus: true,
+            agreedAmount: true,
           },
         },
         payer: {
           select: {
             id: true,
             name: true,
+            phone: true,
             employerProfile: {
               select: { businessName: true },
             },
@@ -42,30 +48,67 @@ export async function GET(req: NextRequest) {
           select: {
             id: true,
             name: true,
+            phone: true,
+          },
+        },
+        ledger: true,
+        disputes: {
+          select: {
+            id: true,
+            status: true,
+            reason: true,
+            createdAt: true,
           },
         },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    const totalEarned = payments
-      .filter((p) => p.status === "SUCCESS")
-      .reduce((sum, p) => sum + (p.amount - p.platformFee), 0);
+    // Calculate role-specific stats
+    const releasedPayments = payments.filter(
+      (p) => p.escrowStatus === "RELEASED" || p.escrowStatus === "SETTLED" || p.status === "SUCCESS"
+    );
+    const heldPayments = payments.filter(
+      (p) => p.escrowStatus === "HELD" || p.escrowStatus === "RELEASE_ELIGIBLE"
+    );
+    const disputedPayments = payments.filter((p) => p.escrowStatus === "DISPUTED");
+    const refundedPayments = payments.filter((p) => p.escrowStatus === "REFUNDED");
 
-    const totalPaid = payments
-      .filter((p) => p.status === "SUCCESS")
-      .reduce((sum, p) => sum + p.amount, 0);
+    let stats: any = {};
+
+    if (user.role === "WORKER") {
+      const totalEarned = releasedPayments.reduce((sum, p) => sum + p.workerAmount, 0);
+      const totalHeldInEscrow = heldPayments.reduce((sum, p) => sum + p.workerAmount, 0);
+      const totalDisputed = disputedPayments.reduce((sum, p) => sum + p.workerAmount, 0);
+
+      stats = {
+        totalEarned,
+        totalHeldInEscrow,
+        totalDisputed,
+        totalTransactions: payments.length,
+      };
+    } else {
+      const totalPaid = releasedPayments.reduce((sum, p) => sum + p.amount, 0);
+      const totalHeldInEscrow = heldPayments.reduce((sum, p) => sum + p.amount, 0);
+      const totalRefunded = refundedPayments.reduce((sum, p) => sum + p.amount, 0);
+
+      stats = {
+        totalPaid,
+        totalHeldInEscrow,
+        totalRefunded,
+        totalTransactions: payments.length,
+      };
+    }
 
     return NextResponse.json({
       payments,
-      stats: {
-        totalEarned,
-        totalPaid,
-        totalTransactions: payments.length,
-      },
+      stats,
     });
   } catch (err: any) {
     console.error("Fetch payments error:", err);
-    return NextResponse.json({ error: err.message || "Failed to fetch payments" }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message || "Failed to fetch payments" },
+      { status: 500 }
+    );
   }
 }

@@ -37,6 +37,17 @@ export async function PATCH(
       },
     });
 
+    // Update payment escrow status to RELEASE_ELIGIBLE if currently HELD
+    await db.payment.updateMany({
+      where: {
+        assignmentId: params.id,
+        escrowStatus: "HELD",
+      },
+      data: {
+        escrowStatus: "RELEASE_ELIGIBLE",
+      },
+    });
+
     // Increment worker completedJobs
     await db.workerProfile.updateMany({
       where: { userId: assignment.workerId },

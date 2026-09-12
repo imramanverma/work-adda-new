@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -14,13 +14,15 @@ import {
   Star,
   MessageSquare,
   ShieldCheck,
-  Award,
+  AlertTriangle,
+  Lock,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { calculatePaymentBreakdown } from "@/lib/payments";
+import { RazorpayCheckoutButton } from "@/components/payments/razorpay-checkout";
 
 export default function EmployerWorkPage() {
   const toast = useToast();
@@ -31,10 +33,15 @@ export default function EmployerWorkPage() {
   const [approveAssignment, setApproveAssignment] = useState<any | null>(null);
   const [approving, setApproving] = useState(false);
 
-  // Payment modal state
-  const [payAssignment, setPayAssignment] = useState<any | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState("UPI");
-  const [processingPayment, setProcessingPayment] = useState(false);
+  // Release payment modal state
+  const [releasePaymentItem, setReleasePaymentItem] = useState<any | null>(null);
+  const [releasing, setReleasing] = useState(false);
+
+  // Dispute modal state
+  const [disputeItem, setDisputeItem] = useState<any | null>(null);
+  const [disputeReason, setDisputeReason] = useState("Work quality below agreement");
+  const [disputeDescription, setDisputeDescription] = useState("");
+  const [submittingDispute, setSubmittingDispute] = useState(false);
 
   // Review modal state
   const [reviewAssignment, setReviewAssignment] = useState<any | null>(null);
@@ -69,12 +76,12 @@ export default function EmployerWorkPage() {
       });
 
       if (res.ok) {
-        toast.success("Work Approved! 🌟", "You can now release the verified payment to the worker.");
+        toast.success("Work Approved! 🌟", "You can now safely release the escrow funds to the worker.");
         const approved = approveAssignment;
         setApproveAssignment(null);
         await fetchAssignments();
-        // Automatically open the payment modal for a seamless workflow
-        setPayAssignment(approved);
+        // Prompt employer to release the escrow funds
+        setReleasePaymentItem(approved);
       } else {
         const data = await res.json();
         toast.error("Error", data.error);
@@ -86,36 +93,69 @@ export default function EmployerWorkPage() {
     }
   };
 
-  const handleProcessPayment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!payAssignment) return;
-
-    setProcessingPayment(true);
+  const handleReleasePayment = async () => {
+    if (!releasePaymentItem) return;
+    setReleasing(true);
     try {
-      const res = await fetch("/api/payments/process", {
+      const res = await fetch("/api/payments/release", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          assignmentId: payAssignment.id,
-          paymentMethod,
+          assignmentId: releasePaymentItem.id,
+          paymentId: releasePaymentItem.payment?.id,
         }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        toast.success("Payment Disbursed! 💰", `₹${data.payment.amount} successfully transferred to ${payAssignment.worker.name}.`);
-        const paidItem = payAssignment;
-        setPayAssignment(null);
+        toast.success("Escrow Funds Released! 💰", "Payment successfully transferred to worker account.");
+        const releasedItem = releasePaymentItem;
+        setReleasePaymentItem(null);
         await fetchAssignments();
-        // Prompt for worker rating
-        setReviewAssignment(paidItem);
+        // Prompt for review
+        setReviewAssignment(releasedItem);
       } else {
-        toast.error("Payment Failed", data.error || "Could not process transaction");
+        toast.error("Release Failed", data.error || "Could not release payment.");
       }
     } catch (err: any) {
       toast.error("Network Error", err.message);
     } finally {
-      setProcessingPayment(false);
+      setReleasing(false);
+    }
+  };
+
+  const handleRaiseDispute = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!disputeItem) return;
+
+    setSubmittingDispute(true);
+    try {
+      const res = await fetch("/api/disputes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          paymentId: disputeItem.payment?.id,
+          reason: disputeReason,
+          description: disputeDescription,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(
+          "Dispute Registered ⚠️",
+          "Escrow funds are safely frozen. Work Adda admin will inspect the evidence."
+        );
+        setDisputeItem(null);
+        setDisputeDescription("");
+        fetchAssignments();
+      } else {
+        toast.error("Dispute Error", data.error || "Could not file dispute.");
+      }
+    } catch (err: any) {
+      toast.error("Error", err.message);
+    } finally {
+      setSubmittingDispute(false);
     }
   };
 
@@ -137,7 +177,7 @@ export default function EmployerWorkPage() {
       });
 
       if (res.ok) {
-        toast.success("Review Submitted! ⭐", "Worker's rating has been updated.");
+        toast.success("Review Submitted! ⭐", "Worker rating has been updated.");
         setReviewAssignment(null);
         fetchAssignments();
       } else {
@@ -157,16 +197,16 @@ export default function EmployerWorkPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Work Contracts & Payout Approvals
+              Work Contracts & Escrow Payments
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Verify completion submissions, release escrow payments, and build trusted local worker relationships.
+              Fund contracts securely via Razorpay, hold money in Escrow until completion, and release payouts with confidence.
             </p>
           </div>
 
           <Link href="/employer/payments">
             <Button size="sm" variant="outline">
-              <CreditCard className="w-4 h-4 mr-1.5" /> View Payment Ledger
+              <CreditCard className="w-4 h-4 mr-1.5" /> Escrow Payment Ledger
             </Button>
           </Link>
         </div>
@@ -192,123 +232,217 @@ export default function EmployerWorkPage() {
           </div>
         ) : (
           <div className="space-y-5">
-            {assignments.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-xs hover:shadow-sm transition space-y-4"
-              >
-                {/* Header & Status */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <Badge
-                        variant={
-                          item.status === "PAID"
-                            ? "success"
-                            : item.status === "APPROVED"
-                            ? "brand"
-                            : item.status === "COMPLETED"
-                            ? "warning"
-                            : "outline"
-                        }
-                        className="font-bold"
-                      >
-                        Status: {item.status}
-                      </Badge>
-                      <span className="text-xs text-slate-400">
-                        Started: {formatDate(item.createdAt)}
-                      </span>
+            {assignments.map((item) => {
+              const payment = item.payment;
+              const isEscrowFunded = payment && (payment.escrowStatus === "HELD" || payment.escrowStatus === "RELEASE_ELIGIBLE");
+              const isDisputed = payment && payment.escrowStatus === "DISPUTED";
+              const isReleased = payment && (payment.escrowStatus === "RELEASED" || payment.escrowStatus === "SETTLED");
+              const isRefunded = payment && payment.escrowStatus === "REFUNDED";
+              const isAwaitingPayment = !payment || payment.escrowStatus === "PENDING" || payment.status === "FAILED";
+
+              return (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-xs hover:shadow-sm transition space-y-4"
+                >
+                  {/* Header & Status */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <Badge
+                          variant={
+                            isReleased
+                              ? "success"
+                              : isDisputed
+                              ? "destructive"
+                              : isEscrowFunded
+                              ? "brand"
+                              : "warning"
+                          }
+                          className="font-bold text-xs"
+                        >
+                          {isReleased
+                            ? "Payment Released"
+                            : isDisputed
+                            ? "Escrow Disputed"
+                            : isEscrowFunded
+                            ? "Secured in Escrow"
+                            : "Escrow Deposit Pending"}
+                        </Badge>
+                        <span className="text-xs text-slate-400">
+                          Started: {formatDate(item.createdAt)}
+                        </span>
+                      </div>
+
+                      <h3 className="text-lg font-bold text-slate-900 leading-snug">
+                        {item.job?.title}
+                      </h3>
                     </div>
 
-                    <h3 className="text-lg font-bold text-slate-900 leading-snug">
-                      {item.job?.title}
-                    </h3>
+                    <div className="sm:text-right bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-xl">
+                      <span className="text-xl font-black text-emerald-700">
+                        {formatCurrency(item.agreedAmount)}
+                      </span>
+                      <p className="text-[11px] text-slate-400">Agreed Contract Pay</p>
+                    </div>
                   </div>
 
-                  <div className="sm:text-right bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-xl">
-                    <span className="text-xl font-black text-emerald-700">
-                      {formatCurrency(item.agreedAmount)}
-                    </span>
-                    <p className="text-[11px] text-slate-400">Agreed Contract Pay</p>
+                  {/* Worker & Payment Details Strip */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
+                        {item.worker?.name.charAt(0)}
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Assigned Worker</span>
+                        <span className="font-bold text-slate-800">{item.worker?.name}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-brand-600 shrink-0" />
+                      <div>
+                        <span className="text-slate-400 block font-medium">Work Location</span>
+                        <span className="font-bold text-slate-800">{item.job?.location}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <div>
+                        <span className="text-slate-400 block font-medium">Razorpay Escrow Status</span>
+                        <span className="font-bold text-slate-800">
+                          {isReleased
+                            ? "RELEASED (Completed)"
+                            : isDisputed
+                            ? "DISPUTED (Locked)"
+                            : isEscrowFunded
+                            ? "HELD (Safe in Escrow)"
+                            : isRefunded
+                            ? "REFUNDED"
+                            : "Awaiting Razorpay Deposit"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Escrow Guidance Banner */}
+                  {isAwaitingPayment && (
+                    <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
+                      <Lock className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="font-bold">Deposit Funds into Escrow</p>
+                        <p className="text-amber-800 mt-0.5">
+                          Deposit {formatCurrency(item.agreedAmount)} into Work Adda Escrow via Razorpay. Your funds remain 100% protected and are only released when you inspect and confirm job completion.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {isEscrowFunded && (
+                    <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs text-emerald-900 flex items-start gap-2.5">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="font-bold">Funds Safeguarded in Escrow</p>
+                        <p className="text-emerald-800 mt-0.5">
+                          ₹{payment.amount} is securely locked in Escrow. Payment ID:{" "}
+                          <span className="font-mono text-emerald-950 font-bold">
+                            {payment.razorpayPaymentId || payment.transactionId}
+                          </span>
+                          . The worker cannot access these funds until you confirm task completion.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {isDisputed && (
+                    <div className="p-3.5 bg-red-50 rounded-2xl border border-red-200 text-xs text-red-900 flex items-start gap-2.5">
+                      <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="font-bold">Dispute Under Administrative Review</p>
+                        <p className="text-red-800 mt-0.5">
+                          Escrow funds are frozen. Work Adda dispute arbitration team is investigating the submitted details.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action Controls */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <Link href="/employer/messages">
+                        <Button size="sm" variant="outline">
+                          <MessageSquare className="w-3.5 h-3.5 mr-1.5" /> Message Worker
+                        </Button>
+                      </Link>
+
+                      {isEscrowFunded && !isDisputed && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setDisputeItem(item)}
+                          className="text-red-600 border-red-200 hover:bg-red-50"
+                        >
+                          <AlertTriangle className="w-3.5 h-3.5 mr-1" /> Raise Dispute
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {isAwaitingPayment ? (
+                        <RazorpayCheckoutButton
+                          assignmentId={item.id}
+                          jobTitle={item.job?.title}
+                          workerName={item.worker?.name}
+                          amount={item.agreedAmount}
+                          buttonText="Deposit in Escrow via Razorpay"
+                          onSuccess={() => {
+                            toast.success(
+                              "Escrow Deposit Successful! 🔒",
+                              "Funds are safely held in Work Adda Escrow. The worker can now begin work."
+                            );
+                            fetchAssignments();
+                          }}
+                          onError={(errMsg) => {
+                            toast.error("Payment Error", errMsg);
+                          }}
+                        />
+                      ) : item.status === "COMPLETED" ? (
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          onClick={() => setApproveAssignment(item)}
+                          className="font-bold bg-amber-600 hover:bg-amber-700 shadow-sm text-white"
+                        >
+                          <CheckCircle2 className="w-4 h-4 mr-1.5" /> Review & Approve Completion
+                        </Button>
+                      ) : item.status === "APPROVED" || payment?.escrowStatus === "RELEASE_ELIGIBLE" ? (
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          onClick={() => setReleasePaymentItem(item)}
+                          className="font-bold bg-emerald-600 hover:bg-emerald-700 shadow-sm text-white"
+                        >
+                          <CheckCircle2 className="w-4 h-4 mr-1.5" /> Confirm & Release Escrow Payment
+                        </Button>
+                      ) : isReleased ? (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => setReviewAssignment(item)}
+                        >
+                          <Star className="w-3.5 h-3.5 mr-1 text-amber-500" /> Rate Worker
+                        </Button>
+                      ) : (
+                        <span className="text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100 flex items-center gap-1.5">
+                          <Clock className="w-4 h-4 text-slate-400" /> Work in progress (Protected in Escrow)
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-
-                {/* Worker Details Strip */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
-                      {item.worker?.name.charAt(0)}
-                    </div>
-                    <div>
-                      <span className="text-slate-400 block font-medium">Assigned Worker</span>
-                      <span className="font-bold text-slate-800">{item.worker?.name}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-brand-600 shrink-0" />
-                    <div>
-                      <span className="text-slate-400 block font-medium">Work Location</span>
-                      <span className="font-bold text-slate-800">{item.job?.location}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <div>
-                      <span className="text-slate-400 block font-medium">Payment State</span>
-                      <span className="font-bold text-slate-800">
-                        {item.payment ? `${item.payment.status} (${item.payment.paymentMethod})` : "Pending Release"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Controls */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
-                  <Link href="/employer/messages">
-                    <Button size="sm" variant="outline">
-                      <MessageSquare className="w-3.5 h-3.5 mr-1.5" /> Message Worker
-                    </Button>
-                  </Link>
-
-                  <div className="flex items-center gap-2">
-                    {item.status === "COMPLETED" ? (
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        onClick={() => setApproveAssignment(item)}
-                        className="font-bold bg-amber-600 hover:bg-amber-700 shadow-sm"
-                      >
-                        <CheckCircle2 className="w-4 h-4 mr-1.5" /> Review & Approve Completion
-                      </Button>
-                    ) : item.status === "APPROVED" ? (
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        onClick={() => setPayAssignment(item)}
-                        className="font-bold bg-emerald-600 hover:bg-emerald-700 shadow-sm"
-                      >
-                        <CreditCard className="w-4 h-4 mr-1.5" /> Release Payment (
-                        {formatCurrency(item.agreedAmount)})
-                      </Button>
-                    ) : item.status === "PAID" ? (
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => setReviewAssignment(item)}
-                      >
-                        <Star className="w-3.5 h-3.5 mr-1 text-amber-500" /> Rate Worker
-                      </Button>
-                    ) : (
-                      <span className="text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100 flex items-center gap-1.5">
-                        <Clock className="w-4 h-4 text-slate-400" /> Worker is currently performing task
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -326,7 +460,7 @@ export default function EmployerWorkPage() {
             </p>
 
             <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900">
-              Upon approval, you can disburse the agreed compensation of{" "}
+              Upon approval, you can release the secured escrow funds of{" "}
               <strong>{formatCurrency(approveAssignment?.agreedAmount || 0)}</strong>.
             </div>
 
@@ -346,63 +480,109 @@ export default function EmployerWorkPage() {
           </div>
         </Modal>
 
-        {/* Modal: Release Payment */}
+        {/* Modal: Release Escrow Payment */}
         <Modal
-          isOpen={!!payAssignment}
-          onClose={() => setPayAssignment(null)}
-          title="Release Worker Payment"
-          description="Securely disburse verified task compensation."
+          isOpen={!!releasePaymentItem}
+          onClose={() => setReleasePaymentItem(null)}
+          title="Release Escrow Funds to Worker"
+          description="Authorize Work Adda Escrow to release funds to the worker."
         >
-          {payAssignment && (
-            <form onSubmit={handleProcessPayment} className="space-y-4 text-left">
-              {/* Payment Breakdown Card */}
-              {(() => {
-                const breakdown = calculatePaymentBreakdown(payAssignment.agreedAmount);
-                return (
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2 text-xs">
-                    <div className="flex justify-between text-slate-600">
-                      <span>Total Agreed Amount:</span>
-                      <span className="font-bold text-slate-900">{formatCurrency(breakdown.grossAmount)}</span>
-                    </div>
-                    <div className="flex justify-between text-slate-600">
-                      <span>Work Adda Platform Fee (5%):</span>
-                      <span className="text-slate-500">-{formatCurrency(breakdown.platformFee)}</span>
-                    </div>
-                    <div className="border-t border-slate-200 pt-2 flex justify-between font-bold text-sm text-emerald-700">
-                      <span>Net Worker Payout:</span>
-                      <span>{formatCurrency(breakdown.workerPayout)}</span>
-                    </div>
-                  </div>
-                );
-              })()}
+          {releasePaymentItem && (
+            <div className="space-y-4 text-left">
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2 text-xs">
+                <div className="flex justify-between text-slate-600">
+                  <span>Agreed Job Amount:</span>
+                  <span className="font-bold text-slate-900">
+                    {formatCurrency(releasePaymentItem.agreedAmount)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-slate-600">
+                  <span>Work Adda Platform Fee (0% Launch Offer):</span>
+                  <span className="text-emerald-600 font-bold">₹0.00</span>
+                </div>
+                <div className="border-t border-slate-200 pt-2 flex justify-between font-bold text-sm text-emerald-700">
+                  <span>Net Payout to Worker:</span>
+                  <span>{formatCurrency(releasePaymentItem.agreedAmount)}</span>
+                </div>
+              </div>
 
+              <p className="text-xs text-slate-500">
+                By confirming, the funds held securely in escrow will be released immediately to{" "}
+                <strong>{releasePaymentItem.worker?.name}</strong>. This action is final and marks the contract as successfully settled.
+              </p>
+
+              <div className="pt-2 flex justify-end gap-2">
+                <Button variant="secondary" onClick={() => setReleasePaymentItem(null)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  isLoading={releasing}
+                  onClick={handleReleasePayment}
+                  className="font-bold bg-emerald-600 hover:bg-emerald-700 text-white"
+                >
+                  Confirm & Release Funds
+                </Button>
+              </div>
+            </div>
+          )}
+        </Modal>
+
+        {/* Modal: Raise Dispute */}
+        <Modal
+          isOpen={!!disputeItem}
+          onClose={() => setDisputeItem(null)}
+          title="Raise Escrow Dispute"
+          description="Freeze escrow funds and request administrative arbitration."
+        >
+          {disputeItem && (
+            <form onSubmit={handleRaiseDispute} className="space-y-4 text-left">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Payment Method
+                  Reason for Dispute
                 </label>
                 <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  value={disputeReason}
+                  onChange={(e) => setDisputeReason(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
                 >
-                  <option value="UPI">Instant UPI (GPay / PhonePe / Paytm)</option>
-                  <option value="BANK_TRANSFER">Direct Bank IMPS Transfer</option>
-                  <option value="WALLET">Work Adda Escrow Wallet</option>
-                  <option value="CASH">Verified Cash Settlement</option>
+                  <option value="Work quality below agreement">Work quality below agreed standard</option>
+                  <option value="Worker did not show up">Worker failed to show up / abandon</option>
+                  <option value="Incomplete job scope">Incomplete job scope</option>
+                  <option value="Disagreement on terms">Disagreement on terms or timeline</option>
+                  <option value="Other">Other reason</option>
                 </select>
               </div>
 
-              <div className="pt-2 flex justify-end gap-2">
-                <Button type="button" variant="secondary" onClick={() => setPayAssignment(null)}>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Describe the Issue in Detail
+                </label>
+                <textarea
+                  rows={4}
+                  required
+                  value={disputeDescription}
+                  onChange={(e) => setDisputeDescription(e.target.value)}
+                  placeholder="Explain what was agreed vs what was delivered. Include specific dates or shortcomings..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                />
+              </div>
+
+              <div className="p-3 bg-red-50 rounded-xl border border-red-200 text-xs text-red-900">
+                Raising a dispute immediately locks the escrow funds. Neither party can withdraw until resolution.
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <Button type="button" variant="secondary" onClick={() => setDisputeItem(null)}>
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   variant="primary"
-                  isLoading={processingPayment}
-                  className="font-bold bg-emerald-600 hover:bg-emerald-700"
+                  isLoading={submittingDispute}
+                  className="font-bold bg-red-600 hover:bg-red-700 text-white"
                 >
-                  Confirm & Disburse Payment
+                  Lock Funds & Submit Dispute
                 </Button>
               </div>
             </form>
