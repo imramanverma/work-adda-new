@@ -147,7 +147,7 @@ export default function WorkerProfilePage() {
             Worker Profile & Preferences
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Build your hyperlocal credibility, add skills, and get matched to jobs within your preferred commute radius.
+            Build your local credibility, add skills, and get matched to jobs within your preferred commute radius.
           </p>
         </div>
 

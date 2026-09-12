@@ -10,7 +10,7 @@ import { SplashIntro } from "@/components/brand/splash-intro";
 export const metadata: Metadata = {
   title: "Work Adda — Local Work. Local People. Local Growth.",
   description:
-    "Hyperlocal employment and task marketplace connecting students, skilled workers, gig seekers, and local businesses.",
+    "Local employment and task marketplace connecting students, skilled workers, gig seekers, and businesses across Haryana.",
 };
 
 export default function RootLayout({

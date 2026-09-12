@@ -78,7 +78,7 @@ export default function HomePage() {
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-brand-200 shadow-sm shadow-brand-500/10">
                 <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
                 <span className="text-xs font-black text-brand-900 tracking-wide uppercase">
-                  Hyperlocal Employment • Punjab & North India
+                  Local Employment • Haryana
                 </span>
               </div>
 
@@ -117,13 +117,14 @@ export default function HomePage() {
                     onChange={(e) => setHeroLocation(e.target.value)}
                     className="text-xs sm:text-sm font-semibold text-slate-700 bg-transparent focus:outline-none"
                   >
-                    <option value="Chandigarh">Chandigarh</option>
-                    <option value="Mohali">Mohali</option>
-                    <option value="Ludhiana">Ludhiana</option>
-                    <option value="Amritsar">Amritsar</option>
-                    <option value="Jalandhar">Jalandhar</option>
-                    <option value="Patiala">Patiala</option>
-                    <option value="Delhi NCR">Delhi NCR</option>
+                    <option value="Gurugram">Gurugram</option>
+                    <option value="Faridabad">Faridabad</option>
+                    <option value="Panipat">Panipat</option>
+                    <option value="Ambala">Ambala</option>
+                    <option value="Karnal">Karnal</option>
+                    <option value="Panchkula">Panchkula</option>
+                    <option value="Rohtak">Rohtak</option>
+                    <option value="Sonipat">Sonipat</option>
                   </select>
                 </div>
 
@@ -186,11 +187,11 @@ export default function HomePage() {
                       <span className="font-black text-sm text-emerald-600">₹800/day</span>
                     </div>
                     <h4 className="font-bold text-sm text-slate-900">
-                      Hyperlocal Delivery Assistant (Tricity Hub)
+                      Local Delivery Assistant (Haryana Hub)
                     </h4>
                     <div className="flex items-center gap-2 text-xs text-slate-500">
                       <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Punjab Logistics Hub</span>
+                      <span>Haryana Logistics Hub</span>
                       <span>•</span>
                       <span className="text-brand-700 font-bold">1.8 km away</span>
                     </div>
@@ -471,7 +472,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h5 className="font-bold text-xs text-slate-900">Gurpreet Singh</h5>
-                  <span className="text-[10px] text-slate-400">Owner, Punjab Logistics Hub</span>
+                  <span className="text-[10px] text-slate-400">Owner, Haryana Logistics Hub</span>
                 </div>
               </div>
             </div>

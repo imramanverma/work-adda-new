@@ -1,12 +1,12 @@
-# 🇮🇳 Work Adda - Hyperlocal Employment & Task Marketplace
+# 🇮🇳 Work Adda - Local Employment & Task Marketplace
 
-**Work Adda** is a full-stack, hyper-responsive hyperlocal employment and task platform engineered for India's bustling gig economy. It bridges the gap between skilled workers (electricians, plumbers, delivery personnel, tutors, carpenters, daily tasks) and local employers/residents with instant job discovery, trust badges, verified profiles, and seamless work tracking.
+**Work Adda** is a full-stack, hyper-responsive local employment and task platform engineered for India's bustling gig economy. It bridges the gap between skilled workers (electricians, plumbers, delivery personnel, tutors, carpenters, daily tasks) and local employers/residents with instant job discovery, trust badges, verified profiles, and seamless work tracking across Haryana.
 
 ---
 
 ## ✨ Features
 
-- **⚡ Instant Radar Job Discovery**: Hyperlocal radar scan matching workers with gigs in their radius across Chandigarh, Mohali, Ludhiana, Amritsar, and beyond.
+- **⚡ Instant Radar Job Discovery**: Local radar scan matching workers with gigs in their radius across Gurugram, Faridabad, Panipat, Ambala, and beyond.
 - **🛡️ Multi-Role Ecosystem**: Tailored dashboards and workflows for **Workers**, **Employers**, and **System Admins**.
 - **📍 Live Task Pipeline**: End-to-end status lifecycle (`APPLIED` → `ASSIGNED` → `IN_PROGRESS` → `COMPLETED` → `PAID`).
 - **💬 Real-Time Direct Messaging**: In-app messaging between employers and job applicants.

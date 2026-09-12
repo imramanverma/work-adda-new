@@ -55,7 +55,7 @@ export function AuthBackground() {
           <Package className="w-4 h-4 text-emerald-600" />
         </div>
         <div>
-          <span className="font-extrabold text-xs text-slate-800 block">Hyperlocal Dispatch</span>
+          <span className="font-extrabold text-xs text-slate-800 block">Local Dispatch</span>
           <span className="text-[10px] text-slate-500 font-medium">Daily Gigs • ₹800/day</span>
         </div>
       </div>

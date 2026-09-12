@@ -14,10 +14,10 @@ export function Footer() {
               <Logo size="sm" />
             </div>
             <p className="text-xs text-slate-500 leading-relaxed mb-3">
-              “Local Work. Local People. Local Growth.” A trusted hyperlocal employment marketplace connecting workers, students, and businesses.
+              “Local Work. Local People. Local Growth.” A trusted local employment marketplace connecting workers, students, and businesses.
             </p>
             <div className="flex items-center gap-2 text-xs text-slate-500">
-              <MapPin className="w-3.5 h-3.5 text-brand-600" /> Active across Punjab & North India
+              <MapPin className="w-3.5 h-3.5 text-brand-600" /> Active across Haryana
             </div>
           </div>
 

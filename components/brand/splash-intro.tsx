@@ -70,25 +70,25 @@ export function SplashIntro() {
         <div className="relative flex items-center justify-center">
           {/* Rotating City Beacons Orbit Ring */}
           <div className="absolute w-44 h-44 sm:w-52 sm:h-52 rounded-full border border-dashed border-white/20 animate-spin-slow pointer-events-none">
-            {/* North Beacon: Chandigarh */}
+            {/* North Beacon: Gurugram */}
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-slate-900/90 border border-blue-400/50 text-[9px] font-bold text-blue-300 shadow-md shadow-blue-500/20 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
-              Chandigarh
+              Gurugram
             </div>
-            {/* East Beacon: Mohali */}
+            {/* East Beacon: Faridabad */}
             <div className="absolute top-1/2 -right-4 -translate-y-1/2 px-2 py-0.5 rounded-full bg-slate-900/90 border border-emerald-400/50 text-[9px] font-bold text-emerald-300 shadow-md shadow-emerald-500/20 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-              Mohali
+              Faridabad
             </div>
-            {/* South Beacon: Ludhiana */}
+            {/* South Beacon: Panipat */}
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-slate-900/90 border border-amber-400/50 text-[9px] font-bold text-amber-300 shadow-md shadow-amber-500/20 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-              Ludhiana
+              Panipat
             </div>
-            {/* West Beacon: Amritsar */}
+            {/* West Beacon: Ambala */}
             <div className="absolute top-1/2 -left-5 -translate-y-1/2 px-2 py-0.5 rounded-full bg-slate-900/90 border border-indigo-400/50 text-[9px] font-bold text-indigo-300 shadow-md shadow-indigo-500/20 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping" />
-              Amritsar
+              Ambala
             </div>
           </div>
 
@@ -175,13 +175,13 @@ export function SplashIntro() {
           {phase === 1 && (
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/30 text-xs font-semibold text-blue-300 animate-in fade-in duration-300">
               <Radio className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
-              <span>Scanning Tricity & Punjab Network...</span>
+              <span>Scanning Haryana Network...</span>
             </div>
           )}
           {phase === 2 && (
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-xs font-semibold text-emerald-300 animate-in fade-in duration-300">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Found 32+ Hyperlocal Tasks Near You</span>
+              <span>Found 32+ Local Tasks Near You</span>
             </div>
           )}
           {phase === 3 && (

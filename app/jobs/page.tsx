@@ -104,7 +104,7 @@ export default function JobsDiscoveryPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Discover Hyperlocal Work
+              Discover Local Work
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
               Find verified shifts, gigs, and jobs within your neighborhood radius.
