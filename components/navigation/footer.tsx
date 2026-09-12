@@ -17,7 +17,7 @@ export function Footer() {
               “Local Work. Local People. Local Growth.” A trusted local employment marketplace connecting workers, students, and businesses.
             </p>
             <div className="flex items-center gap-2 text-xs text-slate-500">
-              <MapPin className="w-3.5 h-3.5 text-brand-600" /> Active across Haryana
+              <MapPin className="w-3.5 h-3.5 text-brand-600" /> Active across Fatehabad & Sirsa, Haryana
             </div>
           </div>
 

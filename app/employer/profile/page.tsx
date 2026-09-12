@@ -186,7 +186,7 @@ export default function EmployerProfilePage() {
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                placeholder="e.g. Ludhiana, Punjab"
+                placeholder="e.g. Fatehabad or Sirsa"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>

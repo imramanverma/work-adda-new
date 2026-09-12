@@ -31,7 +31,7 @@ export default function HomePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"worker" | "employer">("worker");
   const [heroSearch, setHeroSearch] = useState("");
-  const [heroLocation, setHeroLocation] = useState("Chandigarh");
+  const [heroLocation, setHeroLocation] = useState("Fatehabad");
   const [featuredJobs, setFeaturedJobs] = useState<any[]>([]);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function HomePage() {
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-brand-200 shadow-sm shadow-brand-500/10">
                 <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
                 <span className="text-xs font-black text-brand-900 tracking-wide uppercase">
-                  Local Employment • Haryana
+                  Local Employment • Fatehabad & Sirsa
                 </span>
               </div>
 
@@ -117,14 +117,8 @@ export default function HomePage() {
                     onChange={(e) => setHeroLocation(e.target.value)}
                     className="text-xs sm:text-sm font-semibold text-slate-700 bg-transparent focus:outline-none"
                   >
-                    <option value="Gurugram">Gurugram</option>
-                    <option value="Faridabad">Faridabad</option>
-                    <option value="Panipat">Panipat</option>
-                    <option value="Ambala">Ambala</option>
-                    <option value="Karnal">Karnal</option>
-                    <option value="Panchkula">Panchkula</option>
-                    <option value="Rohtak">Rohtak</option>
-                    <option value="Sonipat">Sonipat</option>
+                    <option value="Fatehabad">Fatehabad</option>
+                    <option value="Sirsa">Sirsa</option>
                   </select>
                 </div>
 
@@ -454,7 +448,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h5 className="font-bold text-xs text-slate-900">Amanpreet Singh</h5>
-                  <span className="text-[10px] text-slate-400">Student & Delivery Partner, Chandigarh</span>
+                  <span className="text-[10px] text-slate-400">Student & Delivery Partner, Fatehabad</span>
                 </div>
               </div>
             </div>
@@ -482,7 +476,7 @@ export default function HomePage() {
                 ★★★★★
               </div>
               <p className="text-xs text-slate-600 leading-relaxed italic">
-                "I get residential wiring gigs directly in Phase 7 Mohali. The distance filter is fantastic because I don't waste fuel traveling across the city."
+                "I get residential wiring gigs directly in Begu Road, Sirsa. The distance filter is fantastic because I don't waste fuel traveling far."
               </p>
               <div className="pt-2 border-t border-slate-100 flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
@@ -490,7 +484,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h5 className="font-bold text-xs text-slate-900">Jaspal Bains</h5>
-                  <span className="text-[10px] text-slate-400">Certified Electrician, Mohali</span>
+                  <span className="text-[10px] text-slate-400">Certified Electrician, Sirsa</span>
                 </div>
               </div>
             </div>

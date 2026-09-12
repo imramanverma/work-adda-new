@@ -185,7 +185,7 @@ export default function WorkerProfilePage() {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="e.g. Sector 15, Chandigarh"
+                  placeholder="e.g. Model Town, Fatehabad or Begu Road, Sirsa"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>

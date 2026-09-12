@@ -28,7 +28,7 @@ export default function NewJobPage() {
     description: "",
     category: "Delivery",
     jobType: "PART_TIME",
-    location: "Chandigarh",
+    location: "Fatehabad",
     payAmount: 700,
     payType: "DAILY",
     workersRequired: 1,
@@ -240,7 +240,7 @@ export default function NewJobPage() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. SCO 28, Phase 7, Mohali"
+                    placeholder="e.g. Near Bus Stand, Fatehabad or Begu Road, Sirsa"
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"

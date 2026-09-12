@@ -26,7 +26,7 @@ export default function RegisterPage() {
     phone: "",
     password: "",
     confirmPassword: "",
-    location: "Chandigarh",
+    location: "Fatehabad",
     businessName: "",
     businessType: "Retail Shop",
   });
@@ -34,13 +34,8 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
 
   const locations = [
-    "Chandigarh",
-    "Mohali",
-    "Ludhiana",
-    "Amritsar",
-    "Jalandhar",
-    "Patiala",
-    "Delhi NCR",
+    "Fatehabad",
+    "Sirsa",
   ];
 
   const businessTypes = [
