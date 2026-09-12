@@ -24,71 +24,41 @@ export async function sendRealSmsOtp({ phone, otp }: SendSmsOptions): Promise<Sm
   const indian10Digits = digits.slice(-10);
   const e164Phone = `+91${indian10Digits}`;
 
-  // 1. FAST2SMS (Direct Indian cellular carrier delivery to Jio, Airtel, Vi, BSNL)
+  // 1. FAST2SMS (Direct cellular carrier delivery without DLT via Quick SMS route)
   const fast2SmsKey = process.env.FAST2SMS_API_KEY?.trim();
   if (fast2SmsKey && fast2SmsKey !== "your_fast2sms_key_here") {
     try {
-      const response = await fetch("https://www.fast2sms.com/dev/bulkV2", {
-        method: "POST",
+      const messageText = `Your Work Adda verification code is ${otp}. Valid for 10 minutes.`;
+      
+      // Fast2SMS Quick SMS API (matching Fast2SMS Dev API GET endpoint)
+      const qUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=${encodeURIComponent(
+        fast2SmsKey
+      )}&route=q&message=${encodeURIComponent(messageText)}&numbers=${encodeURIComponent(
+        indian10Digits
+      )}`;
+
+      const response = await fetch(qUrl, {
+        method: "GET",
         headers: {
-          authorization: fast2SmsKey,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          variables_values: otp,
-          route: "otp",
-          numbers: indian10Digits,
-        }),
       });
 
       const data = await response.json();
       if (data.return === true) {
-        console.log(`[Fast2SMS] Successfully sent live OTP to ${e164Phone}`);
+        console.log(`[Fast2SMS Quick SMS] Successfully dispatched live OTP to ${e164Phone}`);
         return {
           success: true,
           provider: "FAST2SMS",
           messageId: data.request_id || "sent",
         };
       } else {
-        console.error(`[Fast2SMS Gateway Error]:`, data);
+        console.error(`[Fast2SMS Error]:`, data);
         const errMsg = Array.isArray(data.message) ? data.message.join(", ") : String(data.message || "");
-
-        // If website verification is required for route: "otp", attempt route: "q" (Quick SMS) fallback
-        if (errMsg.toLowerCase().includes("website verification")) {
-          console.log("[Fast2SMS] Attempting Quick SMS (route: 'q') fallback...");
-          try {
-            const qResponse = await fetch("https://www.fast2sms.com/dev/bulkV2", {
-              method: "POST",
-              headers: {
-                authorization: fast2SmsKey,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                route: "q",
-                message: `Your Work Adda verification OTP is ${otp}. Valid for 10 minutes.`,
-                language: "english",
-                flash: 0,
-                numbers: indian10Digits,
-              }),
-            });
-            const qData = await qResponse.json();
-            if (qData.return === true) {
-              console.log(`[Fast2SMS Quick SMS] Successfully sent live OTP to ${e164Phone}`);
-              return {
-                success: true,
-                provider: "FAST2SMS_QUICK",
-                messageId: qData.request_id || "sent",
-              };
-            }
-          } catch (qErr: any) {
-            console.error("[Fast2SMS Quick Error]:", qErr.message);
-          }
-        }
-
         return {
           success: false,
           provider: "FAST2SMS",
-          error: errMsg || "Fast2SMS gateway rejected delivery. Please check credits or API key.",
+          error: errMsg || "Fast2SMS rejected delivery. Please verify credits or API key.",
         };
       }
     } catch (err: any) {
