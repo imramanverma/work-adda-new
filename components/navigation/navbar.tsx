@@ -13,14 +13,13 @@ import {
   PlusCircle,
   MessageSquare,
   ShieldCheck,
-  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/brand/logo";
 
 export function Navbar() {
-  const { user, logout, quickLogin } = useAuth();
+  const { user, logout } = useAuth();
   const pathname = usePathname();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -209,42 +208,7 @@ export function Navbar() {
 
         {/* Right Section: Actions, Notifications, User Profile */}
         <div className="flex items-center gap-3">
-          {/* Quick Demo Login Switcher */}
-          <div className="hidden lg:flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
-            <span className="text-slate-500 font-medium px-2 flex items-center gap-1">
-              <Zap className="w-3.5 h-3.5 text-accent-500" /> Demo Switch:
-            </span>
-            <button
-              onClick={() => quickLogin("WORKER")}
-              className={`px-2 py-1 rounded-lg font-medium transition ${
-                user?.role === "WORKER"
-                  ? "bg-white shadow-xs text-brand-700 font-bold"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Worker
-            </button>
-            <button
-              onClick={() => quickLogin("EMPLOYER")}
-              className={`px-2 py-1 rounded-lg font-medium transition ${
-                user?.role === "EMPLOYER"
-                  ? "bg-white shadow-xs text-brand-700 font-bold"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Employer
-            </button>
-            <button
-              onClick={() => quickLogin("ADMIN")}
-              className={`px-2 py-1 rounded-lg font-medium transition ${
-                user?.role === "ADMIN"
-                  ? "bg-white shadow-xs text-brand-700 font-bold"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Admin
-            </button>
-          </div>
+
 
           {user?.role === "EMPLOYER" && (
             <Link href="/employer/jobs/new">
