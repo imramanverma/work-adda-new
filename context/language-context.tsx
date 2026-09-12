@@ -23,7 +23,7 @@ const translations: Record<Language, Record<string, string>> = {
     "brand.active_district": "Active: Fatehabad & Sirsa",
     "brand.active_district_full": "Active across Fatehabad & Sirsa, Haryana",
     "brand.scanning": "Scanning Fatehabad & Sirsa Network...",
-    "brand.tasks_found": "Found 32+ Local Tasks in Fatehabad & Sirsa",
+    "brand.tasks_found": "Hyperlocal Employment Network • Fatehabad & Sirsa",
     "brand.ready_deal": "Ready! Instant Settlement & 5% Fee",
 
     // Navigation & Common Actions
@@ -131,7 +131,7 @@ const translations: Record<Language, Record<string, string>> = {
     "brand.active_district": "सक्रिय: फतेहाबाद व सिरसा",
     "brand.active_district_full": "फतेहाबाद व सिरसा, हरियाणा में सक्रिय",
     "brand.scanning": "फतेहाबाद व सिरसा नेटवर्क स्कैन हो रहा है...",
-    "brand.tasks_found": "फतेहाबाद व सिरसा में 32+ लोकल काम उपलब्ध हैं",
+    "brand.tasks_found": "सक्रिय लोकल नेटवर्क • फतेहाबाद व सिरसा",
     "brand.ready_deal": "तैयार! तुरंत पेमेंट और मात्र 5% शुल्क",
 
     // Navigation & Common Actions

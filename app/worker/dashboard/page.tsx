@@ -105,7 +105,7 @@ export default function WorkerDashboardPage() {
           <div className="grid grid-cols-3 gap-3 shrink-0">
             <div className="bg-white/10 backdrop-blur-sm p-3.5 rounded-2xl border border-white/10 text-center">
               <span className="text-xl sm:text-2xl font-black text-accent-400">
-                {profile?.rating > 0 ? profile.rating.toFixed(1) : "5.0"}
+                {profile?.rating > 0 ? profile.rating.toFixed(1) : "New"}
               </span>
               <p className="text-[11px] text-brand-200 mt-0.5">Rating (★)</p>
             </div>

@@ -34,12 +34,47 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<"worker" | "employer">("worker");
   const [heroSearch, setHeroSearch] = useState("");
   const [heroLocation, setHeroLocation] = useState("Fatehabad");
+  const [platformStats, setPlatformStats] = useState<{
+    totalWorkers: number;
+    totalBusinesses: number;
+    openJobs: number;
+    completedTasks: number;
+    totalSettledAmount: number;
+    categoryCounts: Record<string, number>;
+    latestJob: any | null;
+  }>({
+    totalWorkers: 0,
+    totalBusinesses: 0,
+    openJobs: 0,
+    completedTasks: 0,
+    totalSettledAmount: 0,
+    categoryCounts: {},
+    latestJob: null,
+  });
+  const [reviews, setReviews] = useState<any[]>([]);
   const [featuredJobs, setFeaturedJobs] = useState<any[]>([]);
 
   useEffect(() => {
+    // 1. Fetch featured jobs
     fetch("/api/jobs?limit=3&sortBy=highest_pay")
       .then((r) => r.json())
       .then((d) => setFeaturedJobs(d.jobs || []))
+      .catch(() => {});
+
+    // 2. Fetch platform live stats
+    fetch("/api/platform/stats")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && d.stats) {
+          setPlatformStats(d.stats);
+        }
+      })
+      .catch(() => {});
+
+    // 3. Fetch real reviews
+    fetch("/api/reviews")
+      .then((r) => r.json())
+      .then((d) => setReviews(d.reviews || []))
       .catch(() => {});
   }, []);
 
@@ -52,14 +87,14 @@ export default function HomePage() {
   };
 
   const categories = [
-    { name: "Delivery & Courier", count: "24+ Gigs", icon: "🛵", bg: "from-blue-500/10 to-blue-500/5", border: "hover:border-blue-300" },
-    { name: "Retail & Stores", count: "18+ Gigs", icon: "🏪", bg: "from-emerald-500/10 to-emerald-500/5", border: "hover:border-emerald-300" },
-    { name: "Events & Catering", count: "16+ Gigs", icon: "🎪", bg: "from-amber-500/10 to-amber-500/5", border: "hover:border-amber-300" },
-    { name: "Hospitality & Cafe", count: "12+ Gigs", icon: "☕", bg: "from-rose-500/10 to-rose-500/5", border: "hover:border-rose-300" },
-    { name: "Warehouse Logistics", count: "20+ Gigs", icon: "📦", bg: "from-indigo-500/10 to-indigo-500/5", border: "hover:border-indigo-300" },
-    { name: "Data Entry & Office", count: "15+ Gigs", icon: "💻", bg: "from-cyan-500/10 to-cyan-500/5", border: "hover:border-cyan-300" },
-    { name: "Technicians & Repair", count: "14+ Gigs", icon: "🔧", bg: "from-orange-500/10 to-orange-500/5", border: "hover:border-orange-300" },
-    { name: "Sales & Promoters", count: "11+ Gigs", icon: "📈", bg: "from-purple-500/10 to-purple-500/5", border: "hover:border-purple-300" },
+    { name: "Delivery & Courier", key: "Delivery", icon: "🛵", bg: "from-blue-500/10 to-blue-500/5", border: "hover:border-blue-300" },
+    { name: "Retail & Stores", key: "Retail", icon: "🏪", bg: "from-emerald-500/10 to-emerald-500/5", border: "hover:border-emerald-300" },
+    { name: "Events & Catering", key: "Events", icon: "🎪", bg: "from-amber-500/10 to-amber-500/5", border: "hover:border-amber-300" },
+    { name: "Hospitality & Cafe", key: "Hospitality", icon: "☕", bg: "from-rose-500/10 to-rose-500/5", border: "hover:border-rose-300" },
+    { name: "Warehouse Logistics", key: "Logistics", icon: "📦", bg: "from-indigo-500/10 to-indigo-500/5", border: "hover:border-indigo-300" },
+    { name: "Data Entry & Office", key: "Data Entry", icon: "💻", bg: "from-cyan-500/10 to-cyan-500/5", border: "hover:border-cyan-300" },
+    { name: "Technicians & Repair", key: "Repair & Maintenance", icon: "🔧", bg: "from-orange-500/10 to-orange-500/5", border: "hover:border-orange-300" },
+    { name: "Sales & Promoters", key: "Sales", icon: "📈", bg: "from-purple-500/10 to-purple-500/5", border: "hover:border-purple-300" },
   ];
 
   return (
@@ -128,50 +163,54 @@ export default function HomePage() {
                 </Button>
               </form>
 
-              {/* Social Proof Avatars Strip */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2 text-xs text-slate-500">
-                <div className="flex -space-x-2">
-                  {["A", "K", "N", "J", "S"].map((initial, i) => (
-                    <div
-                      key={i}
-                      className="w-7 h-7 rounded-full bg-gradient-to-tr from-brand-600 to-accent-500 text-white font-bold flex items-center justify-center border-2 border-white text-[10px]"
-                    >
-                      {initial}
-                    </div>
-                  ))}
-                </div>
-                <span>
-                  {language === "hi" ? (
-                    <>
-                      <strong className="text-slate-800">5,000+ स्थानीय कामगार</strong> व{" "}
-                      <strong className="text-slate-800">1,200+ व्यापारी</strong> वर्क अड्डा से जुड़े हैं
-                    </>
-                  ) : (
-                    <>
-                      Over <strong className="text-slate-800">5,000+ local workers</strong> &{" "}
-                      <strong className="text-slate-800">1,200+ businesses</strong> trust Work Adda
-                    </>
-                  )}
-                </span>
+              {/* Social Proof Strip - 100% Dynamic Database Values */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2 text-xs text-slate-600">
+                {platformStats.totalWorkers > 0 || platformStats.totalBusinesses > 0 ? (
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100/90 text-slate-700 font-semibold border border-slate-200">
+                    <Users className="w-4 h-4 text-brand-600 shrink-0" />
+                    <span>
+                      {language === "hi" ? (
+                        <>
+                          <strong className="text-slate-900">{platformStats.totalWorkers}</strong> सत्यापित कामगार व{" "}
+                          <strong className="text-slate-900">{platformStats.totalBusinesses}</strong> पंजीकृत व्यापार
+                        </>
+                      ) : (
+                        <>
+                          <strong className="text-slate-900">{platformStats.totalWorkers}</strong> verified workers &{" "}
+                          <strong className="text-slate-900">{platformStats.totalBusinesses}</strong> local businesses registered
+                        </>
+                      )}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-brand-50 border border-brand-200 text-brand-900 font-semibold">
+                    <ShieldCheck className="w-4 h-4 text-brand-600 shrink-0" />
+                    <span>
+                      {language === "hi"
+                        ? "फतेहाबाद व सिरसा का पहला हाइपरलोकल रोजगार नेटवर्क • 100% सत्यापित"
+                        : "Fatehabad & Sirsa's Verified Employment Network • Direct & Hyperlocal"}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Right Col: Interactive Visual Mockup with Floating Badges */}
+            {/* Right Col: Dynamic Visual Card with Authentic Capability Badges */}
             <div className="lg:col-span-5 relative pt-6 pb-8 px-1 sm:px-3">
-              {/* Floating Match Score Badge - Positioned cleanly above with zero collision */}
-              <div className="absolute -top-4 sm:-top-5 left-3 sm:left-6 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl border border-emerald-200/90 shadow-xl shadow-emerald-500/15 flex items-center gap-2.5 animate-float-slow">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-4 h-4 text-emerald-600" />
+              {/* Floating Region Verification Badge */}
+              <div className="absolute -top-4 sm:-top-5 left-3 sm:left-6 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl border border-brand-200/90 shadow-xl shadow-brand-500/15 flex items-center gap-2.5 animate-float-slow">
+                <div className="w-8 h-8 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4 text-brand-600" />
                 </div>
                 <div>
                   <span className="font-black text-xs sm:text-sm text-slate-900 block leading-tight">
-                    96% Smart Match
+                    {language === "hi" ? "हाइपरलोकल नेटवर्क" : "Hyperlocal Network"}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-medium">Skills + 2.1 km Proximity</span>
+                  <span className="text-[10px] text-slate-500 font-medium">Fatehabad & Sirsa, Haryana</span>
                 </div>
               </div>
 
-              {/* Main Feature Mockup Card */}
+              {/* Main Feature Showcase Card - Real Database Job or Inviting Empty State */}
               <div className="bg-white rounded-3xl border-2 border-slate-200/90 p-6 pt-7 pb-10 sm:pb-12 shadow-2xl shadow-slate-300/40 space-y-4 relative overflow-hidden">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3 pt-1">
                   <div className="flex items-center gap-2">
@@ -180,27 +219,45 @@ export default function HomePage() {
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
                     <span className="text-xs font-bold text-slate-400 ml-2">Work Adda Live Feed</span>
                   </div>
-                  <Badge variant="success" className="text-[10px] font-bold">
-                    ● Active Dispatch
+                  <Badge variant="brand" className="text-[10px] font-bold">
+                    {platformStats.latestJob ? "● Active Dispatch" : "● Network Ready"}
                   </Badge>
                 </div>
 
                 <div className="space-y-3">
-                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="brand">Delivery & Logistics</Badge>
-                      <span className="font-black text-sm text-emerald-600">₹800/day</span>
+                  {platformStats.latestJob ? (
+                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Badge variant="brand">{platformStats.latestJob.category}</Badge>
+                        <span className="font-black text-sm text-emerald-600">
+                          {formatCurrency(platformStats.latestJob.payAmount)}/{platformStats.latestJob.payType.toLowerCase()}
+                        </span>
+                      </div>
+                      <h4 className="font-bold text-sm text-slate-900 line-clamp-1">
+                        {platformStats.latestJob.title}
+                      </h4>
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                        <span className="truncate">{platformStats.latestJob.employer?.businessName || "Local Employer"}</span>
+                        <span>•</span>
+                        <span className="text-brand-700 font-bold">{platformStats.latestJob.location}</span>
+                      </div>
                     </div>
-                    <h4 className="font-bold text-sm text-slate-900">
-                      Local Delivery Assistant (Haryana Hub)
-                    </h4>
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Haryana Logistics Hub</span>
-                      <span>•</span>
-                      <span className="text-brand-700 font-bold">1.8 km away</span>
+                  ) : (
+                    <div className="p-5 bg-gradient-to-br from-brand-50/40 via-white to-slate-50 rounded-2xl border border-dashed border-brand-200 text-center space-y-2">
+                      <div className="w-10 h-10 rounded-2xl bg-brand-100 text-brand-700 mx-auto flex items-center justify-center">
+                        <Briefcase className="w-5 h-5" />
+                      </div>
+                      <h4 className="font-bold text-sm text-slate-900">
+                        {language === "hi" ? "पहला काम पोस्ट करें या खोजें" : "Be the First to Post or Apply"}
+                      </h4>
+                      <p className="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto">
+                        {language === "hi"
+                          ? "फतेहाबाद व सिरसा में असली कामगारों और व्यापारियों को सीधे जोड़ें।"
+                          : "Connect directly with authentic local workers and verified businesses across Fatehabad & Sirsa."}
+                      </p>
                     </div>
-                  </div>
+                  )}
 
                   <div className="grid grid-cols-2 gap-2.5 text-xs">
                     <div className="p-3 bg-brand-50/50 rounded-xl border border-brand-100">
@@ -214,26 +271,32 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Primary Action Button - Cleanly positioned above the bottom badge */}
-                <Link href="/jobs" className="block pt-1">
+                {/* Primary Action Button */}
+                <Link href={platformStats.latestJob ? `/jobs/${platformStats.latestJob.id}` : "/jobs"} className="block pt-1">
                   <Button size="md" variant="primary" className="w-full font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-md shadow-brand-500/20 hover:shadow-brand-500/30 flex items-center justify-center gap-2">
-                    <span>{language === "hi" ? "अभी 32+ खुले काम देखें" : "Explore 32+ Open Gigs Now"}</span>
+                    <span>
+                      {platformStats.openJobs > 0
+                        ? (language === "hi" ? `अभी ${platformStats.openJobs} खुले काम देखें` : `Explore ${platformStats.openJobs} Open Gigs Now`)
+                        : (language === "hi" ? "काम पोस्ट करें या काम ढूंढें" : "Post Work or Explore Jobs")}
+                    </span>
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
               </div>
 
-              {/* Floating Instant Payout Badge - Positioned comfortably below with zero button overlap */}
+              {/* Floating Payment Security Badge */}
               <div className="absolute -bottom-4 sm:-bottom-5 -right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl border border-blue-200/90 shadow-xl shadow-blue-500/15 flex items-center gap-2.5 animate-float-delayed">
                 <div className="w-8 h-8 rounded-xl bg-blue-100 text-brand-600 flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-4 h-4 text-brand-600" />
+                  <ShieldCheck className="w-4 h-4 text-brand-600" />
                 </div>
                 <div>
                   <span className="font-black text-xs sm:text-sm text-slate-900 block leading-tight">
-                    {language === "hi" ? "तुरंत भुगतान" : "Instant Settlement"}
+                    {language === "hi" ? "सुरक्षित भुगतान" : "Direct Settlements"}
                   </span>
-                  <span className="text-[10px] text-emerald-600 font-bold">
-                    {language === "hi" ? "₹760 UPI भुगतान जारी" : "₹760 UPI Payout Released"}
+                  <span className="text-[10px] text-brand-600 font-bold">
+                    {platformStats.totalSettledAmount > 0
+                      ? `₹${platformStats.totalSettledAmount.toLocaleString()} ${language === "hi" ? "जारी हुआ" : "Settled"}`
+                      : (language === "hi" ? "शून्य बिचौलिया • 100% पारदर्शी" : "Zero Middlemen • 100% Escrow")}
                   </span>
                 </div>
               </div>
@@ -269,23 +332,28 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {categories.map((c, i) => (
-              <Link
-                key={i}
-                href={`/jobs?category=${encodeURIComponent(c.name.split(" ")[0])}`}
-                className={`p-5 rounded-2xl border border-slate-200 bg-gradient-to-br ${c.bg} ${c.border} hover:shadow-md transition-all group`}
-              >
-                <span className="text-3xl block mb-3 group-hover:scale-110 transition-transform">
-                  {c.icon}
-                </span>
-                <h4 className="font-bold text-sm text-slate-900 group-hover:text-brand-600 transition">
-                  {c.name}
-                </h4>
-                <span className="text-xs text-slate-500 font-medium mt-1 block">
-                  {c.count}
-                </span>
-              </Link>
-            ))}
+            {categories.map((c, i) => {
+              const count = platformStats.categoryCounts[c.key] || 0;
+              return (
+                <Link
+                  key={i}
+                  href={`/jobs?category=${encodeURIComponent(c.key)}`}
+                  className={`p-5 rounded-2xl border border-slate-200 bg-gradient-to-br ${c.bg} ${c.border} hover:shadow-md transition-all group`}
+                >
+                  <span className="text-3xl block mb-3 group-hover:scale-110 transition-transform">
+                    {c.icon}
+                  </span>
+                  <h4 className="font-bold text-sm text-slate-900 group-hover:text-brand-600 transition">
+                    {c.name}
+                  </h4>
+                  <span className="text-xs text-slate-500 font-medium mt-1 block">
+                    {count > 0
+                      ? (language === "hi" ? `${count} काम उपलब्ध` : `${count} Open ${count === 1 ? "Gig" : "Gigs"}`)
+                      : (language === "hi" ? "कोई काम उपलब्ध नहीं" : "0 Open Gigs")}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -450,61 +518,59 @@ export default function HomePage() {
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-3">
-              <div className="flex items-center gap-1 text-amber-500 text-xs">
-                ★★★★★
+          {reviews.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {reviews.slice(0, 3).map((review) => (
+                <div key={review.id} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-3">
+                  <div className="flex items-center gap-1 text-amber-500 text-xs">
+                    {Array.from({ length: review.rating || 5 }).map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed italic">
+                    "{review.comment}"
+                  </p>
+                  <div className="pt-2 border-t border-slate-100 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-xs flex items-center justify-center">
+                      {review.reviewer?.name?.charAt(0) || "U"}
+                    </div>
+                    <div>
+                      <h5 className="font-bold text-xs text-slate-900">{review.reviewer?.name || "Verified Member"}</h5>
+                      <span className="text-[10px] text-slate-400">
+                        {review.reviewer?.employerProfile?.businessName || review.job?.title || "Community Member"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xs text-center max-w-xl mx-auto space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 mx-auto flex items-center justify-center">
+                <Award className="w-6 h-6" />
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed italic">
-                "As a Panjab University student, I earn ₹4,000–₹6,000 every weekend helping local stores with delivery and stock counting. Immediate UPI payment without any hassle!"
+              <h4 className="font-bold text-base text-slate-900">
+                {language === "hi" ? "सत्यापित कार्य समीक्षाएं" : "Verified Community Reviews"}
+              </h4>
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                {language === "hi"
+                  ? "समीक्षाएं केवल फतेहाबाद व सिरसा में पूरे किए गए कार्यों और सत्यापित अनुबंधों के बाद ही दर्ज की जाती हैं। पहला काम पूरा करें और अपनी पहली रेटिंग प्राप्त करें!"
+                  : "Reviews are recorded exclusively upon verified completion of contracts between local employers and workers in Fatehabad & Sirsa. Complete your first gig to earn verified ratings!"}
               </p>
-              <div className="pt-2 border-t border-slate-100 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-xs flex items-center justify-center">
-                  A
-                </div>
-                <div>
-                  <h5 className="font-bold text-xs text-slate-900">Amanpreet Singh</h5>
-                  <span className="text-[10px] text-slate-400">Student & Delivery Partner, Fatehabad</span>
-                </div>
+              <div className="pt-2 flex justify-center gap-3">
+                <Link href="/jobs">
+                  <Button size="sm" variant="outline" className="font-semibold">
+                    {language === "hi" ? "लोकल काम देखें" : "Explore Local Jobs"}
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button size="sm" variant="primary" className="font-semibold">
+                    {language === "hi" ? "खाता बनाएं" : "Create Free Account"}
+                  </Button>
+                </Link>
               </div>
             </div>
-
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-3">
-              <div className="flex items-center gap-1 text-amber-500 text-xs">
-                ★★★★★
-              </div>
-              <p className="text-xs text-slate-600 leading-relaxed italic">
-                "During festive Diwali rush, we needed 5 parcel packing helpers urgently. Posted on Work Adda and hired verified boys within 30 minutes from our own market area."
-              </p>
-              <div className="pt-2 border-t border-slate-100 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-accent-500 text-slate-950 font-bold text-xs flex items-center justify-center">
-                  G
-                </div>
-                <div>
-                  <h5 className="font-bold text-xs text-slate-900">Gurpreet Singh</h5>
-                  <span className="text-[10px] text-slate-400">Owner, Haryana Logistics Hub</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-3">
-              <div className="flex items-center gap-1 text-amber-500 text-xs">
-                ★★★★★
-              </div>
-              <p className="text-xs text-slate-600 leading-relaxed italic">
-                "I get residential wiring gigs directly in Begu Road, Sirsa. The distance filter is fantastic because I don't waste fuel traveling far."
-              </p>
-              <div className="pt-2 border-t border-slate-100 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
-                  J
-                </div>
-                <div>
-                  <h5 className="font-bold text-xs text-slate-900">Jaspal Bains</h5>
-                  <span className="text-[10px] text-slate-400">Certified Electrician, Sirsa</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 

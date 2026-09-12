@@ -171,7 +171,7 @@ export function SplashIntro() {
           {phase === 2 && (
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-xs font-semibold text-emerald-300 animate-in fade-in duration-300">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Found 32+ Local Tasks in Fatehabad & Sirsa</span>
+              <span>Live Hyperlocal Network • Fatehabad & Sirsa</span>
             </div>
           )}
           {phase === 3 && (

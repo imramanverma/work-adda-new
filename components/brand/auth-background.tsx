@@ -37,26 +37,26 @@ export function AuthBackground() {
         <line x1="80%" y1="75%" x2="60%" y2="60%" stroke="url(#lineGrad1)" strokeWidth="1.5" strokeDasharray="4 4" />
       </svg>
 
-      {/* 4. Floating Hyperlocal Activity Cards & Badges */}
+      {/* 4. Floating Hyperlocal Capability Badges */}
       {/* Top-Left Floating Badge: Instant UPI Settlement */}
       <div className="hidden md:flex absolute top-16 left-8 xl:left-24 z-0 bg-white/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-blue-200/70 shadow-lg shadow-blue-500/5 items-center gap-3 animate-float-slow">
         <div className="w-8 h-8 rounded-xl bg-blue-100 text-brand-600 flex items-center justify-center shrink-0">
           <Zap className="w-4 h-4 text-brand-600" />
         </div>
         <div>
-          <span className="font-extrabold text-xs text-slate-800 block">Instant Settlement</span>
-          <span className="text-[10px] text-emerald-600 font-bold">₹760 UPI Payout Credited</span>
+          <span className="font-extrabold text-xs text-slate-800 block">Secure Escrow</span>
+          <span className="text-[10px] text-emerald-600 font-bold">Direct UPI Payouts</span>
         </div>
       </div>
 
       {/* Top-Right Floating Badge: Delivery Gigs */}
       <div className="hidden md:flex absolute top-20 right-8 xl:right-28 z-0 bg-white/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-emerald-200/70 shadow-lg shadow-emerald-500/5 items-center gap-3 animate-float-delayed">
         <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-          <Package className="w-4 h-4 text-emerald-600" />
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
         </div>
         <div>
-          <span className="font-extrabold text-xs text-slate-800 block">Local Dispatch</span>
-          <span className="text-[10px] text-slate-500 font-medium">Daily Gigs • ₹800/day</span>
+          <span className="font-extrabold text-xs text-slate-800 block">Verified Identity</span>
+          <span className="text-[10px] text-slate-500 font-medium">Mobile OTP Protected</span>
         </div>
       </div>
 
@@ -66,8 +66,8 @@ export function AuthBackground() {
           <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
         </div>
         <div>
-          <span className="font-extrabold text-xs text-slate-800 block">Verified Reputation</span>
-          <span className="text-[10px] text-amber-600 font-bold">4.9 ★ (35 Tasks Completed)</span>
+          <span className="font-extrabold text-xs text-slate-800 block">Task Reviews</span>
+          <span className="text-[10px] text-amber-600 font-bold">Verified Community Ratings</span>
         </div>
       </div>
 
@@ -77,8 +77,8 @@ export function AuthBackground() {
           <MapPin className="w-4 h-4 text-brand-600" />
         </div>
         <div>
-          <span className="font-extrabold text-xs text-slate-800 block">Nearby Matching</span>
-          <span className="text-[10px] text-brand-600 font-bold">Within 2.5 km • Mohali Hub</span>
+          <span className="font-extrabold text-xs text-slate-800 block">Hyperlocal Radius</span>
+          <span className="text-[10px] text-brand-600 font-bold">Fatehabad & Sirsa, Haryana</span>
         </div>
       </div>
 
