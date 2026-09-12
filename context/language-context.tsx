@@ -106,6 +106,19 @@ const translations: Record<Language, Record<string, string>> = {
     "auth.i_want_to": "I want to:",
     "auth.role_worker": "Find Work (Worker / Student)",
     "auth.role_employer": "Hire Helpers (Employer / Business)",
+
+    // OTP & Privacy System
+    "otp.verify_title": "Verify Phone Number",
+    "otp.verify_desc": "Enter the 6-digit verification code sent to your mobile",
+    "otp.send_btn": "Verify via OTP",
+    "otp.sent_success": "OTP Sent Successfully",
+    "otp.resend": "Resend OTP",
+    "otp.resend_in": "Resend code in",
+    "otp.verified_badge": "Verified Mobile",
+    "otp.login_tab_password": "Password Sign-In",
+    "otp.login_tab_otp": "Mobile OTP Sign-In",
+    "otp.get_otp": "Get Login OTP",
+    "otp.privacy_notice": "Work Adda Privacy System: Your mobile number is verified for genuine local identity and masked to protect you from spam.",
   },
   hi: {
     // Brand & Taglines
@@ -201,6 +214,19 @@ const translations: Record<Language, Record<string, string>> = {
     "auth.i_want_to": "मैं चाहता हूँ:",
     "auth.role_worker": "काम पाना (कामगार / छात्र)",
     "auth.role_employer": "कामगार रखना (नियोक्ता / व्यापारी)",
+
+    // OTP & Privacy System
+    "otp.verify_title": "मोबाइल नंबर सत्यापन",
+    "otp.verify_desc": "आपके मोबाइल नंबर पर भेजा गया 6 अंकों का कोड दर्ज करें",
+    "otp.send_btn": "ओटीपी से सत्यापित करें",
+    "otp.sent_success": "ओटीपी सफलतापूर्वक भेजा गया",
+    "otp.resend": "ओटीपी दोबारा भेजें",
+    "otp.resend_in": "पुनः भेजने का समय",
+    "otp.verified_badge": "सत्यापित मोबाइल",
+    "otp.login_tab_password": "पासवर्ड से लॉगिन",
+    "otp.login_tab_otp": "मोबाइल ओटीपी लॉगिन",
+    "otp.get_otp": "लॉगिन ओटीपी पाएं",
+    "otp.privacy_notice": "वर्क अड्डा प्राइवेसी सिस्टम: आपका नंबर सुरक्षित रूप से सत्यापित है और स्पैम से बचाने के लिए गोपनीय रखा जाता है।",
   },
 };
 

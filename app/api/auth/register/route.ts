@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
         latitude: validatedData.latitude,
         longitude: validatedData.longitude,
         isVerified: true, // Auto-verified for instant marketplace usage
+        phoneVerified: true,
         ...(validatedData.role === "WORKER"
           ? {
               workerProfile: {

@@ -19,6 +19,7 @@ model User {
   latitude     Float?
   longitude    Float?
   isVerified   Boolean   @default(false)
+  phoneVerified Boolean  @default(false)
   isActive     Boolean   @default(true)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -249,4 +250,17 @@ model Report {
   createdAt      DateTime  @default(now())
 
   @@index([status])
+}
+
+model OtpVerification {
+  id        String   @id @default(cuid())
+  phone     String
+  otp       String
+  purpose   String   @default("REGISTER") // "REGISTER", "LOGIN", "PHONE_VERIFY"
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([phone, purpose])
 }

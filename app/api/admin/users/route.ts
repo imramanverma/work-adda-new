@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
         name: true,
         email: true,
         phone: true,
+        phoneVerified: true,
         role: true,
         location: true,
         isVerified: true,

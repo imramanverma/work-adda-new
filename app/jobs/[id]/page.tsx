@@ -338,9 +338,15 @@ export default function JobDetailsPage() {
           {/* Employer Verification Profile Box */}
           <div className="p-5 bg-gradient-to-r from-slate-50 to-blue-50/30 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span className="text-xs text-slate-400 uppercase font-bold tracking-wider">
-                {language === "hi" ? "नियोक्ता द्वारा पोस्ट" : "Posted by Employer"}
-              </span>
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="text-xs text-slate-400 uppercase font-bold tracking-wider">
+                  {language === "hi" ? "नियोक्ता द्वारा पोस्ट" : "Posted by Employer"}
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                  {language === "hi" ? "ओटीपी-सत्यापित संपर्क" : "OTP-Verified Contact"}
+                </span>
+              </div>
               <h4 className="text-base font-extrabold text-slate-900">{job.employer?.businessName}</h4>
               <p className="text-xs text-slate-500 mt-0.5">{job.employer?.businessType} • {job.employer?.location}</p>
             </div>

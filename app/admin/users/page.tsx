@@ -175,8 +175,16 @@ export default function AdminUsersPage() {
                           </div>
                           <div>
                             <span className="font-bold text-slate-900 block">{u.name}</span>
-                            <span className="text-[11px] text-slate-400">{u.email}</span>
-                            <span className="text-[10px] text-slate-400 block">{u.phone}</span>
+                            <span className="text-[11px] text-slate-400 block">{u.email}</span>
+                            <span className="text-[10px] text-slate-500 flex items-center gap-1 mt-0.5">
+                              {u.phone}
+                              {u.phoneVerified && (
+                                <span className="inline-flex items-center gap-0.5 text-emerald-600 font-semibold" title="Phone OTP Verified">
+                                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                                  <span className="text-[9px]">OTP Verified</span>
+                                </span>
+                              )}
+                            </span>
                           </div>
                         </div>
                       </td>
