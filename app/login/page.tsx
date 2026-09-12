@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
+import { useLanguage } from "@/context/language-context";
 import { Briefcase, Lock, Mail, ArrowRight, Zap, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuthBackground } from "@/components/brand/auth-background";
 
 export default function LoginPage() {
   const { login, quickLogin } = useAuth();
+  const { t, language } = useLanguage();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,16 +34,19 @@ export default function LoginPage() {
               <Briefcase className="w-6 h-6 text-accent-300" />
             </div>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Sign In to Work Adda</h2>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            {t("auth.welcome_back")}
+          </h2>
           <p className="text-xs text-slate-500 mt-1.5 font-medium">
-            Access your local tasks, applications, and payouts
+            {t("auth.welcome_desc")}
           </p>
         </div>
 
         {/* Quick Demo Logins Box */}
         <div className="bg-brand-50/50 p-4 rounded-2xl border border-brand-100">
           <p className="text-xs font-bold text-brand-900 flex items-center gap-1.5 mb-2.5">
-            <Zap className="w-4 h-4 text-accent-500" /> 1-Click Instant Demo Access:
+            <Zap className="w-4 h-4 text-accent-500" />{" "}
+            {language === "hi" ? "1-क्लिक त्वरित डेमो लॉगिन:" : "1-Click Instant Demo Access:"}
           </p>
           <div className="grid grid-cols-3 gap-2">
             <button
@@ -49,21 +54,21 @@ export default function LoginPage() {
               onClick={() => quickLogin("WORKER")}
               className="px-2.5 py-2 bg-white hover:bg-brand-50 border border-brand-200 rounded-xl text-xs font-semibold text-brand-700 shadow-xs transition"
             >
-              Demo Worker
+              {language === "hi" ? "डेमो कामगार" : "Demo Worker"}
             </button>
             <button
               type="button"
               onClick={() => quickLogin("EMPLOYER")}
               className="px-2.5 py-2 bg-white hover:bg-brand-50 border border-brand-200 rounded-xl text-xs font-semibold text-brand-700 shadow-xs transition"
             >
-              Demo Employer
+              {language === "hi" ? "डेमो नियोक्ता" : "Demo Employer"}
             </button>
             <button
               type="button"
               onClick={() => quickLogin("ADMIN")}
               className="px-2.5 py-2 bg-white hover:bg-brand-50 border border-brand-200 rounded-xl text-xs font-semibold text-brand-700 shadow-xs transition"
             >
-              Demo Admin
+              {language === "hi" ? "डेमो एडमिन" : "Demo Admin"}
             </button>
           </div>
         </div>
@@ -71,7 +76,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1">
-              Email Address or Phone Number
+              {t("auth.email_phone")}
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -87,7 +92,9 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Password</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              {t("auth.password")}
+            </label>
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
               <input
@@ -102,15 +109,15 @@ export default function LoginPage() {
           </div>
 
           <Button type="submit" isLoading={loading} className="w-full font-bold">
-            Sign In <ArrowRight className="w-4 h-4 ml-1.5" />
+            {t("auth.sign_in_btn")} <ArrowRight className="w-4 h-4 ml-1.5" />
           </Button>
         </form>
 
         <div className="text-center pt-2">
           <p className="text-xs text-slate-500">
-            Don't have an account yet?{" "}
+            {t("auth.no_account")}{" "}
             <Link href="/register" className="font-bold text-brand-600 hover:text-brand-700">
-              Create an account
+              {t("auth.create_one")}
             </Link>
           </p>
         </div>

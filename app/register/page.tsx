@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
+import { useLanguage } from "@/context/language-context";
 import {
   Briefcase,
   Building2,
@@ -19,6 +20,7 @@ import { AuthBackground } from "@/components/brand/auth-background";
 
 export default function RegisterPage() {
   const { register } = useAuth();
+  const { t, language } = useLanguage();
   const [role, setRole] = useState<"WORKER" | "EMPLOYER">("WORKER");
   const [formData, setFormData] = useState({
     name: "",
@@ -89,9 +91,13 @@ export default function RegisterPage() {
 
       <div className="max-w-xl w-full space-y-8 bg-white/92 backdrop-blur-xl p-8 sm:p-10 rounded-3xl border border-white/80 shadow-2xl shadow-brand-900/10 relative z-10">
         <div className="text-center">
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Join Work Adda</h2>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+            {language === "hi" ? "वर्क अड्डा से जुड़ें" : "Join Work Adda"}
+          </h2>
           <p className="text-xs text-slate-500 mt-1.5 font-medium">
-            Choose your account type to get started
+            {language === "hi"
+              ? "शुरू करने के लिए अपना खाता प्रकार चुनें"
+              : "Choose your account type to get started"}
           </p>
         </div>
 
@@ -106,7 +112,8 @@ export default function RegisterPage() {
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <User className="w-4 h-4" /> I Want to Work / Gig
+            <User className="w-4 h-4" />{" "}
+            {language === "hi" ? "काम खोजना चाहते हैं (वर्कर)" : "I Want to Work / Gig"}
           </button>
           <button
             type="button"
@@ -117,7 +124,8 @@ export default function RegisterPage() {
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <Building2 className="w-4 h-4" /> I Want to Hire
+            <Building2 className="w-4 h-4" />{" "}
+            {language === "hi" ? "कामगार रखना चाहते हैं (नियोक्ता)" : "I Want to Hire"}
           </button>
         </div>
 
@@ -247,15 +255,16 @@ export default function RegisterPage() {
           </div>
 
           <Button type="submit" isLoading={loading} className="w-full font-bold">
-            Create Account <ArrowRight className="w-4 h-4 ml-1.5" />
+            {language === "hi" ? "खाता बनाएं" : "Create Account"}{" "}
+            <ArrowRight className="w-4 h-4 ml-1.5" />
           </Button>
         </form>
 
         <div className="text-center pt-2">
           <p className="text-xs text-slate-500">
-            Already have an account?{" "}
+            {language === "hi" ? "पहले से खाता है?" : "Already have an account?"}{" "}
             <Link href="/login" className="font-bold text-brand-600 hover:text-brand-700">
-              Sign in
+              {language === "hi" ? "लॉग इन करें" : "Sign in"}
             </Link>
           </p>
         </div>

@@ -22,9 +22,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { formatDistance } from "@/lib/location";
+import { useLanguage } from "@/context/language-context";
 
 export default function JobsDiscoveryPage() {
   const { user } = useAuth();
+  const { t, language } = useLanguage();
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
@@ -104,10 +106,10 @@ export default function JobsDiscoveryPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Discover Local Work
+              {t("jobs.title")}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Find verified shifts, gigs, and jobs within your neighborhood radius.
+              {t("jobs.subtitle")}
             </p>
           </div>
 
@@ -115,7 +117,7 @@ export default function JobsDiscoveryPage() {
           {user && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 shadow-xs w-fit">
               <MapPin className="w-4 h-4 text-brand-600" />
-              <span>Browsing near: <strong>{user.location || "Fatehabad & Sirsa"}</strong></span>
+              <span>{t("jobs.browsing_near")} <strong>{user.location || "Fatehabad & Sirsa"}</strong></span>
             </div>
           )}
         </div>
@@ -128,7 +130,7 @@ export default function JobsDiscoveryPage() {
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
               <input
                 type="text"
-                placeholder="Search job title, skills, or business name..."
+                placeholder={t("jobs.filter_input")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -141,14 +143,14 @@ export default function JobsDiscoveryPage() {
                 <MapPin className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <input
                   type="text"
-                  placeholder="Filter Fatehabad or Sirsa..."
+                  placeholder={t("jobs.district_filter")}
                   value={selectedLocation}
                   onChange={(e) => setSelectedLocation(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] text-slate-400 font-semibold">Districts:</span>
+                <span className="text-[10px] text-slate-400 font-semibold">{t("jobs.districts_label")}</span>
                 {["Fatehabad", "Sirsa"].map((district) => (
                   <button
                     key={district}
@@ -173,11 +175,13 @@ export default function JobsDiscoveryPage() {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
               >
-                <option value="recently_posted">Sort: Recently Posted</option>
-                <option value="nearest">Sort: Nearest Distance</option>
-                <option value="highest_pay">Sort: Highest Compensation</option>
+                <option value="recently_posted">{t("jobs.sort_recent")}</option>
+                <option value="nearest">{t("jobs.sort_nearest")}</option>
+                <option value="highest_pay">{t("jobs.sort_pay")}</option>
                 {user?.role === "WORKER" && (
-                  <option value="relevance">Sort: Highest Match Score</option>
+                  <option value="relevance">
+                    {language === "hi" ? "क्रम: सर्वश्रेष्ठ मिलान स्कोर" : "Sort: Highest Match Score"}
+                  </option>
                 )}
               </select>
             </div>
@@ -187,15 +191,15 @@ export default function JobsDiscoveryPage() {
           <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 text-xs">
             <div className="flex items-center gap-2">
               <span className="font-bold text-slate-700 flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-brand-600" /> Distance Radius:
+                <MapPin className="w-3.5 h-3.5 text-brand-600" /> {t("jobs.radius_label")}
               </span>
               <div className="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200">
                 {[
-                  { label: "Within 2 km", val: "2" },
-                  { label: "5 km", val: "5" },
-                  { label: "10 km", val: "10" },
-                  { label: "25 km", val: "25" },
-                  { label: "Any distance", val: "any" },
+                  { label: t("jobs.within_2km"), val: "2" },
+                  { label: t("jobs.within_5km"), val: "5" },
+                  { label: t("jobs.within_10km"), val: "10" },
+                  { label: t("jobs.within_25km"), val: "25" },
+                  { label: t("jobs.any_distance"), val: "any" },
                 ].map((d) => (
                   <button
                     key={d.val}
@@ -381,11 +385,16 @@ export default function JobsDiscoveryPage() {
                 {/* Card Footer Action */}
                 <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                   <span className="text-slate-400">
-                    {job.applicantsCount} {job.applicantsCount === 1 ? "applicant" : "applicants"}
+                    {job.applicantsCount}{" "}
+                    {language === "hi"
+                      ? "आवेदक"
+                      : job.applicantsCount === 1
+                      ? "applicant"
+                      : "applicants"}
                   </span>
                   <Link href={`/jobs/${job.id}`}>
                     <Button size="sm" variant="primary" className="font-semibold">
-                      View & Apply
+                      {language === "hi" ? "देखें व आवेदन करें" : "View & Apply"}
                     </Button>
                   </Link>
                 </div>

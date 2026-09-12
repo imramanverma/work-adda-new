@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
+import { useLanguage } from "@/context/language-context";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import {
   Briefcase,
   Bell,
@@ -25,6 +27,7 @@ import { Sidebar } from "@/components/navigation/sidebar";
 export function Navbar() {
   const router = useRouter();
   const { user, logout } = useAuth();
+  const { t, language } = useLanguage();
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [navSearch, setNavSearch] = useState("");
@@ -76,7 +79,7 @@ export function Navbar() {
             title="Open Navigation"
           >
             <PanelLeft className="w-5 h-5 text-slate-700" />
-            <span className="hidden lg:inline text-xs font-bold text-slate-600">Menu</span>
+            <span className="hidden lg:inline text-xs font-bold text-slate-600">{t("nav.menu")}</span>
           </button>
 
           <Link href="/" className="transition hover:opacity-95 flex items-center">
@@ -93,7 +96,7 @@ export function Navbar() {
             <Search className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
             <input
               type="text"
-              placeholder="Search local jobs & skills in Fatehabad & Sirsa..."
+              placeholder={t("nav.search_placeholder")}
               value={navSearch}
               onChange={(e) => setNavSearch(e.target.value)}
               className="w-full text-xs text-slate-800 placeholder:text-slate-400 bg-transparent focus:outline-none"
@@ -106,19 +109,20 @@ export function Navbar() {
               type="submit"
               className="ml-2 px-3.5 py-1.5 rounded-full bg-brand-600 hover:bg-brand-700 text-white text-[11px] font-bold transition shrink-0"
             >
-              Search
+              {t("nav.search_btn")}
             </button>
           </form>
         </div>
 
         {/* Right Section: Actions, Notifications, User Profile */}
         <div className="flex items-center gap-3">
-
+          {/* Language Switcher */}
+          <LanguageSwitcher className="hidden sm:inline-flex" />
 
           {user?.role === "EMPLOYER" && (
             <Link href="/employer/jobs/new">
               <Button size="sm" variant="accent" className="hidden sm:inline-flex">
-                <PlusCircle className="w-4 h-4 mr-1" /> Post Work
+                <PlusCircle className="w-4 h-4 mr-1" /> {t("nav.post_work")}
               </Button>
             </Link>
           )}
@@ -222,7 +226,7 @@ export function Navbar() {
                       onClick={() => setShowUserMenu(false)}
                       className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100"
                     >
-                      <User className="w-4 h-4 text-slate-400" /> Profile Settings
+                      <User className="w-4 h-4 text-slate-400" /> {t("nav.profile")}
                     </Link>
 
                     <button
@@ -232,7 +236,7 @@ export function Navbar() {
                       }}
                       className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50"
                     >
-                      <LogOut className="w-4 h-4" /> Sign Out
+                      <LogOut className="w-4 h-4" /> {t("nav.sign_out")}
                     </button>
                   </div>
                 )}
@@ -242,12 +246,12 @@ export function Navbar() {
             <div className="flex items-center gap-2">
               <Link href="/login">
                 <Button variant="ghost" size="sm">
-                  Sign In
+                  {t("nav.sign_in")}
                 </Button>
               </Link>
               <Link href="/register">
                 <Button variant="primary" size="sm">
-                  Join Now
+                  {t("nav.join_now")}
                 </Button>
               </Link>
             </div>

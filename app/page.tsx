@@ -26,9 +26,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
+import { useLanguage } from "@/context/language-context";
 
 export default function HomePage() {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<"worker" | "employer">("worker");
   const [heroSearch, setHeroSearch] = useState("");
   const [heroLocation, setHeroLocation] = useState("Fatehabad");
@@ -78,20 +80,19 @@ export default function HomePage() {
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-brand-200 shadow-sm shadow-brand-500/10">
                 <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
                 <span className="text-xs font-black text-brand-900 tracking-wide uppercase">
-                  Local Employment • Fatehabad & Sirsa
+                  {t("brand.badge")}
                 </span>
               </div>
 
               <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-[1.12]">
-                Find Local Work. <br />
+                {t("brand.hero_title_1")} <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-700 via-brand-600 to-accent-600">
-                  Build Your Future.
+                  {t("brand.hero_title_2")}
                 </span>
               </h1>
 
               <p className="text-base sm:text-lg text-slate-600 max-w-2xl leading-relaxed">
-                Work Adda connects ambitious students, gig seekers, and skilled workers with neighborhood stores, warehouses, and businesses —{" "}
-                <strong className="text-slate-900 font-bold">quickly, safely, and nearby.</strong>
+                {t("brand.hero_desc")}
               </p>
 
               {/* Interactive Search Bar in Hero */}
@@ -103,7 +104,7 @@ export default function HomePage() {
                   <Search className="w-4 h-4 text-brand-600 shrink-0" />
                   <input
                     type="text"
-                    placeholder="Search delivery, counter sales, warehouse..."
+                    placeholder={t("hero.search_input")}
                     value={heroSearch}
                     onChange={(e) => setHeroSearch(e.target.value)}
                     className="w-full text-xs sm:text-sm focus:outline-none text-slate-900 bg-transparent placeholder:text-slate-400"
@@ -123,7 +124,7 @@ export default function HomePage() {
                 </div>
 
                 <Button type="submit" size="md" className="w-full sm:w-auto font-bold rounded-xl sm:rounded-full px-6">
-                  Search Gigs
+                  {t("hero.search_btn")}
                 </Button>
               </form>
 
@@ -140,7 +141,17 @@ export default function HomePage() {
                   ))}
                 </div>
                 <span>
-                  Over <strong className="text-slate-800">5,000+ local workers</strong> & <strong className="text-slate-800">1,200+ businesses</strong> trust Work Adda
+                  {language === "hi" ? (
+                    <>
+                      <strong className="text-slate-800">5,000+ स्थानीय कामगार</strong> व{" "}
+                      <strong className="text-slate-800">1,200+ व्यापारी</strong> वर्क अड्डा से जुड़े हैं
+                    </>
+                  ) : (
+                    <>
+                      Over <strong className="text-slate-800">5,000+ local workers</strong> &{" "}
+                      <strong className="text-slate-800">1,200+ businesses</strong> trust Work Adda
+                    </>
+                  )}
                 </span>
               </div>
             </div>
@@ -193,12 +204,12 @@ export default function HomePage() {
 
                   <div className="grid grid-cols-2 gap-2.5 text-xs">
                     <div className="p-3 bg-brand-50/50 rounded-xl border border-brand-100">
-                      <span className="text-slate-400 block text-[10px]">Hiring Time</span>
-                      <span className="font-bold text-brand-900">&lt; 15 Minutes</span>
+                      <span className="text-slate-400 block text-[10px]">{t("hero.hiring_time_label")}</span>
+                      <span className="font-bold text-brand-900">{t("hero.hiring_time_val")}</span>
                     </div>
                     <div className="p-3 bg-amber-50/50 rounded-xl border border-amber-100">
-                      <span className="text-slate-400 block text-[10px]">Platform Fee</span>
-                      <span className="font-bold text-accent-900">Standard 5%</span>
+                      <span className="text-slate-400 block text-[10px]">{t("hero.fee_label")}</span>
+                      <span className="font-bold text-accent-900">{t("hero.fee_val")}</span>
                     </div>
                   </div>
                 </div>
@@ -206,7 +217,7 @@ export default function HomePage() {
                 {/* Primary Action Button - Cleanly positioned above the bottom badge */}
                 <Link href="/jobs" className="block pt-1">
                   <Button size="md" variant="primary" className="w-full font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-md shadow-brand-500/20 hover:shadow-brand-500/30 flex items-center justify-center gap-2">
-                    <span>Explore 32+ Open Gigs Now</span>
+                    <span>{language === "hi" ? "अभी 32+ खुले काम देखें" : "Explore 32+ Open Gigs Now"}</span>
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
@@ -219,9 +230,11 @@ export default function HomePage() {
                 </div>
                 <div>
                   <span className="font-black text-xs sm:text-sm text-slate-900 block leading-tight">
-                    Instant Settlement
+                    {language === "hi" ? "तुरंत भुगतान" : "Instant Settlement"}
                   </span>
-                  <span className="text-[10px] text-emerald-600 font-bold">₹760 UPI Payout Released</span>
+                  <span className="text-[10px] text-emerald-600 font-bold">
+                    {language === "hi" ? "₹760 UPI भुगतान जारी" : "₹760 UPI Payout Released"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -235,20 +248,23 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
             <div>
               <span className="text-xs uppercase font-bold tracking-widest text-brand-600">
-                Diverse Opportunities
+                {language === "hi" ? "विविध अवसर" : "Diverse Opportunities"}
               </span>
               <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-                Explore Work by Category
+                {language === "hi" ? "श्रेणी अनुसार काम खोजें" : "Explore Work by Category"}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                From student part-time gigs to full-time trades across retail, logistics, and hospitality.
+                {language === "hi"
+                  ? "छात्र पार्ट-टाइम काम से लेकर रीटेल, लॉजिस्टिक्स व स्थानीय व्यवसायों तक।"
+                  : "From student part-time gigs to full-time trades across retail, logistics, and hospitality."}
               </p>
             </div>
             <Link
               href="/jobs"
               className="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 group shrink-0"
             >
-              Browse All Categories <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              {language === "hi" ? "सभी श्रेणियां देखें" : "Browse All Categories"}{" "}
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
 

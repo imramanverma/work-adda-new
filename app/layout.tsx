@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/auth-context";
+import { LanguageProvider } from "@/context/language-context";
 import { ToastProvider } from "@/components/ui/toast";
 import { Navbar } from "@/components/navigation/navbar";
 import { Footer } from "@/components/navigation/footer";
@@ -23,14 +24,16 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <SplashIntro />
         <ToastProvider>
-          <AuthProvider>
-            <div className="min-h-screen flex flex-col bg-slate-50">
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <MobileNav />
-            </div>
-          </AuthProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <div className="min-h-screen flex flex-col bg-slate-50">
+                <Navbar />
+                <main className="flex-1">{children}</main>
+                <Footer />
+                <MobileNav />
+              </div>
+            </AuthProvider>
+          </LanguageProvider>
         </ToastProvider>
       </body>
     </html>

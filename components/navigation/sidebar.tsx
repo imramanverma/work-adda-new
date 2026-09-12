@@ -4,6 +4,8 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
+import { useLanguage } from "@/context/language-context";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import {
   X,
   Search,
@@ -25,6 +27,7 @@ import {
   LogOut,
   MapPin,
   CheckCircle2,
+  Languages,
 } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 
@@ -35,6 +38,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { user, logout } = useAuth();
+  const { t, language } = useLanguage();
   const pathname = usePathname();
 
   // Close sidebar on route change
@@ -116,9 +120,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </div>
         ) : (
           <div className="p-4 bg-brand-50/50 border-b border-brand-100/60">
-            <h4 className="font-bold text-xs text-brand-900">Welcome to Work Adda</h4>
+            <h4 className="font-bold text-xs text-brand-900">
+              {language === "hi" ? "वर्क अड्डा में आपका स्वागत है" : "Welcome to Work Adda"}
+            </h4>
             <p className="text-[11px] text-slate-500 mt-0.5">
-              Local employment & task marketplace for Fatehabad & Sirsa.
+              {language === "hi"
+                ? "फतेहाबाद व सिरसा के लिए लोकल रोजगार व काम मंच।"
+                : "Local employment & task marketplace for Fatehabad & Sirsa."}
             </p>
           </div>
         )}
@@ -136,14 +144,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             }`}
           >
             <Search className="w-4 h-4 text-brand-600 shrink-0" />
-            <span>Find Work</span>
+            <span>{t("nav.find_work")}</span>
           </Link>
 
           {/* Worker Navigation Links */}
           {user?.role === "WORKER" && (
             <div className="pt-2 space-y-1">
               <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
-                Worker Hub
+                {t("nav.worker_hub")}
               </div>
               <Link
                 href="/worker/dashboard"
@@ -155,7 +163,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Worker Hub</span>
+                <span>{t("nav.worker_hub")}</span>
               </Link>
               <Link
                 href="/worker/applications"
@@ -167,7 +175,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <FileText className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>My Applications</span>
+                <span>{t("nav.my_applications")}</span>
               </Link>
               <Link
                 href="/worker/work"
@@ -179,7 +187,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <Briefcase className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Active Work</span>
+                <span>{t("nav.active_work")}</span>
               </Link>
               <Link
                 href="/worker/earnings"
@@ -191,7 +199,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <Wallet className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Earnings</span>
+                <span>{t("nav.earnings")}</span>
               </Link>
               <Link
                 href="/worker/messages"
@@ -203,7 +211,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <MessageSquare className="w-4 h-4 text-slate-500 shrink-0" />
-                <span>Messages</span>
+                <span>{t("nav.messages")}</span>
               </Link>
               <Link
                 href="/worker/profile"
@@ -215,7 +223,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <User className="w-4 h-4 text-slate-500 shrink-0" />
-                <span>Profile & Skills</span>
+                <span>{t("nav.profile")}</span>
               </Link>
             </div>
           )}
@@ -224,7 +232,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           {user?.role === "EMPLOYER" && (
             <div className="pt-2 space-y-1">
               <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
-                Employer Hub
+                {t("nav.employer_hub")}
               </div>
               <Link
                 href="/employer/jobs/new"
@@ -232,7 +240,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 transition shadow-xs"
               >
                 <PlusCircle className="w-4 h-4 text-slate-950 shrink-0" />
-                <span>Post Work</span>
+                <span>{t("nav.post_work")}</span>
               </Link>
               <Link
                 href="/employer/dashboard"
@@ -244,7 +252,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Employer Hub</span>
+                <span>{t("nav.employer_hub")}</span>
               </Link>
               <Link
                 href="/employer/applicants"
@@ -256,7 +264,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <Users className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Applicants</span>
+                <span>{t("nav.applicants")}</span>
               </Link>
               <Link
                 href="/employer/work"
@@ -268,7 +276,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <Briefcase className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Work Contracts</span>
+                <span>{t("nav.work_contracts")}</span>
               </Link>
               <Link
                 href="/employer/payments"
@@ -280,7 +288,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <CreditCard className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Payments</span>
+                <span>{t("nav.payments")}</span>
               </Link>
               <Link
                 href="/employer/messages"
@@ -292,7 +300,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <MessageSquare className="w-4 h-4 text-slate-500 shrink-0" />
-                <span>Messages</span>
+                <span>{t("nav.messages")}</span>
               </Link>
               <Link
                 href="/employer/profile"
@@ -304,7 +312,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <Building2 className="w-4 h-4 text-slate-500 shrink-0" />
-                <span>Company Profile</span>
+                <span>{t("nav.company_profile")}</span>
               </Link>
             </div>
           )}
@@ -313,7 +321,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           {user?.role === "ADMIN" && (
             <div className="pt-2 space-y-1">
               <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
-                Admin Panel
+                {t("nav.admin_panel")}
               </div>
               <Link
                 href="/admin"
@@ -325,7 +333,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <ShieldCheck className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Admin Overview</span>
+                <span>{t("nav.admin_panel")}</span>
               </Link>
               <Link
                 href="/admin/users"
@@ -337,7 +345,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <Users className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Users</span>
+                <span>{t("nav.users")}</span>
               </Link>
               <Link
                 href="/admin/jobs"
@@ -349,7 +357,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <Briefcase className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Jobs</span>
+                <span>{t("nav.jobs")}</span>
               </Link>
               <Link
                 href="/admin/reports"
@@ -361,7 +369,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }`}
               >
                 <AlertTriangle className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Reports</span>
+                <span>{t("nav.reports")}</span>
               </Link>
             </div>
           )}
@@ -370,7 +378,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           {!user && (
             <div className="pt-2 space-y-1">
               <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
-                Account
+                {language === "hi" ? "खाता" : "Account"}
               </div>
               <Link
                 href="/login"
@@ -378,7 +386,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition"
               >
                 <LogIn className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>Sign In</span>
+                <span>{t("nav.sign_in")}</span>
               </Link>
               <Link
                 href="/register"
@@ -386,17 +394,31 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold bg-brand-600 text-white hover:bg-brand-700 transition shadow-xs"
               >
                 <UserPlus className="w-4 h-4 shrink-0" />
-                <span>Create Free Account</span>
+                <span>{t("nav.create_account")}</span>
               </Link>
             </div>
           )}
         </div>
 
-        {/* Footer: District Badge & Logout */}
-        <div className="p-3 border-t border-slate-100 bg-slate-50/70 space-y-2">
+        {/* Footer: Language Switcher, District Badge & Logout */}
+        <div className="p-3 border-t border-slate-100 bg-slate-50/70 space-y-2.5">
+          {/* Language Switcher in Drawer */}
+          <div className="p-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+            <div className="flex items-center justify-between gap-2 mb-1.5 px-1">
+              <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600">
+                <Languages className="w-3.5 h-3.5 text-brand-600" />
+                <span>{t("nav.lang")}</span>
+              </div>
+              <span className="text-[10px] text-slate-400 font-semibold">
+                {language === "hi" ? "हिंदी चयनित" : "English selected"}
+              </span>
+            </div>
+            <LanguageSwitcher className="w-full justify-center" />
+          </div>
+
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-slate-200/80 text-[11px] font-semibold text-slate-600">
             <MapPin className="w-3.5 h-3.5 text-brand-600 shrink-0" />
-            <span className="truncate">Active: Fatehabad & Sirsa</span>
+            <span className="truncate">{t("brand.active_district")}</span>
           </div>
 
           {user && (
@@ -408,7 +430,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 transition"
             >
               <LogOut className="w-4 h-4" />
-              <span>Log Out</span>
+              <span>{t("nav.sign_out")}</span>
             </button>
           )}
         </div>
