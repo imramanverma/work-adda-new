@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import {
   Briefcase,
@@ -13,17 +13,33 @@ import {
   PlusCircle,
   MessageSquare,
   ShieldCheck,
+  PanelLeft,
+  Search,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/brand/logo";
+import { Sidebar } from "@/components/navigation/sidebar";
 
 export function Navbar() {
+  const router = useRouter();
   const { user, logout } = useAuth();
   const pathname = usePathname();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [navSearch, setNavSearch] = useState("");
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
+
+  const handleNavSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (navSearch.trim()) {
+      router.push(`/jobs?q=${encodeURIComponent(navSearch.trim())}`);
+    } else {
+      router.push("/jobs");
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -48,162 +64,51 @@ export function Navbar() {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/90 backdrop-blur-md">
+    <>
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* Logo & Tagline */}
-        <div className="flex items-center gap-6">
-          <Link href="/" className="transition hover:opacity-95">
+        {/* Left Section: Sidebar Toggle & Brand Logo */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 -ml-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-1.5 focus:outline-none"
+            aria-label="Open left sidebar menu"
+            title="Open Navigation"
+          >
+            <PanelLeft className="w-5 h-5 text-slate-700" />
+            <span className="hidden lg:inline text-xs font-bold text-slate-600">Menu</span>
+          </button>
+
+          <Link href="/" className="transition hover:opacity-95 flex items-center">
             <Logo size="md" />
           </Link>
+        </div>
 
-          {/* Main Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
-            <Link
-              href="/jobs"
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                pathname.startsWith("/jobs")
-                  ? "bg-brand-50 text-brand-700 font-semibold"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-              }`}
+        {/* Center Section: Quick Search filling the blank section */}
+        <div className="flex-1 max-w-xl mx-2 sm:mx-6 hidden sm:flex items-center">
+          <form
+            onSubmit={handleNavSearch}
+            className="w-full relative flex items-center bg-slate-100/90 hover:bg-slate-100 focus-within:bg-white border border-slate-200 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 rounded-full pl-3.5 pr-1.5 py-1 transition shadow-xs"
+          >
+            <Search className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
+            <input
+              type="text"
+              placeholder="Search local jobs & skills in Fatehabad & Sirsa..."
+              value={navSearch}
+              onChange={(e) => setNavSearch(e.target.value)}
+              className="w-full text-xs text-slate-800 placeholder:text-slate-400 bg-transparent focus:outline-none"
+            />
+            <div className="hidden md:flex items-center gap-1 shrink-0 ml-2 px-2.5 py-0.5 rounded-full bg-brand-50 border border-brand-200/70 text-[10px] font-extrabold text-brand-700">
+              <MapPin className="w-3 h-3 text-brand-600" />
+              <span>Fatehabad & Sirsa</span>
+            </div>
+            <button
+              type="submit"
+              className="ml-2 px-3.5 py-1.5 rounded-full bg-brand-600 hover:bg-brand-700 text-white text-[11px] font-bold transition shrink-0"
             >
-              Find Work
-            </Link>
-
-            {user?.role === "WORKER" && (
-              <>
-                <Link
-                  href="/worker/dashboard"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/worker/dashboard"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  Worker Hub
-                </Link>
-                <Link
-                  href="/worker/applications"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/worker/applications"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  My Applications
-                </Link>
-                <Link
-                  href="/worker/work"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/worker/work"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  Active Work
-                </Link>
-                <Link
-                  href="/worker/earnings"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/worker/earnings"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  Earnings
-                </Link>
-              </>
-            )}
-
-            {user?.role === "EMPLOYER" && (
-              <>
-                <Link
-                  href="/employer/dashboard"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/employer/dashboard"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  Employer Hub
-                </Link>
-                <Link
-                  href="/employer/applicants"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/employer/applicants"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  Applicants
-                </Link>
-                <Link
-                  href="/employer/work"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/employer/work"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  Work Contracts
-                </Link>
-                <Link
-                  href="/employer/payments"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/employer/payments"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  Payments
-                </Link>
-              </>
-            )}
-
-            {user?.role === "ADMIN" && (
-              <>
-                <Link
-                  href="/admin"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/admin"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  Admin Panel
-                </Link>
-                <Link
-                  href="/admin/users"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/admin/users"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  Users
-                </Link>
-                <Link
-                  href="/admin/jobs"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/admin/jobs"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  Jobs
-                </Link>
-                <Link
-                  href="/admin/reports"
-                  className={`px-3 py-1.5 rounded-lg transition-colors ${
-                    pathname === "/admin/reports"
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`}
-                >
-                  Reports
-                </Link>
-              </>
-            )}
-          </nav>
+              Search
+            </button>
+          </form>
         </div>
 
         {/* Right Section: Actions, Notifications, User Profile */}
@@ -350,5 +255,7 @@ export function Navbar() {
         </div>
       </div>
     </header>
-  );
+    <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+  </>
+);
 }
