@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { useLanguage } from "@/context/language-context";
 import {
@@ -10,47 +9,22 @@ import {
   Lock,
   Mail,
   ArrowRight,
-  Phone,
-  ShieldCheck,
-  Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Modal } from "@/components/ui/modal";
 import { AuthBackground } from "@/components/brand/auth-background";
-import { OtpVerificationModal } from "@/components/auth/otp-input";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { login, refreshUser } = useAuth();
-  const { t, language } = useLanguage();
-  const [authMode, setAuthMode] = useState<"password" | "otp">("password");
+  const { login } = useAuth();
+  const { t } = useLanguage();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [otpPhone, setOtpPhone] = useState("");
-  const [showOtpModal, setShowOtpModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [otpError, setOtpError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     await login(identifier, password);
     setLoading(false);
-  };
-
-  const handleOtpLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const digits = otpPhone.replace(/\D/g, "");
-    if (!otpPhone || digits.length < 10) {
-      setOtpError(
-        language === "hi"
-          ? "कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें"
-          : "Please enter a valid 10-digit mobile number"
-      );
-      return;
-    }
-    setOtpError("");
-    setShowOtpModal(true);
   };
 
   return (
@@ -73,116 +47,46 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Auth Mode Tabs (Password vs Mobile OTP) */}
-        <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200">
-          <button
-            type="button"
-            onClick={() => {
-              setAuthMode("password");
-              setOtpError("");
-            }}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-xs transition-all ${
-              authMode === "password"
-                ? "bg-white text-brand-700 shadow-sm border border-slate-200"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <Lock className="w-3.5 h-3.5" />
-            {t("otp.login_tab_password")}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setAuthMode("otp");
-              setOtpError("");
-            }}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-xs transition-all ${
-              authMode === "otp"
-                ? "bg-white text-brand-700 shadow-sm border border-slate-200"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <Smartphone className="w-3.5 h-3.5" />
-            {t("otp.login_tab_otp")}
-          </button>
-        </div>
-
-        {/* OTP Sign-In Form */}
-        {authMode === "otp" ? (
-          <form onSubmit={handleOtpLoginSubmit} className="space-y-4">
-            {otpError && (
-              <div className="p-3 text-xs bg-red-50 border border-red-200 text-red-700 rounded-xl">
-                {otpError}
-              </div>
-            )}
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                {language === "hi" ? "पंजीकृत मोबाइल नंबर" : "Registered Mobile Number"}
-              </label>
-              <div className="relative">
-                <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                <input
-                  type="tel"
-                  required
-                  value={otpPhone}
-                  onChange={(e) => setOtpPhone(e.target.value)}
-                  placeholder="e.g. 9822200001"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-                />
-              </div>
-              <p className="text-[11px] text-slate-500 flex items-center gap-1 mt-1.5 leading-tight">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 inline shrink-0" />
-                {t("otp.privacy_notice")}
-              </p>
+        {/* Password Sign-In Form (Accepts Email or Phone Number + Password) */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              {t("auth.email_phone")}
+            </label>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+              <input
+                type="text"
+                required
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder="e.g. worker@workadda.com or 9822200001"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              />
             </div>
+          </div>
 
-            <Button type="submit" className="w-full font-bold">
-              {t("otp.get_otp")} <ArrowRight className="w-4 h-4 ml-1.5" />
-            </Button>
-          </form>
-        ) : (
-          /* Password Sign-In Form */
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                {t("auth.email_phone")}
-              </label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                <input
-                  type="text"
-                  required
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="e.g. worker@workadda.com or 9822200001"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-                />
-              </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              {t("auth.password")}
+            </label>
+            <div className="relative">
+              <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              />
             </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                {t("auth.password")}
-              </label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-                />
-              </div>
-            </div>
-
-            <Button type="submit" isLoading={loading} className="w-full font-bold">
-              {t("auth.sign_in_btn")} <ArrowRight className="w-4 h-4 ml-1.5" />
-            </Button>
-          </form>
-        )}
+          <Button type="submit" isLoading={loading} className="w-full font-bold">
+            {t("auth.sign_in_btn")} <ArrowRight className="w-4 h-4 ml-1.5" />
+          </Button>
+        </form>
 
         <div className="text-center pt-2">
           <p className="text-xs text-slate-500">
@@ -193,29 +97,6 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-
-      {/* OTP Login Modal */}
-      <Modal
-        isOpen={showOtpModal}
-        onClose={() => setShowOtpModal(false)}
-        title={t("otp.verify_title")}
-        description={t("otp.verify_desc")}
-      >
-        <OtpVerificationModal
-          phone={otpPhone}
-          purpose="LOGIN"
-          onVerified={async (data) => {
-            setShowOtpModal(false);
-            await refreshUser();
-            if (data.redirectUrl) {
-              router.push(data.redirectUrl);
-            } else {
-              router.push("/worker/dashboard");
-            }
-          }}
-          onCancel={() => setShowOtpModal(false)}
-        />
-      </Modal>
     </div>
   );
 }

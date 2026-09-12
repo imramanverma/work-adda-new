@@ -17,9 +17,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Modal } from "@/components/ui/modal";
 import { AuthBackground } from "@/components/brand/auth-background";
-import { OtpVerificationModal } from "@/components/auth/otp-input";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -37,8 +35,6 @@ export default function RegisterPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
-  const [showOtpModal, setShowOtpModal] = useState(false);
 
   const locations = [
     "Fatehabad",
@@ -61,16 +57,13 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
 
-    if (!isPhoneVerified) {
-      if (!formData.phone || formData.phone.length < 10) {
-        setError(
-          language === "hi"
-            ? "कृपया पंजीकरण से पहले 10 अंकों का वैध मोबाइल नंबर दर्ज करें।"
-            : "Please enter a valid 10-digit phone number first."
-        );
-        return;
-      }
-      setShowOtpModal(true);
+    const phoneDigits = formData.phone.replace(/\D/g, "");
+    if (!formData.phone || phoneDigits.length < 10) {
+      setError(
+        language === "hi"
+          ? "कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें।"
+          : "Please enter a valid 10-digit phone number."
+      );
       return;
     }
 
@@ -168,61 +161,19 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-bold text-slate-700">
-                  {language === "hi" ? "मोबाइल नंबर" : "Phone Number"}
-                </label>
-                {isPhoneVerified && (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    {t("otp.verified_badge")}
-                  </span>
-                )}
-              </div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                {language === "hi" ? "मोबाइल नंबर" : "Phone Number"}
+              </label>
               <div className="relative">
                 <input
                   type="tel"
                   required
                   value={formData.phone}
-                  onChange={(e) => {
-                    setFormData({ ...formData, phone: e.target.value });
-                    if (isPhoneVerified) setIsPhoneVerified(false);
-                  }}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   placeholder="e.g. 9822200001"
-                  className={`w-full pl-3.5 ${
-                    isPhoneVerified ? "pr-10 border-emerald-400 bg-emerald-50/20" : "pr-24 border-slate-200"
-                  } py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500`}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
-                {!isPhoneVerified && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!formData.phone || formData.phone.length < 10) {
-                        setError(
-                          language === "hi"
-                            ? "कृपया पहले मान्य 10 अंकों का मोबाइल नंबर दर्ज करें"
-                            : "Please enter a valid 10-digit phone number first"
-                        );
-                        return;
-                      }
-                      setError("");
-                      setShowOtpModal(true);
-                    }}
-                    className="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-brand-50 hover:bg-brand-100 border border-brand-200 text-brand-700 rounded-lg text-xs font-bold transition shadow-xs flex items-center"
-                  >
-                    {t("otp.send_btn")}
-                  </button>
-                )}
-                {isPhoneVerified && (
-                  <div className="absolute right-3 top-3 text-emerald-600">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                )}
               </div>
-              <p className="text-[11px] text-slate-500 flex items-center gap-1 mt-1.5 leading-tight">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 inline shrink-0" />
-                {t("otp.privacy_notice")}
-              </p>
             </div>
           </div>
 
@@ -333,24 +284,6 @@ export default function RegisterPage() {
           </p>
         </div>
       </div>
-
-      {/* OTP Phone Verification Modal */}
-      <Modal
-        isOpen={showOtpModal}
-        onClose={() => setShowOtpModal(false)}
-        title={t("otp.verify_title")}
-        description={t("otp.verify_desc")}
-      >
-        <OtpVerificationModal
-          phone={formData.phone}
-          purpose="REGISTER"
-          onVerified={() => {
-            setIsPhoneVerified(true);
-            setShowOtpModal(false);
-          }}
-          onCancel={() => setShowOtpModal(false)}
-        />
-      </Modal>
     </div>
   );
 }
