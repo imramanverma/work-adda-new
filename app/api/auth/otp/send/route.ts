@@ -6,6 +6,7 @@ import {
   generateOtp,
   maskPhoneNumber,
 } from "@/lib/privacy";
+import { sendRealSmsOtp } from "@/lib/sms";
 
 export async function POST(req: NextRequest) {
   try {
@@ -101,15 +102,17 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log(`[Work Adda OTP System] Generated OTP ${otp} for ${normalizedPhone} (${purpose})`);
+    // Dispatch Real SMS directly to the user's mobile carrier
+    await sendRealSmsOtp({
+      phone: normalizedPhone,
+      otp,
+    });
 
     return NextResponse.json({
       success: true,
       message: `OTP sent successfully to ${maskPhoneNumber(normalizedPhone)}`,
       normalizedPhone,
       expiresAt: expiresAt.toISOString(),
-      // debugOtp provided for immediate demo/testing convenience
-      debugOtp: otp,
     });
   } catch (err: any) {
     console.error("OTP send error:", err);

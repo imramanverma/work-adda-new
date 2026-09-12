@@ -10,7 +10,6 @@ import {
   Lock,
   Mail,
   ArrowRight,
-  Zap,
   Phone,
   ShieldCheck,
   Smartphone,
@@ -22,7 +21,7 @@ import { OtpVerificationModal } from "@/components/auth/otp-input";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, quickLogin, refreshUser } = useAuth();
+  const { login, refreshUser } = useAuth();
   const { t, language } = useLanguage();
   const [authMode, setAuthMode] = useState<"password" | "otp">("password");
   const [identifier, setIdentifier] = useState("");
@@ -106,83 +105,6 @@ export default function LoginPage() {
             <Smartphone className="w-3.5 h-3.5" />
             {t("otp.login_tab_otp")}
           </button>
-        </div>
-
-        {/* Quick Demo Logins Box */}
-        <div className="bg-brand-50/50 p-4 rounded-2xl border border-brand-100">
-          <p className="text-xs font-bold text-brand-900 flex items-center gap-1.5 mb-2.5">
-            <Zap className="w-4 h-4 text-accent-500" />{" "}
-            {authMode === "otp"
-              ? language === "hi"
-                ? "त्वरित डेमो ओटीपी लॉगिन:"
-                : "1-Click Demo OTP Sign-In:"
-              : language === "hi"
-              ? "1-क्लिक त्वरित डेमो लॉगिन:"
-              : "1-Click Instant Demo Access:"}
-          </p>
-          <div className="grid grid-cols-3 gap-2">
-            {authMode === "password" ? (
-              <>
-                <button
-                  type="button"
-                  onClick={() => quickLogin("WORKER")}
-                  className="px-2.5 py-2 bg-white hover:bg-brand-50 border border-brand-200 rounded-xl text-xs font-semibold text-brand-700 shadow-xs transition"
-                >
-                  {language === "hi" ? "डेमो कामगार" : "Demo Worker"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => quickLogin("EMPLOYER")}
-                  className="px-2.5 py-2 bg-white hover:bg-brand-50 border border-brand-200 rounded-xl text-xs font-semibold text-brand-700 shadow-xs transition"
-                >
-                  {language === "hi" ? "डेमो नियोक्ता" : "Demo Employer"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => quickLogin("ADMIN")}
-                  className="px-2.5 py-2 bg-white hover:bg-brand-50 border border-brand-200 rounded-xl text-xs font-semibold text-brand-700 shadow-xs transition"
-                >
-                  {language === "hi" ? "डेमो एडमिन" : "Demo Admin"}
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtpPhone("9822200001");
-                    setOtpError("");
-                    setShowOtpModal(true);
-                  }}
-                  className="px-2.5 py-2 bg-white hover:bg-brand-50 border border-brand-200 rounded-xl text-xs font-semibold text-brand-700 shadow-xs transition"
-                >
-                  {language === "hi" ? "कामगार OTP" : "Worker OTP"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtpPhone("9811100001");
-                    setOtpError("");
-                    setShowOtpModal(true);
-                  }}
-                  className="px-2.5 py-2 bg-white hover:bg-brand-50 border border-brand-200 rounded-xl text-xs font-semibold text-brand-700 shadow-xs transition"
-                >
-                  {language === "hi" ? "नियोक्ता OTP" : "Employer OTP"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtpPhone("9876500000");
-                    setOtpError("");
-                    setShowOtpModal(true);
-                  }}
-                  className="px-2.5 py-2 bg-white hover:bg-brand-50 border border-brand-200 rounded-xl text-xs font-semibold text-brand-700 shadow-xs transition"
-                >
-                  {language === "hi" ? "एडमिन OTP" : "Admin OTP"}
-                </button>
-              </>
-            )}
-          </div>
         </div>
 
         {/* OTP Sign-In Form */}

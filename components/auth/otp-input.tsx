@@ -31,7 +31,6 @@ export function OtpVerificationModal({
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [debugCode, setDebugCode] = useState<string | null>(null);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -57,9 +56,6 @@ export function OtpVerificationModal({
             ? `${maskPhoneNumber(phone)} पर 6 अंकों का कोड भेजा गया है।`
             : `6-digit verification code sent to ${maskPhoneNumber(phone)}.`
         );
-        if (data.debugOtp) {
-          setDebugCode(data.debugOtp);
-        }
         setCountdown(60);
         setCanResend(false);
         // Focus on first input
@@ -205,25 +201,6 @@ export function OtpVerificationModal({
             </>
           )}
         </p>
-
-        {/* Demo Fast Fill Pill */}
-        {debugCode && (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 rounded-full text-xs font-bold text-amber-800 animate-in fade-in">
-            <span>{language === "hi" ? "डेमो कोड:" : "Demo Code:"}</span>
-            <code className="text-amber-900 tracking-widest">{debugCode}</code>
-            <button
-              type="button"
-              onClick={() => {
-                const digits = debugCode.split("");
-                setOtpDigits(digits);
-                triggerVerify(debugCode);
-              }}
-              className="ml-1 text-[10px] underline text-amber-700 hover:text-amber-900"
-            >
-              {language === "hi" ? "स्वतः भरें" : "Auto Fill"}
-            </button>
-          </div>
-        )}
       </div>
 
       {/* 6-Digit OTP Boxes */}
