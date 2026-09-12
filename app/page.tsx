@@ -1,0 +1,529 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Logo } from "@/components/brand/logo";
+import {
+  Briefcase,
+  MapPin,
+  ShieldCheck,
+  Zap,
+  TrendingUp,
+  Clock,
+  Award,
+  ChevronRight,
+  CheckCircle2,
+  Users,
+  Search,
+  Building2,
+  ArrowRight,
+  Sparkles,
+  Star,
+  IndianRupee,
+  Phone,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { formatCurrency } from "@/lib/utils";
+
+export default function HomePage() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<"worker" | "employer">("worker");
+  const [heroSearch, setHeroSearch] = useState("");
+  const [heroLocation, setHeroLocation] = useState("Chandigarh");
+  const [featuredJobs, setFeaturedJobs] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/jobs?limit=3&sortBy=highest_pay")
+      .then((r) => r.json())
+      .then((d) => setFeaturedJobs(d.jobs || []))
+      .catch(() => {});
+  }, []);
+
+  const handleHeroSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (heroSearch) params.set("q", heroSearch);
+    if (heroLocation) params.set("location", heroLocation);
+    router.push(`/jobs?${params.toString()}`);
+  };
+
+  const categories = [
+    { name: "Delivery & Courier", count: "24+ Gigs", icon: "🛵", bg: "from-blue-500/10 to-blue-500/5", border: "hover:border-blue-300" },
+    { name: "Retail & Stores", count: "18+ Gigs", icon: "🏪", bg: "from-emerald-500/10 to-emerald-500/5", border: "hover:border-emerald-300" },
+    { name: "Events & Catering", count: "16+ Gigs", icon: "🎪", bg: "from-amber-500/10 to-amber-500/5", border: "hover:border-amber-300" },
+    { name: "Hospitality & Cafe", count: "12+ Gigs", icon: "☕", bg: "from-rose-500/10 to-rose-500/5", border: "hover:border-rose-300" },
+    { name: "Warehouse Logistics", count: "20+ Gigs", icon: "📦", bg: "from-indigo-500/10 to-indigo-500/5", border: "hover:border-indigo-300" },
+    { name: "Data Entry & Office", count: "15+ Gigs", icon: "💻", bg: "from-cyan-500/10 to-cyan-500/5", border: "hover:border-cyan-300" },
+    { name: "Technicians & Repair", count: "14+ Gigs", icon: "🔧", bg: "from-orange-500/10 to-orange-500/5", border: "hover:border-orange-300" },
+    { name: "Sales & Promoters", count: "11+ Gigs", icon: "📈", bg: "from-purple-500/10 to-purple-500/5", border: "hover:border-purple-300" },
+  ];
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {/* 1. Enhanced Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50/80 via-white to-slate-50 pt-12 pb-20 sm:pt-20 sm:pb-28 border-b border-slate-200">
+        {/* Decorative Background Mesh */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full overflow-hidden pointer-events-none -z-10">
+          <div className="absolute top-[-80px] left-1/4 w-[500px] h-[500px] bg-brand-400/10 rounded-full blur-3xl" />
+          <div className="absolute top-[100px] right-1/4 w-[400px] h-[400px] bg-accent-400/10 rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* Left Col: Hero Value Proposition */}
+            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+              {/* Pop Logo Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-brand-200 shadow-sm shadow-brand-500/10">
+                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                <span className="text-xs font-black text-brand-900 tracking-wide uppercase">
+                  Hyperlocal Employment • Punjab & North India
+                </span>
+              </div>
+
+              <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-[1.12]">
+                Find Local Work. <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-700 via-brand-600 to-accent-600">
+                  Build Your Future.
+                </span>
+              </h1>
+
+              <p className="text-base sm:text-lg text-slate-600 max-w-2xl leading-relaxed">
+                Work Adda connects ambitious students, gig seekers, and skilled workers with neighborhood stores, warehouses, and businesses —{" "}
+                <strong className="text-slate-900 font-bold">quickly, safely, and nearby.</strong>
+              </p>
+
+              {/* Interactive Search Bar in Hero */}
+              <form
+                onSubmit={handleHeroSearch}
+                className="bg-white p-2 rounded-2xl sm:rounded-full border-2 border-brand-200 shadow-lg shadow-brand-500/10 flex flex-col sm:flex-row items-center gap-2 max-w-2xl"
+              >
+                <div className="flex items-center gap-2 px-4 py-2 w-full sm:w-auto flex-1">
+                  <Search className="w-4 h-4 text-brand-600 shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Search delivery, counter sales, warehouse..."
+                    value={heroSearch}
+                    onChange={(e) => setHeroSearch(e.target.value)}
+                    className="w-full text-xs sm:text-sm focus:outline-none text-slate-900 bg-transparent placeholder:text-slate-400"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2 px-4 py-2 border-t sm:border-t-0 sm:border-l border-slate-200 w-full sm:w-auto">
+                  <MapPin className="w-4 h-4 text-accent-500 shrink-0" />
+                  <select
+                    value={heroLocation}
+                    onChange={(e) => setHeroLocation(e.target.value)}
+                    className="text-xs sm:text-sm font-semibold text-slate-700 bg-transparent focus:outline-none"
+                  >
+                    <option value="Chandigarh">Chandigarh</option>
+                    <option value="Mohali">Mohali</option>
+                    <option value="Ludhiana">Ludhiana</option>
+                    <option value="Amritsar">Amritsar</option>
+                    <option value="Jalandhar">Jalandhar</option>
+                    <option value="Patiala">Patiala</option>
+                    <option value="Delhi NCR">Delhi NCR</option>
+                  </select>
+                </div>
+
+                <Button type="submit" size="md" className="w-full sm:w-auto font-bold rounded-xl sm:rounded-full px-6">
+                  Search Gigs
+                </Button>
+              </form>
+
+              {/* Social Proof Avatars Strip */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2 text-xs text-slate-500">
+                <div className="flex -space-x-2">
+                  {["A", "K", "N", "J", "S"].map((initial, i) => (
+                    <div
+                      key={i}
+                      className="w-7 h-7 rounded-full bg-gradient-to-tr from-brand-600 to-accent-500 text-white font-bold flex items-center justify-center border-2 border-white text-[10px]"
+                    >
+                      {initial}
+                    </div>
+                  ))}
+                </div>
+                <span>
+                  Over <strong className="text-slate-800">5,000+ local workers</strong> & <strong className="text-slate-800">1,200+ businesses</strong> trust Work Adda
+                </span>
+              </div>
+            </div>
+
+            {/* Right Col: Interactive Visual Mockup with Floating Badges */}
+            <div className="lg:col-span-5 relative pt-6 pb-8 px-1 sm:px-3">
+              {/* Floating Match Score Badge - Positioned cleanly above with zero collision */}
+              <div className="absolute -top-4 sm:-top-5 left-3 sm:left-6 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl border border-emerald-200/90 shadow-xl shadow-emerald-500/15 flex items-center gap-2.5 animate-float-slow">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4 text-emerald-600" />
+                </div>
+                <div>
+                  <span className="font-black text-xs sm:text-sm text-slate-900 block leading-tight">
+                    96% Smart Match
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-medium">Skills + 2.1 km Proximity</span>
+                </div>
+              </div>
+
+              {/* Main Feature Mockup Card */}
+              <div className="bg-white rounded-3xl border-2 border-slate-200/90 p-6 pt-7 pb-10 sm:pb-12 shadow-2xl shadow-slate-300/40 space-y-4 relative overflow-hidden">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3 pt-1">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                    <span className="text-xs font-bold text-slate-400 ml-2">Work Adda Live Feed</span>
+                  </div>
+                  <Badge variant="success" className="text-[10px] font-bold">
+                    ● Active Dispatch
+                  </Badge>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="brand">Delivery & Logistics</Badge>
+                      <span className="font-black text-sm text-emerald-600">₹800/day</span>
+                    </div>
+                    <h4 className="font-bold text-sm text-slate-900">
+                      Hyperlocal Delivery Assistant (Tricity Hub)
+                    </h4>
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                      <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Punjab Logistics Hub</span>
+                      <span>•</span>
+                      <span className="text-brand-700 font-bold">1.8 km away</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5 text-xs">
+                    <div className="p-3 bg-brand-50/50 rounded-xl border border-brand-100">
+                      <span className="text-slate-400 block text-[10px]">Hiring Time</span>
+                      <span className="font-bold text-brand-900">&lt; 15 Minutes</span>
+                    </div>
+                    <div className="p-3 bg-amber-50/50 rounded-xl border border-amber-100">
+                      <span className="text-slate-400 block text-[10px]">Platform Fee</span>
+                      <span className="font-bold text-accent-900">Standard 5%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Primary Action Button - Cleanly positioned above the bottom badge */}
+                <Link href="/jobs" className="block pt-1">
+                  <Button size="md" variant="primary" className="w-full font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-md shadow-brand-500/20 hover:shadow-brand-500/30 flex items-center justify-center gap-2">
+                    <span>Explore 32+ Open Gigs Now</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Floating Instant Payout Badge - Positioned comfortably below with zero button overlap */}
+              <div className="absolute -bottom-4 sm:-bottom-5 -right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl border border-blue-200/90 shadow-xl shadow-blue-500/15 flex items-center gap-2.5 animate-float-delayed">
+                <div className="w-8 h-8 rounded-xl bg-blue-100 text-brand-600 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-4 h-4 text-brand-600" />
+                </div>
+                <div>
+                  <span className="font-black text-xs sm:text-sm text-slate-900 block leading-tight">
+                    Instant Settlement
+                  </span>
+                  <span className="text-[10px] text-emerald-600 font-bold">₹760 UPI Payout Released</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Popular Categories with Gradient Badges */}
+      <section className="py-16 bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+            <div>
+              <span className="text-xs uppercase font-bold tracking-widest text-brand-600">
+                Diverse Opportunities
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                Explore Work by Category
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                From student part-time gigs to full-time trades across retail, logistics, and hospitality.
+              </p>
+            </div>
+            <Link
+              href="/jobs"
+              className="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 group shrink-0"
+            >
+              Browse All Categories <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {categories.map((c, i) => (
+              <Link
+                key={i}
+                href={`/jobs?category=${encodeURIComponent(c.name.split(" ")[0])}`}
+                className={`p-5 rounded-2xl border border-slate-200 bg-gradient-to-br ${c.bg} ${c.border} hover:shadow-md transition-all group`}
+              >
+                <span className="text-3xl block mb-3 group-hover:scale-110 transition-transform">
+                  {c.icon}
+                </span>
+                <h4 className="font-bold text-sm text-slate-900 group-hover:text-brand-600 transition">
+                  {c.name}
+                </h4>
+                <span className="text-xs text-slate-500 font-medium mt-1 block">
+                  {c.count}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Featured Live Jobs Preview */}
+      {featuredJobs.length > 0 && (
+        <section className="py-16 bg-slate-50 border-b border-slate-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div>
+                <span className="text-xs uppercase font-bold tracking-widest text-brand-600">
+                  Hot Local Positions
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                  Featured High-Comp Jobs
+                </h3>
+              </div>
+              <Link href="/jobs">
+                <Button size="sm" variant="outline">
+                  View All Listings
+                </Button>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {featuredJobs.map((job) => (
+                <div
+                  key={job.id}
+                  className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs hover:shadow-md hover:border-brand-300 transition flex flex-col justify-between"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="brand">{job.category}</Badge>
+                      <span className="font-black text-base text-slate-900">
+                        {formatCurrency(job.payAmount)}
+                        <span className="text-xs font-normal text-slate-500">/{job.payType.toLowerCase()}</span>
+                      </span>
+                    </div>
+
+                    <Link href={`/jobs/${job.id}`}>
+                      <h4 className="font-bold text-base text-slate-900 hover:text-brand-600 transition line-clamp-2">
+                        {job.title}
+                      </h4>
+                    </Link>
+
+                    <p className="text-xs text-slate-500 line-clamp-2">
+                      {job.description}
+                    </p>
+
+                    <div className="flex items-center gap-2 text-xs text-slate-500 pt-1">
+                      <MapPin className="w-3.5 h-3.5 text-brand-600 shrink-0" />
+                      <span className="truncate">{job.location}</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-[11px] text-slate-400">
+                      {job.applicantsCount || 0} applied
+                    </span>
+                    <Link href={`/jobs/${job.id}`}>
+                      <Button size="sm" variant="primary">
+                        Apply Now
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 4. How It Works Interactive Tabs */}
+      <section className="py-16 sm:py-20 bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-xs uppercase font-bold tracking-widest text-brand-600">
+              Clear & Straightforward
+            </span>
+            <h3 className="text-3xl font-extrabold text-slate-900 mt-1">How Work Adda Works</h3>
+            <p className="text-xs sm:text-sm text-slate-500 mt-2">
+              From finding a shift to getting paid into your UPI account.
+            </p>
+
+            <div className="mt-6 inline-flex p-1 bg-slate-100 rounded-2xl border border-slate-200">
+              <button
+                onClick={() => setActiveTab("worker")}
+                className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  activeTab === "worker"
+                    ? "bg-white text-brand-700 shadow-sm"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                For Job Seekers & Workers
+              </button>
+              <button
+                onClick={() => setActiveTab("employer")}
+                className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  activeTab === "employer"
+                    ? "bg-white text-brand-700 shadow-sm"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                For Businesses & Employers
+              </button>
+            </div>
+          </div>
+
+          {activeTab === "worker" ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {[
+                { step: "01", title: "Create Profile", desc: "Add skills, availability, and commute radius." },
+                { step: "02", title: "Discover Work", desc: "Filter jobs by distance (2–25 km) & see match scores." },
+                { step: "03", title: "1-Click Apply", desc: "Send your pitch and proposed pay directly." },
+                { step: "04", title: "Get Hired", desc: "Employer accepts and your work contract begins." },
+                { step: "05", title: "Complete Work", desc: "Perform the task and mark completion in your hub." },
+                { step: "06", title: "Get Paid & Rated", desc: "Instant UPI payout release and reputation boost." },
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  className="bg-slate-50 rounded-2xl p-5 border border-slate-200 flex flex-col justify-between hover:border-brand-300 hover:shadow-md transition"
+                >
+                  <span className="text-2xl font-black text-brand-600/40">{item.step}</span>
+                  <h4 className="font-bold text-slate-900 text-sm mt-3">{item.title}</h4>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {[
+                { step: "01", title: "Post Work", desc: "Specify required skills, shift hours, and compensation." },
+                { step: "02", title: "Review Talent", desc: "Inspect candidate ratings and past completed gigs." },
+                { step: "03", title: "Shortlist", desc: "Bookmark top candidates or message in built-in chat." },
+                { step: "04", title: "Hire & Assign", desc: "Accept candidate to establish an active contract." },
+                { step: "05", title: "Approve Task", desc: "Inspect the worker's submitted completion." },
+                { step: "06", title: "Pay & Review", desc: "Release verified payment and rate worker's quality." },
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  className="bg-amber-50/50 rounded-2xl p-5 border border-amber-200 flex flex-col justify-between hover:shadow-md transition"
+                >
+                  <span className="text-2xl font-black text-accent-600/40">{item.step}</span>
+                  <h4 className="font-bold text-slate-900 text-sm mt-3">{item.title}</h4>
+                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 5. Community Testimonials */}
+      <section className="py-16 bg-slate-50 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center max-w-xl mx-auto">
+            <span className="text-xs uppercase font-bold tracking-widest text-brand-600">
+              Community Voices
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+              Loved by Local Workers & Businesses
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-3">
+              <div className="flex items-center gap-1 text-amber-500 text-xs">
+                ★★★★★
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed italic">
+                "As a Panjab University student, I earn ₹4,000–₹6,000 every weekend helping local stores with delivery and stock counting. Immediate UPI payment without any hassle!"
+              </p>
+              <div className="pt-2 border-t border-slate-100 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-xs flex items-center justify-center">
+                  A
+                </div>
+                <div>
+                  <h5 className="font-bold text-xs text-slate-900">Amanpreet Singh</h5>
+                  <span className="text-[10px] text-slate-400">Student & Delivery Partner, Chandigarh</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-3">
+              <div className="flex items-center gap-1 text-amber-500 text-xs">
+                ★★★★★
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed italic">
+                "During festive Diwali rush, we needed 5 parcel packing helpers urgently. Posted on Work Adda and hired verified boys within 30 minutes from our own market area."
+              </p>
+              <div className="pt-2 border-t border-slate-100 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-accent-500 text-slate-950 font-bold text-xs flex items-center justify-center">
+                  G
+                </div>
+                <div>
+                  <h5 className="font-bold text-xs text-slate-900">Gurpreet Singh</h5>
+                  <span className="text-[10px] text-slate-400">Owner, Punjab Logistics Hub</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-3">
+              <div className="flex items-center gap-1 text-amber-500 text-xs">
+                ★★★★★
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed italic">
+                "I get residential wiring gigs directly in Phase 7 Mohali. The distance filter is fantastic because I don't waste fuel traveling across the city."
+              </p>
+              <div className="pt-2 border-t border-slate-100 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
+                  J
+                </div>
+                <div>
+                  <h5 className="font-bold text-xs text-slate-900">Jaspal Bains</h5>
+                  <span className="text-[10px] text-slate-400">Certified Electrician, Mohali</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. High-Impact Call To Action */}
+      <section className="bg-gradient-to-r from-brand-900 via-brand-800 to-slate-950 text-white py-20 relative overflow-hidden">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
+          <Badge variant="brand" className="bg-white/10 text-white border-white/20">
+            Join the Local Movement
+          </Badge>
+          <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
+            Your next opportunity could be <br className="hidden sm:block" /> just around the corner.
+          </h2>
+          <p className="text-xs sm:text-base text-brand-100 max-w-xl mx-auto leading-relaxed">
+            Start earning, hiring, and growing together with your local community on Work Adda.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
+            <Link href="/register">
+              <Button size="lg" variant="accent" className="font-bold px-8 shadow-xl shadow-accent-500/25">
+                Join Work Adda for Free <ArrowRight className="w-4 h-4 ml-1.5" />
+              </Button>
+            </Link>
+            <Link href="/jobs">
+              <Button size="lg" variant="outline" className="bg-transparent text-white border-white/30 hover:bg-white/10 px-8">
+                Explore All Jobs
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
