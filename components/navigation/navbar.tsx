@@ -18,6 +18,9 @@ import {
   PanelLeft,
   Search,
   MapPin,
+  Users,
+  CheckCircle2,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +37,23 @@ export function Navbar() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
+
+  const notifRef = React.useRef<HTMLDivElement>(null);
+  const userMenuRef = React.useRef<HTMLDivElement>(null);
+
+  // Close popovers on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleNavSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +82,89 @@ export function Navbar() {
       });
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
     } catch {}
+  };
+
+  const getNotificationUrl = (n: any) => {
+    const type = n.type?.toUpperCase() || "";
+    const title = n.title?.toLowerCase() || "";
+    const msg = n.message?.toLowerCase() || "";
+
+    if (
+      type === "PAYMENT" ||
+      title.includes("payment") ||
+      title.includes("escrow") ||
+      title.includes("dispute") ||
+      msg.includes("payment") ||
+      msg.includes("escrow") ||
+      msg.includes("dispute") ||
+      msg.includes("₹")
+    ) {
+      if (user?.role === "EMPLOYER") return "/employer/work";
+      if (user?.role === "WORKER") return "/worker/earnings";
+      if (user?.role === "ADMIN") return "/admin/payments";
+    }
+
+    if (
+      type === "APPLICATION" ||
+      title.includes("applicant") ||
+      title.includes("applied") ||
+      msg.includes("applied") ||
+      msg.includes("candidate")
+    ) {
+      return user?.role === "EMPLOYER" ? "/employer/applicants" : "/worker/applications";
+    }
+
+    if (
+      type === "ASSIGNMENT" ||
+      title.includes("approved") ||
+      title.includes("completion") ||
+      title.includes("contract") ||
+      msg.includes("contract") ||
+      msg.includes("completed") ||
+      msg.includes("approved")
+    ) {
+      return user?.role === "EMPLOYER" ? "/employer/work" : "/worker/work";
+    }
+
+    if (type === "MESSAGE" || title.includes("message") || msg.includes("message")) {
+      return user?.role === "EMPLOYER" ? "/employer/messages" : "/worker/messages";
+    }
+
+    if (type === "REVIEW" || title.includes("review") || title.includes("rating") || msg.includes("rating")) {
+      return user?.role === "EMPLOYER" ? "/employer/profile" : "/worker/profile";
+    }
+
+    if (user?.role === "EMPLOYER") return "/employer/dashboard";
+    if (user?.role === "WORKER") return "/worker/dashboard";
+    if (user?.role === "ADMIN") return "/admin";
+    return "/";
+  };
+
+  const handleNotificationClick = async (n: any) => {
+    // 1. Optimistically mark as read in local state
+    setNotifications((prev) =>
+      prev.map((item) => (item.id === n.id ? { ...item, isRead: true } : item))
+    );
+
+    // 2. Call server to mark as read
+    if (!n.isRead) {
+      try {
+        await fetch("/api/notifications", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: n.id }),
+        });
+      } catch (err) {
+        console.error("Mark notification read error:", err);
+      }
+    }
+
+    // 3. Close popover
+    setShowNotifications(false);
+
+    // 4. Navigate immediately to the target page
+    const targetUrl = getNotificationUrl(n);
+    router.push(targetUrl);
   };
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
@@ -139,10 +242,11 @@ export function Navbar() {
               </Link>
 
               {/* Notifications Popover */}
-              <div className="relative">
+              <div className="relative" ref={notifRef}>
                 <button
                   onClick={() => setShowNotifications(!showNotifications)}
                   className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition"
+                  aria-label="Notifications"
                 >
                   <Bell className="w-5 h-5" />
                   {unreadCount > 0 && (
@@ -155,7 +259,14 @@ export function Navbar() {
                 {showNotifications && (
                   <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-200 py-3 z-50 animate-in fade-in zoom-in-95">
                     <div className="flex items-center justify-between px-4 pb-2 border-b border-slate-100">
-                      <h4 className="font-bold text-sm text-slate-900">Notifications</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-sm text-slate-900">Notifications</h4>
+                        {unreadCount > 0 && (
+                          <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-bold">
+                            {unreadCount} new
+                          </span>
+                        )}
+                      </div>
                       {unreadCount > 0 && (
                         <button
                           onClick={markAllRead}
@@ -165,35 +276,98 @@ export function Navbar() {
                         </button>
                       )}
                     </div>
+
                     <div className="max-h-80 overflow-y-auto divide-y divide-slate-50">
                       {notifications.length === 0 ? (
-                        <p className="text-xs text-slate-400 text-center py-6">No notifications yet</p>
+                        <div className="py-8 text-center">
+                          <Bell className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                          <p className="text-xs text-slate-400">No notifications yet</p>
+                        </div>
                       ) : (
-                        notifications.map((n) => (
-                          <div
-                            key={n.id}
-                            className={`p-3 text-left text-xs hover:bg-slate-50 transition ${
-                              !n.isRead ? "bg-brand-50/40" : ""
-                            }`}
-                          >
-                            <p className="font-semibold text-slate-900">{n.title}</p>
-                            <p className="text-slate-600 mt-0.5 leading-relaxed">{n.message}</p>
-                            <span className="text-[10px] text-slate-400 mt-1 block">
-                              {new Date(n.createdAt).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
-                          </div>
-                        ))
+                        notifications.map((n) => {
+                          const isUnread = !n.isRead;
+                          return (
+                            <div
+                              key={n.id}
+                              onClick={() => handleNotificationClick(n)}
+                              role="button"
+                              tabIndex={0}
+                              className={`p-3.5 text-left text-xs cursor-pointer transition-all duration-150 flex items-start gap-3 select-none ${
+                                isUnread
+                                  ? "bg-brand-50/70 hover:bg-brand-100/60"
+                                  : "hover:bg-slate-50"
+                              }`}
+                            >
+                              <div
+                                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
+                                  n.type === "PAYMENT"
+                                    ? "bg-emerald-100 text-emerald-700"
+                                    : n.type === "APPLICATION"
+                                    ? "bg-blue-100 text-brand-700"
+                                    : n.type === "ASSIGNMENT"
+                                    ? "bg-amber-100 text-amber-700"
+                                    : isUnread
+                                    ? "bg-brand-600 text-white"
+                                    : "bg-slate-100 text-slate-600"
+                                }`}
+                              >
+                                {n.type === "PAYMENT" ? (
+                                  <ShieldCheck className="w-4 h-4" />
+                                ) : n.type === "APPLICATION" ? (
+                                  <Users className="w-4 h-4" />
+                                ) : n.type === "ASSIGNMENT" ? (
+                                  <Briefcase className="w-4 h-4" />
+                                ) : (
+                                  <Bell className="w-4 h-4" />
+                                )}
+                              </div>
+
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-1.5">
+                                  <p className="font-bold text-slate-900 truncate">{n.title}</p>
+                                  {isUnread && (
+                                    <span className="w-2 h-2 rounded-full bg-brand-600 shrink-0" title="Unread" />
+                                  )}
+                                </div>
+                                <p className="text-slate-600 mt-0.5 leading-relaxed line-clamp-2">{n.message}</p>
+                                <span className="text-[10px] text-slate-400 mt-1 block">
+                                  {new Date(n.createdAt).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </span>
+                              </div>
+
+                              <ChevronRight className="w-3.5 h-3.5 text-slate-300 self-center shrink-0" />
+                            </div>
+                          );
+                        })
                       )}
                     </div>
+
+                    {notifications.length > 0 && (
+                      <div className="pt-2 px-3 border-t border-slate-100 bg-slate-50/70 text-center">
+                        <button
+                          onClick={() => {
+                            setShowNotifications(false);
+                            router.push(
+                              user?.role === "EMPLOYER"
+                                ? "/employer/notifications"
+                                : "/worker/notifications"
+                            );
+                          }}
+                          className="text-xs text-brand-600 hover:text-brand-700 font-bold block w-full py-1"
+                        >
+                          View All Notifications &rarr;
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
               {/* User Dropdown */}
-              <div className="relative">
+              <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center gap-2 p-1.5 pl-2 rounded-xl hover:bg-slate-100 border border-slate-200 transition"

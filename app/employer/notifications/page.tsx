@@ -8,14 +8,14 @@ import {
   CheckCheck,
   ShieldCheck,
   Briefcase,
-  Layers,
+  Users,
   MessageSquare,
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 
-export default function WorkerNotificationsPage() {
+export default function EmployerNotificationsPage() {
   const router = useRouter();
   const toast = useToast();
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -56,19 +56,19 @@ export default function WorkerNotificationsPage() {
     const title = n.title?.toLowerCase() || "";
     const msg = n.message?.toLowerCase() || "";
 
-    if (type === "PAYMENT" || title.includes("payment") || title.includes("escrow") || msg.includes("escrow") || msg.includes("₹")) {
-      return "/worker/earnings";
+    if (type === "APPLICATION" || title.includes("applicant") || msg.includes("applied") || msg.includes("candidate")) {
+      return "/employer/applicants";
     }
-    if (type === "ASSIGNMENT" || title.includes("hired") || title.includes("assigned") || msg.includes("contract")) {
-      return "/worker/work";
+    if (type === "PAYMENT" || title.includes("escrow") || title.includes("payment") || msg.includes("payment") || msg.includes("escrow")) {
+      return "/employer/work";
     }
-    if (type === "APPLICATION" || title.includes("application") || msg.includes("applied")) {
-      return "/worker/applications";
+    if (type === "ASSIGNMENT" || title.includes("complete") || msg.includes("completed") || msg.includes("approved")) {
+      return "/employer/work";
     }
     if (type === "MESSAGE" || title.includes("message")) {
-      return "/worker/messages";
+      return "/employer/messages";
     }
-    return "/worker/dashboard";
+    return "/employer/dashboard";
   };
 
   const handleNotificationClick = async (n: any) => {
@@ -96,10 +96,10 @@ export default function WorkerNotificationsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Notification Center
+              Employer Notifications
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Application updates, hiring notices, and payment confirmations.
+              New applicant alerts, work completion submissions, and escrow updates.
             </p>
           </div>
           {notifications.some((n) => !n.isRead) && (
@@ -134,23 +134,23 @@ export default function WorkerNotificationsPage() {
                 >
                   <div
                     className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                      n.type === "PAYMENT"
+                      n.type === "APPLICATION"
+                        ? "bg-blue-100 text-brand-700"
+                        : n.type === "PAYMENT"
                         ? "bg-emerald-100 text-emerald-700"
                         : n.type === "ASSIGNMENT"
                         ? "bg-amber-100 text-amber-700"
-                        : n.type === "APPLICATION"
-                        ? "bg-blue-100 text-brand-700"
                         : isUnread
                         ? "bg-brand-600 text-white"
                         : "bg-slate-100 text-slate-500"
                     }`}
                   >
-                    {n.type === "PAYMENT" ? (
+                    {n.type === "APPLICATION" ? (
+                      <Users className="w-4 h-4" />
+                    ) : n.type === "PAYMENT" ? (
                       <ShieldCheck className="w-4 h-4" />
                     ) : n.type === "ASSIGNMENT" ? (
                       <Briefcase className="w-4 h-4" />
-                    ) : n.type === "APPLICATION" ? (
-                      <Layers className="w-4 h-4" />
                     ) : (
                       <Bell className="w-4 h-4" />
                     )}

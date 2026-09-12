@@ -133,19 +133,21 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         {/* Navigation Items (The exact items moved from the top bar) */}
         <div className="flex-1 overflow-y-auto p-3 space-y-1">
-          {/* Universal Link: Find Work */}
-          <Link
-            href="/jobs"
-            onClick={onClose}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition ${
-              pathname.startsWith("/jobs")
-                ? "bg-brand-50 text-brand-700 font-bold"
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-            }`}
-          >
-            <Search className="w-4 h-4 text-brand-600 shrink-0" />
-            <span>{t("nav.find_work")}</span>
-          </Link>
+          {/* Universal Link: Find Work (Hidden for Employers) */}
+          {user?.role !== "EMPLOYER" && (
+            <Link
+              href="/jobs"
+              onClick={onClose}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition ${
+                pathname.startsWith("/jobs")
+                  ? "bg-brand-50 text-brand-700 font-bold"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+              }`}
+            >
+              <Search className="w-4 h-4 text-brand-600 shrink-0" />
+              <span>{t("nav.find_work")}</span>
+            </Link>
+          )}
 
           {/* Worker Navigation Links */}
           {user?.role === "WORKER" && (

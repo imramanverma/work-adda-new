@@ -21,15 +21,17 @@ export function MobileNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200 md:hidden px-2 py-1 flex items-center justify-around shadow-lg">
-      <Link
-        href="/jobs"
-        className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg text-[10px] font-medium transition ${
-          pathname === "/jobs" ? "text-brand-600 font-bold" : "text-slate-500 hover:text-slate-900"
-        }`}
-      >
-        <Search className="w-5 h-5 mb-0.5" />
-        <span>Discover</span>
-      </Link>
+      {user?.role !== "EMPLOYER" && (
+        <Link
+          href="/jobs"
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg text-[10px] font-medium transition ${
+            pathname === "/jobs" ? "text-brand-600 font-bold" : "text-slate-500 hover:text-slate-900"
+          }`}
+        >
+          <Search className="w-5 h-5 mb-0.5" />
+          <span>Discover</span>
+        </Link>
+      )}
 
       {user?.role === "WORKER" && (
         <>
