@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Real-Life SMS Delivery Gateway for Work Adda
  *
  * Supports:
@@ -51,7 +51,40 @@ export async function sendRealSmsOtp({ phone, otp }: SendSmsOptions): Promise<Sm
         };
       } else {
         console.error(`[Fast2SMS Gateway Error]:`, data);
-        const errMsg = Array.isArray(data.message) ? data.message.join(", ") : data.message;
+        const errMsg = Array.isArray(data.message) ? data.message.join(", ") : String(data.message || "");
+
+        // If website verification is required for route: "otp", attempt route: "q" (Quick SMS) fallback
+        if (errMsg.toLowerCase().includes("website verification")) {
+          console.log("[Fast2SMS] Attempting Quick SMS (route: 'q') fallback...");
+          try {
+            const qResponse = await fetch("https://www.fast2sms.com/dev/bulkV2", {
+              method: "POST",
+              headers: {
+                authorization: fast2SmsKey,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                route: "q",
+                message: `Your Work Adda verification OTP is ${otp}. Valid for 10 minutes.`,
+                language: "english",
+                flash: 0,
+                numbers: indian10Digits,
+              }),
+            });
+            const qData = await qResponse.json();
+            if (qData.return === true) {
+              console.log(`[Fast2SMS Quick SMS] Successfully sent live OTP to ${e164Phone}`);
+              return {
+                success: true,
+                provider: "FAST2SMS_QUICK",
+                messageId: qData.request_id || "sent",
+              };
+            }
+          } catch (qErr: any) {
+            console.error("[Fast2SMS Quick Error]:", qErr.message);
+          }
+        }
+
         return {
           success: false,
           provider: "FAST2SMS",
