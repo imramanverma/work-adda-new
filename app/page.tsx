@@ -27,6 +27,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { useLanguage } from "@/context/language-context";
+import { AnimatedBackground } from "@/components/ui/animated-background";
+import { AnimatedAurora } from "@/components/ui/animated-aurora";
 
 export default function HomePage() {
   const router = useRouter();
@@ -99,13 +101,10 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* 1. Enhanced Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50/80 via-white to-slate-50 pt-12 pb-20 sm:pt-20 sm:pb-28 border-b border-slate-200">
-        {/* Decorative Background Mesh */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full overflow-hidden pointer-events-none -z-10">
-          <div className="absolute top-[-80px] left-1/4 w-[500px] h-[500px] bg-brand-400/10 rounded-full blur-3xl" />
-          <div className="absolute top-[100px] right-1/4 w-[400px] h-[400px] bg-accent-400/10 rounded-full blur-3xl" />
-        </div>
+      {/* 1. Enhanced Hero Section with Animated Ambient Background */}
+      <section className="relative overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28 border-b border-slate-200">
+        {/* Dynamic Multi-Layer Animated Mesh Background */}
+        <AnimatedBackground intensity="hero" showGrid={true} showParticles={true} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -210,8 +209,10 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Main Feature Showcase Card - Real Database Job or Inviting Empty State */}
-              <div className="bg-white rounded-3xl border-2 border-slate-200/90 p-6 pt-7 pb-10 sm:pb-12 shadow-2xl shadow-slate-300/40 space-y-4 relative overflow-hidden">
+              {/* Main Feature Showcase Card with Animated Glow Aura */}
+              <div className="relative group">
+                <div className="absolute -inset-1.5 bg-gradient-to-r from-brand-600 via-accent-400 to-emerald-500 rounded-[32px] blur-xl opacity-25 group-hover:opacity-45 transition duration-1000 animate-pulse-slow" />
+                <div className="bg-white/95 backdrop-blur-xl rounded-3xl border-2 border-white/90 p-6 pt-7 pb-10 sm:pb-12 shadow-2xl shadow-slate-300/40 space-y-4 relative overflow-hidden">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3 pt-1">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
@@ -283,6 +284,7 @@ export default function HomePage() {
                   </Button>
                 </Link>
               </div>
+            </div>
 
               {/* Floating Payment Security Badge */}
               <div className="absolute -bottom-4 sm:-bottom-5 -right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl border border-blue-200/90 shadow-xl shadow-blue-500/15 flex items-center gap-2.5 animate-float-delayed">
@@ -574,33 +576,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. High-Impact Call To Action */}
-      <section className="bg-gradient-to-r from-brand-900 via-brand-800 to-slate-950 text-white py-20 relative overflow-hidden">
+      {/* 6. High-Impact Call To Action with Animated Aurora Cosmic Waves */}
+      <AnimatedAurora className="py-24 sm:py-28 border-t border-slate-800/80">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
-          <Badge variant="brand" className="bg-white/10 text-white border-white/20">
+          <Badge variant="brand" className="bg-white/10 text-white border-white/20 backdrop-blur-md">
             Join the Local Movement
           </Badge>
           <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
             Your next opportunity could be <br className="hidden sm:block" /> just around the corner.
           </h2>
-          <p className="text-xs sm:text-base text-brand-100 max-w-xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-base text-brand-100/90 max-w-xl mx-auto leading-relaxed">
             Start earning, hiring, and growing together with your local community on Work Adda.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
             <Link href="/register">
-              <Button size="lg" variant="accent" className="font-bold px-8 shadow-xl shadow-accent-500/25">
+              <Button size="lg" variant="accent" className="font-bold px-8 shadow-xl shadow-accent-500/30 hover:scale-105 transition-transform">
                 Join Work Adda for Free <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </Link>
             <Link href="/jobs">
-              <Button size="lg" variant="outline" className="bg-transparent text-white border-white/30 hover:bg-white/10 px-8">
+              <Button size="lg" variant="outline" className="bg-white/5 backdrop-blur-md text-white border-white/30 hover:bg-white/15 px-8">
                 Explore All Jobs
               </Button>
             </Link>
           </div>
         </div>
-      </section>
+      </AnimatedAurora>
     </div>
   );
 }

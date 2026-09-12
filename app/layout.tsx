@@ -8,6 +8,8 @@ import { Footer } from "@/components/navigation/footer";
 import { MobileNav } from "@/components/navigation/mobile-nav";
 import { SplashIntro } from "@/components/brand/splash-intro";
 
+import { AnimatedBackground } from "@/components/ui/animated-background";
+
 export const metadata: Metadata = {
   title: "Work Adda — Local Work. Local People. Local Growth.",
   description:
@@ -26,9 +28,11 @@ export default function RootLayout({
         <ToastProvider>
           <LanguageProvider>
             <AuthProvider>
-              <div className="min-h-screen flex flex-col bg-slate-50">
+              <div className="min-h-screen flex flex-col bg-slate-50/70 relative">
+                {/* Global Ambient Background Animation */}
+                <AnimatedBackground intensity="subtle" className="fixed inset-0" />
                 <Navbar />
-                <main className="flex-1">{children}</main>
+                <main className="flex-1 relative z-10">{children}</main>
                 <Footer />
                 <MobileNav />
               </div>

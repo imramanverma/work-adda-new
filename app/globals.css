@@ -138,3 +138,123 @@
 .animate-spin-reverse {
   animation: spin-reverse 16s linear infinite;
 }
+/* Extended Background Design Animation Keyframes */
+@keyframes blob-drift-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(50px, -40px, 0) scale(1.12);
+  }
+  66% {
+    transform: translate3d(-35px, 30px, 0) scale(0.92);
+  }
+}
+
+@keyframes blob-drift-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(-45px, 35px, 0) scale(1.08);
+  }
+  66% {
+    transform: translate3d(40px, -25px, 0) scale(0.95);
+  }
+}
+
+@keyframes blob-drift-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(30px, -50px, 0) scale(1.15) rotate(180deg);
+  }
+}
+
+@keyframes particle-drift {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(0.8);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-40px) translateX(20px) scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-80px) translateX(-15px) scale(0.8);
+    opacity: 0.2;
+  }
+}
+
+@keyframes aurora-sweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes grid-glow {
+  0%, 100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.animate-blob-1 {
+  animation: blob-drift-1 20s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-blob-2 {
+  animation: blob-drift-2 25s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-blob-3 {
+  animation: blob-drift-3 30s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-particle-1 {
+  animation: particle-drift 8s ease-in-out infinite;
+}
+
+.animate-particle-2 {
+  animation: particle-drift 12s ease-in-out infinite 2s;
+}
+
+.animate-particle-3 {
+  animation: particle-drift 10s ease-in-out infinite 4s;
+}
+
+.animate-aurora {
+  background-size: 200% 200%;
+  animation: aurora-sweep 15s ease infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 6s ease-in-out infinite;
+}
+
+.animate-grid-glow {
+  animation: grid-glow 8s ease-in-out infinite;
+}
