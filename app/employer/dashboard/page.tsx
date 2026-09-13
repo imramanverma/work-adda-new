@@ -184,53 +184,79 @@ export default function EmployerDashboardPage() {
             </div>
 
             <div className="space-y-3">
-              {jobs.length === 0 ? (
+              {jobs.filter((j) => j.status === "OPEN").length === 0 ? (
                 <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center">
-                  <p className="text-xs text-slate-500 mb-3">You haven't posted any jobs yet.</p>
-                  <Link href="/employer/jobs/new">
-                    <Button size="sm" variant="accent">
-                      Post First Work Listing
-                    </Button>
-                  </Link>
-                </div>
-              ) : (
-                jobs.map((job) => (
-                  <div
-                    key={job.id}
-                    className="bg-white p-5 rounded-2xl border border-slate-200 hover:shadow-sm transition flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge variant="brand">{job.category}</Badge>
-                        <Badge variant={job.status === "OPEN" ? "success" : "default"}>
-                          {job.status}
-                        </Badge>
-                      </div>
-                      <Link href={`/jobs/${job.id}`}>
-                        <h4 className="font-bold text-sm text-slate-900 hover:text-brand-600 transition">
-                          {job.title}
-                        </h4>
-                      </Link>
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mt-1">
-                        <span>{formatCurrency(job.payAmount)}/{job.payType.toLowerCase()}</span>
-                        <span>•</span>
-                        <span>{job.location}</span>
-                        <span>•</span>
-                        <span className="font-bold text-brand-700">
-                          {job._count?.applications || 0} applicants
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Link href={`/employer/applicants?jobId=${job.id}`}>
-                        <Button size="sm" variant="primary">
-                          Review Applicants ({job._count?.applications || 0})
+                  <p className="text-xs text-slate-500 mb-3">
+                    {jobs.some((j) => j.status === "COMPLETED")
+                      ? "All posted jobs have been completed or closed."
+                      : "You haven't posted any active jobs yet."}
+                  </p>
+                  <div className="flex items-center justify-center gap-3">
+                    <Link href="/employer/jobs/new">
+                      <Button size="sm" variant="accent">
+                        Post New Work
+                      </Button>
+                    </Link>
+                    {jobs.some((j) => j.status === "COMPLETED") && (
+                      <Link href="/employer/jobs">
+                        <Button size="sm" variant="outline">
+                          View Completed Work ({jobs.filter((j) => j.status === "COMPLETED").length})
                         </Button>
                       </Link>
-                    </div>
+                    )}
                   </div>
-                ))
+                </div>
+              ) : (
+                <>
+                  {jobs
+                    .filter((j) => j.status === "OPEN")
+                    .map((job) => (
+                      <div
+                        key={job.id}
+                        className="bg-white p-5 rounded-2xl border border-slate-200 hover:shadow-sm transition flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                      >
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge variant="brand">{job.category}</Badge>
+                            <Badge variant="success">OPEN</Badge>
+                          </div>
+                          <Link href={`/jobs/${job.id}`}>
+                            <h4 className="font-bold text-sm text-slate-900 hover:text-brand-600 transition">
+                              {job.title}
+                            </h4>
+                          </Link>
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mt-1">
+                            <span>{formatCurrency(job.payAmount)}/{job.payType.toLowerCase()}</span>
+                            <span>•</span>
+                            <span>{job.location}</span>
+                            <span>•</span>
+                            <span className="font-bold text-brand-700">
+                              {job._count?.applications || 0} applicants
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <Link href={`/employer/applicants?jobId=${job.id}`}>
+                            <Button size="sm" variant="primary">
+                              Review Applicants ({job._count?.applications || 0})
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+
+                  {jobs.some((j) => j.status === "COMPLETED") && (
+                    <div className="pt-2 text-right">
+                      <Link
+                        href="/employer/jobs"
+                        className="text-xs font-bold text-brand-600 hover:text-brand-700 hover:underline inline-flex items-center gap-1"
+                      >
+                        View {jobs.filter((j) => j.status === "COMPLETED").length} Completed Jobs &rarr;
+                      </Link>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

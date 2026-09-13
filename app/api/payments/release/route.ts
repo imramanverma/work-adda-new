@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireAuth } from "@/lib/session";
 import { assertValidEscrowTransition, recordPaymentAudit } from "@/lib/escrow";
@@ -118,6 +118,15 @@ export async function POST(req: NextRequest) {
                 status: "PAID",
                 completionStatus: "APPROVED",
               },
+            }),
+          ]
+        : []),
+
+      ...(payment.jobId
+        ? [
+            db.job.update({
+              where: { id: payment.jobId },
+              data: { status: "COMPLETED" },
             }),
           ]
         : []),

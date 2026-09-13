@@ -37,6 +37,12 @@ export async function PATCH(
       },
     });
 
+    // Mark parent job as COMPLETED so it is removed from active marketplace listings
+    await db.job.update({
+      where: { id: assignment.jobId },
+      data: { status: "COMPLETED" },
+    });
+
     // Update payment escrow status to RELEASE_ELIGIBLE if currently HELD
     await db.payment.updateMany({
       where: {

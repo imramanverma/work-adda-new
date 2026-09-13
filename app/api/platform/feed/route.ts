@@ -26,7 +26,13 @@ export async function GET(req: NextRequest) {
         },
       }),
       db.payment.findMany({
-        where: { status: "SUCCESS" },
+        where: {
+          OR: [
+            { status: "SUCCESS" },
+            { status: "RELEASED" },
+            { escrowStatus: "RELEASED" },
+          ],
+        },
         take: 3,
         orderBy: { createdAt: "desc" },
         include: {

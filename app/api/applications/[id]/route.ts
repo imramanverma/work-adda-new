@@ -93,7 +93,18 @@ export async function PATCH(
         });
       }
 
-      // 3. Notify Worker
+      // 3. Check if all required worker positions for this job are now filled
+      const totalHired = await db.workAssignment.count({
+        where: { jobId: application.jobId },
+      });
+      if (totalHired >= application.job.workersRequired) {
+        await db.job.update({
+          where: { id: application.jobId },
+          data: { status: "FILLED" },
+        });
+      }
+
+      // 4. Notify Worker
       await db.notification.create({
         data: {
           userId: application.workerId,

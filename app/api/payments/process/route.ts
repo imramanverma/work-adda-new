@@ -83,6 +83,12 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Mark parent job as COMPLETED so it is removed from active marketplace listings
+    await db.job.update({
+      where: { id: assignment.jobId },
+      data: { status: "COMPLETED" },
+    });
+
     // Notify Worker
     await db.notification.create({
       data: {

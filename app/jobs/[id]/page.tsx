@@ -188,6 +188,37 @@ export default function JobDetailsPage() {
           <ArrowLeft className="w-4 h-4" /> {language === "hi" ? "वापस काम खोजें" : "Back to Job Marketplace"}
         </Link>
 
+        {job.status === "COMPLETED" && (
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center gap-3 text-blue-900">
+            <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" />
+            <div>
+              <h4 className="font-bold text-sm">
+                {language === "hi" ? "यह कार्य पूरा हो चुका है" : "This Work Has Been Completed"}
+              </h4>
+              <p className="text-xs text-blue-700 mt-0.5">
+                {language === "hi"
+                  ? "नियोक्ता द्वारा कार्य सफलतापूर्वक सत्यापित और भुगतान कर दिया गया है। यह लिस्टिंग अब बंद है।"
+                  : "The employer has verified completion and released payment. This job listing is closed and no longer accepting applications."}
+              </p>
+            </div>
+          </div>
+        )}
+        {job.status === "FILLED" && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3 text-amber-900">
+            <Users className="w-5 h-5 text-amber-600 shrink-0" />
+            <div>
+              <h4 className="font-bold text-sm">
+                {language === "hi" ? "सभी पद भर चुके हैं" : "Positions Filled"}
+              </h4>
+              <p className="text-xs text-amber-700 mt-0.5">
+                {language === "hi"
+                  ? "इस काम के लिए आवश्यक सभी कर्मचारियों को नियुक्त कर लिया गया है।"
+                  : "All required worker positions for this job have been filled. You can browse other open opportunities."}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Main Job Card */}
         <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
           {/* Header */}
@@ -195,6 +226,9 @@ export default function JobDetailsPage() {
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <Badge variant="brand">{job.category}</Badge>
+                <Badge variant={job.status === "OPEN" ? "outline" : job.status === "COMPLETED" ? "brand" : "default"}>
+                  {job.status}
+                </Badge>
                 <Badge variant="outline">{job.jobType.replace("_", " ")}</Badge>
                 {job.matchScore !== null && (
                   <Badge variant="success" className="font-bold">
@@ -281,9 +315,19 @@ export default function JobDetailsPage() {
               <span className="text-slate-400 block font-medium">
                 {language === "hi" ? "स्थिति" : "Status"}
               </span>
-              <span className="font-bold text-emerald-700 flex items-center gap-1 mt-0.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                {language === "hi" && job.status === "OPEN" ? "सक्रिय / खुला" : job.status}
+              <span className={`font-bold flex items-center gap-1 mt-0.5 ${
+                job.status === "OPEN" ? "text-emerald-700" : job.status === "COMPLETED" ? "text-blue-700" : "text-amber-700"
+              }`}>
+                <CheckCircle2 className={`w-3.5 h-3.5 ${
+                  job.status === "OPEN" ? "text-emerald-600" : job.status === "COMPLETED" ? "text-blue-600" : "text-amber-600"
+                }`} />
+                {job.status === "OPEN"
+                  ? (language === "hi" ? "सक्रिय / खुला" : "OPEN")
+                  : job.status === "COMPLETED"
+                  ? (language === "hi" ? "कार्य पूर्ण (बंद)" : "COMPLETED")
+                  : job.status === "FILLED"
+                  ? (language === "hi" ? "पद भरे गए" : "FILLED")
+                  : job.status}
               </span>
             </div>
           </div>
@@ -403,6 +447,13 @@ export default function JobDetailsPage() {
                 <span className="text-xs text-slate-400 italic">
                   {language === "hi" ? "नियोक्ता नौकरियों के लिए आवेदन नहीं कर सकते।" : "Employers cannot apply for jobs."}
                 </span>
+              ) : job.status !== "OPEN" ? (
+                <div className="px-5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 text-xs font-bold flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-slate-400" />
+                  {job.status === "COMPLETED"
+                    ? (language === "hi" ? "कार्य पूर्ण व बंद" : "Work Completed & Closed")
+                    : (language === "hi" ? `काम बंद (${job.status})` : `Listing Closed (${job.status})`)}
+                </div>
               ) : (
                 <Button
                   size="lg"
