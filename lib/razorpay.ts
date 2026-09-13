@@ -1,4 +1,4 @@
-﻿import Razorpay from "razorpay";
+import Razorpay from "razorpay";
 import crypto from "crypto";
 
 const key_id = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "";
@@ -6,10 +6,20 @@ const key_secret = process.env.RAZORPAY_KEY_SECRET || "";
 
 let razorpayClient: Razorpay | null = null;
 
+export function isRazorpayConfigured(): boolean {
+  return Boolean(
+    key_id &&
+    key_secret &&
+    key_id !== "rzp_test_placeholder" &&
+    key_secret !== "rzp_test_secret_placeholder" &&
+    !key_id.toLowerCase().includes("placeholder")
+  );
+}
+
 export function getRazorpayClient(): Razorpay {
-  if (!key_id || !key_secret) {
+  if (!isRazorpayConfigured()) {
     throw new Error(
-      "Razorpay API credentials are not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in your environment."
+      "Razorpay API credentials are not configured or are using placeholder values. Please set your real RAZORPAY_KEY_ID (e.g. rzp_test_...) and RAZORPAY_KEY_SECRET in .env or Vercel."
     );
   }
 

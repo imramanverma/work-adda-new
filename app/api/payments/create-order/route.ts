@@ -1,7 +1,7 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireAuth } from "@/lib/session";
-import { createRazorpayOrder } from "@/lib/razorpay";
+import { createRazorpayOrder, isRazorpayConfigured } from "@/lib/razorpay";
 import { calculateEscrowBreakdown, recordPaymentAudit } from "@/lib/escrow";
 
 export async function POST(req: NextRequest) {
@@ -58,6 +58,24 @@ export async function POST(req: NextRequest) {
     if (breakdown.jobAmount <= 0) {
       return NextResponse.json(
         { error: "Invalid agreed amount for this assignment." },
+        { status: 400 }
+      );
+    }
+
+    // Check if Razorpay credentials are validly configured
+    if (!isRazorpayConfigured()) {
+      return NextResponse.json(
+        {
+          error: "Razorpay API credentials are not configured or are set to placeholders.",
+          isKeyMissing: true,
+          message: "Please configure RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in your environment or use Sandbox Escrow to test immediately.",
+          breakdown,
+          assignment: {
+            id: assignment.id,
+            jobTitle: assignment.job.title,
+            workerName: assignment.worker.name,
+          },
+        },
         { status: 400 }
       );
     }
@@ -140,8 +158,19 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     console.error("Create payment order error:", error);
+    const errorMsg = error.message || error.description || "Failed to create payment order.";
+    const isKeyError =
+      errorMsg.includes("api key") ||
+      errorMsg.includes("credentials") ||
+      errorMsg.includes("Authentication failed") ||
+      errorMsg.includes("Key ID") ||
+      errorMsg.includes("BAD_REQUEST_ERROR");
+
     return NextResponse.json(
-      { error: error.message || "Failed to create payment order." },
+      {
+        error: errorMsg,
+        isKeyMissing: isKeyError,
+      },
       { status: 500 }
     );
   }
