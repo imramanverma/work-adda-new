@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuthBackground } from "@/components/brand/auth-background";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -32,6 +33,8 @@ export default function RegisterPage() {
     location: "Fatehabad",
     businessName: "",
     businessType: "Retail Shop",
+    shopImage: "",
+    profileImage: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -77,6 +80,16 @@ export default function RegisterPage() {
       return;
     }
 
+    // Compulsory Shop Image Validation for Employers
+    if (role === "EMPLOYER" && (!formData.shopImage || !formData.shopImage.trim())) {
+      setError(
+        language === "hi"
+          ? "नियोक्ता पंजीकरण के लिए दुकान / कार्यस्थल की तस्वीर अनिवार्य है।"
+          : "Shop / Storefront image is compulsory for employer registration."
+      );
+      return;
+    }
+
     setLoading(true);
     const res = await register({
       name: formData.name,
@@ -87,6 +100,8 @@ export default function RegisterPage() {
       location: formData.location,
       businessName: role === "EMPLOYER" ? formData.businessName : undefined,
       businessType: role === "EMPLOYER" ? formData.businessType : undefined,
+      shopImage: role === "EMPLOYER" ? formData.shopImage : undefined,
+      profileImage: role === "WORKER" ? formData.profileImage : undefined,
     });
 
     if (!res.success && res.error) {
@@ -191,33 +206,69 @@ export default function RegisterPage() {
 
           {/* Employer Specific Fields */}
           {role === "EMPLOYER" && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-amber-50/50 rounded-2xl border border-amber-100">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Business Name</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.businessName}
-                  onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                  placeholder="e.g. Singh Retail Supermarket"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                />
+            <div className="space-y-4 p-4 bg-amber-50/50 rounded-2xl border border-amber-100">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Business Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.businessName}
+                    onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
+                    placeholder="e.g. Singh Retail Supermarket"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Business Category</label>
+                  <select
+                    value={formData.businessType}
+                    onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  >
+                    {businessTypes.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Business Category</label>
-                <select
-                  value={formData.businessType}
-                  onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                >
-                  {businessTypes.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Compulsory Shop Image */}
+              <ImageUpload
+                label={language === "hi" ? "दुकान/व्यवसाय की तस्वीर" : "Shop / Storefront Image"}
+                required={true}
+                aspectRatio="video"
+                placeholderIcon="store"
+                description={
+                  language === "hi"
+                    ? "अपनी दुकान या कार्यस्थल की स्पष्ट तस्वीर अपलोड करें। सत्यापन के लिए यह अनिवार्य है।"
+                    : "Upload a clear photo of your store, workshop, or business premises. Compulsory for employer verification."
+                }
+                value={formData.shopImage}
+                onChange={(val) => setFormData({ ...formData, shopImage: val || "" })}
+              />
+            </div>
+          )}
+
+          {/* Worker Specific Fields: Optional Profile Photo */}
+          {role === "WORKER" && (
+            <div className="p-4 bg-blue-50/40 rounded-2xl border border-blue-100">
+              <ImageUpload
+                label={language === "hi" ? "प्रोफ़ाइल तस्वीर" : "Worker Profile Photo"}
+                required={false}
+                aspectRatio="square"
+                placeholderIcon="user"
+                description={
+                  language === "hi"
+                    ? "अपनी तस्वीर अपलोड करें ताकि नियोक्ता आपको आसानी से पहचान सकें।"
+                    : "Upload a photo of yourself. Helps employers recognize and trust your profile."
+                }
+                value={formData.profileImage}
+                onChange={(val) => setFormData({ ...formData, profileImage: val || "" })}
+              />
             </div>
           )}
 

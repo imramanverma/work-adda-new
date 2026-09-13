@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
         email: true,
         phone: true,
         role: true,
+        profileImage: true,
         location: true,
         latitude: true,
         longitude: true,

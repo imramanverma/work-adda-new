@@ -337,18 +337,35 @@ export default function JobDetailsPage() {
 
           {/* Employer Verification Profile Box */}
           <div className="p-5 bg-gradient-to-r from-slate-50 to-blue-50/30 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <span className="text-xs text-slate-400 uppercase font-bold tracking-wider">
-                  {language === "hi" ? "नियोक्ता द्वारा पोस्ट" : "Posted by Employer"}
-                </span>
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                  {language === "hi" ? "ओटीपी-सत्यापित संपर्क" : "OTP-Verified Contact"}
-                </span>
+            <div className="flex items-start sm:items-center gap-3.5">
+              {job.employer?.shopImage && (
+                <div className="w-16 h-16 rounded-2xl overflow-hidden border border-slate-200 shrink-0 bg-slate-100 shadow-xs">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={job.employer.shopImage}
+                    alt={job.employer.businessName}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div>
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <span className="text-xs text-slate-400 uppercase font-bold tracking-wider">
+                    {language === "hi" ? "नियोक्ता द्वारा पोस्ट" : "Posted by Employer"}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                    {language === "hi" ? "ओटीपी-सत्यापित संपर्क" : "OTP-Verified Contact"}
+                  </span>
+                  {job.employer?.shopImage && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                      🏪 {language === "hi" ? "दुकान की तस्वीर उपलब्ध" : "Shop Photo Verified"}
+                    </span>
+                  )}
+                </div>
+                <h4 className="text-base font-extrabold text-slate-900">{job.employer?.businessName}</h4>
+                <p className="text-xs text-slate-500 mt-0.5">{job.employer?.businessType} • {job.employer?.location}</p>
               </div>
-              <h4 className="text-base font-extrabold text-slate-900">{job.employer?.businessName}</h4>
-              <p className="text-xs text-slate-500 mt-0.5">{job.employer?.businessType} • {job.employer?.location}</p>
             </div>
 
             {user?.role === "WORKER" && (

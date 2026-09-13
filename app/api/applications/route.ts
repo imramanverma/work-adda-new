@@ -92,6 +92,7 @@ export async function GET(req: NextRequest) {
               location: true,
               latitude: true,
               longitude: true,
+              profileImage: true,
               workerProfile: true,
             },
           },

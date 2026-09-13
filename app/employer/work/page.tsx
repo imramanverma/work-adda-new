@@ -290,9 +290,20 @@ export default function EmployerWorkPage() {
                   {/* Worker & Payment Details Strip */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
-                        {item.worker?.name.charAt(0)}
-                      </div>
+                      {item.worker?.profileImage ? (
+                        <div className="w-8 h-8 rounded-xl overflow-hidden border border-slate-200 shrink-0 bg-slate-100">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.worker.profileImage}
+                            alt={item.worker.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-8 h-8 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold shrink-0">
+                          {item.worker?.name.charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <span className="text-slate-400 block font-medium">Assigned Worker</span>
                         <span className="font-bold text-slate-800">{item.worker?.name}</span>

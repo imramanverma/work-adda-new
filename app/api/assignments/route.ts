@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
             phone: true,
             email: true,
             location: true,
+            profileImage: true,
             workerProfile: {
               select: { rating: true, completedJobs: true },
             },
@@ -55,7 +56,7 @@ export async function GET(req: NextRequest) {
             phone: true,
             email: true,
             employerProfile: {
-              select: { businessName: true, location: true, rating: true },
+              select: { businessName: true, location: true, rating: true, shopImage: true },
             },
           },
         },

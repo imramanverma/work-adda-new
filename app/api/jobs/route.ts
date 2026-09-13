@@ -78,6 +78,7 @@ export async function GET(req: NextRequest) {
               businessType: true,
               rating: true,
               verificationStatus: true,
+              shopImage: true,
               location: true,
             },
           },

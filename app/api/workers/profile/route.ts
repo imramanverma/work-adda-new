@@ -45,6 +45,7 @@ export async function GET(req: NextRequest) {
     if (fullUser.workerProfile.education) completion += 10;
     if (fullUser.workerProfile.availability) completion += 10;
     if (fullUser.location) completion += 10;
+    if (fullUser.profileImage) completion += 10;
 
     const workerData = {
       ...fullUser.workerProfile,
@@ -56,6 +57,7 @@ export async function GET(req: NextRequest) {
       location: fullUser.location,
       latitude: fullUser.latitude,
       longitude: fullUser.longitude,
+      profileImage: fullUser.profileImage,
       isVerified: fullUser.isVerified,
       completionPercentage: Math.min(100, completion),
       reviews: fullUser.reviewsReceived,
@@ -79,14 +81,20 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const validated = WorkerProfileUpdateSchema.parse(body);
 
-    // Update User location if provided
-    if (validated.location || validated.latitude !== undefined || validated.longitude !== undefined) {
+    // Update User location and profileImage if provided
+    if (
+      validated.location ||
+      validated.latitude !== undefined ||
+      validated.longitude !== undefined ||
+      validated.profileImage !== undefined
+    ) {
       await db.user.update({
         where: { id: user.id },
         data: {
           location: validated.location ?? undefined,
           latitude: validated.latitude ?? undefined,
           longitude: validated.longitude ?? undefined,
+          profileImage: validated.profileImage !== undefined ? validated.profileImage : undefined,
         },
       });
     }

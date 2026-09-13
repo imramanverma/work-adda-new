@@ -426,8 +426,19 @@ export default function JobsDiscoveryPage() {
                     </h3>
                   </Link>
 
-                  <div className="flex items-center gap-1.5 text-xs text-slate-600 mt-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <div className="flex items-center gap-2 text-xs text-slate-600 mt-2">
+                    {job.employer?.shopImage ? (
+                      <div className="w-7 h-7 rounded-lg overflow-hidden border border-slate-200 shrink-0 bg-slate-100 shadow-2xs">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={job.employer.shopImage}
+                          alt={job.employer.businessName}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
+                    )}
                     <span className="font-semibold text-slate-700 truncate">
                       {job.employer?.businessName || "Local Business"}
                     </span>

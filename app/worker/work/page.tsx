@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -249,7 +249,18 @@ export default function WorkerWorkPage() {
                   {/* Details Strip */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                     <div className="flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
+                      {item.employer?.employerProfile?.shopImage ? (
+                        <div className="w-8 h-8 rounded-xl overflow-hidden border border-slate-200 shrink-0 bg-slate-100">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.employer.employerProfile.shopImage}
+                            alt={item.employer.employerProfile.businessName}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
+                      )}
                       <div>
                         <span className="text-slate-400 block font-medium">Employer</span>
                         <span className="font-bold text-slate-800">

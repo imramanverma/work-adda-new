@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
         location: validatedData.location,
         latitude: validatedData.latitude,
         longitude: validatedData.longitude,
+        profileImage: validatedData.profileImage || null,
         isVerified: true, // Auto-verified for instant marketplace usage
         phoneVerified: true,
         ...(validatedData.role === "WORKER"
@@ -53,6 +54,7 @@ export async function POST(req: NextRequest) {
                 create: {
                   businessName: validatedData.businessName || `${validatedData.name}'s Enterprise`,
                   businessType: validatedData.businessType || "Local Business",
+                  shopImage: validatedData.shopImage || null,
                   description: "Local employer on Work Adda",
                   location: validatedData.location,
                   latitude: validatedData.latitude,

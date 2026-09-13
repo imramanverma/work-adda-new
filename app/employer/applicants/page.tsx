@@ -166,9 +166,20 @@ function ApplicantsContent() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-brand-600 text-white font-black text-sm flex items-center justify-center">
-                      {app.worker?.name.charAt(0)}
-                    </div>
+                    {app.worker?.profileImage ? (
+                      <div className="w-11 h-11 rounded-2xl overflow-hidden border border-slate-200 shrink-0 bg-slate-100 shadow-2xs">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={app.worker.profileImage}
+                          alt={app.worker.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-11 h-11 rounded-2xl bg-brand-600 text-white font-black text-sm flex items-center justify-center shrink-0">
+                        {app.worker?.name.charAt(0)}
+                      </div>
+                    )}
                     <div>
                       <h3 className="font-bold text-base text-slate-900 leading-tight">
                         {app.worker?.name}

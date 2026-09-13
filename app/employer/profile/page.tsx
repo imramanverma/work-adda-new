@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 export default function EmployerProfilePage() {
   const { user } = useAuth();
@@ -24,6 +25,7 @@ export default function EmployerProfilePage() {
   // Form State
   const [businessName, setBusinessName] = useState("");
   const [businessType, setBusinessType] = useState("Retail Shop");
+  const [shopImage, setShopImage] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
   const [location, setLocation] = useState("");
@@ -53,6 +55,7 @@ export default function EmployerProfilePage() {
           setProfile(p);
           setBusinessName(p.businessName || "");
           setBusinessType(p.businessType || "Retail Shop");
+          setShopImage(p.shopImage || null);
           setDescription(p.description || "");
           setAddress(p.address || "");
           setLocation(p.location || "");
@@ -77,6 +80,7 @@ export default function EmployerProfilePage() {
         body: JSON.stringify({
           businessName,
           businessType,
+          shopImage: shopImage || undefined,
           description,
           address,
           location,
@@ -155,6 +159,19 @@ export default function EmployerProfilePage() {
                 ))}
               </select>
             </div>
+          </div>
+
+          {/* Shop / Workplace Image (Compulsory for employers) */}
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+            <ImageUpload
+              label="Shop / Workplace Front Photo"
+              required={true}
+              aspectRatio="video"
+              placeholderIcon="store"
+              description="A clear photo of your store, workshop, or office premises. Displayed to workers on job postings."
+              value={shopImage}
+              onChange={setShopImage}
+            />
           </div>
 
           <div>

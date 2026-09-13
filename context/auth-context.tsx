@@ -14,6 +14,7 @@ export interface AuthUser {
   latitude?: number | null;
   longitude?: number | null;
   isVerified: boolean;
+  profileImage?: string | null;
   unreadNotificationsCount?: number;
   workerProfile?: any;
   employerProfile?: any;

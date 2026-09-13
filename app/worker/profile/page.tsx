@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { formatDate } from "@/lib/utils";
 
 export default function WorkerProfilePage() {
@@ -29,6 +30,7 @@ export default function WorkerProfilePage() {
   const [saving, setSaving] = useState(false);
 
   // Form State
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [bio, setBio] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [newSkillInput, setNewSkillInput] = useState("");
@@ -67,6 +69,7 @@ export default function WorkerProfilePage() {
           const data = await res.json();
           const p = data.profile;
           setProfile(p);
+          setProfileImage(p.profileImage || null);
           setBio(p.bio || "");
           setSkills(p.skills || []);
           setExperience(p.experience || "");
@@ -106,6 +109,7 @@ export default function WorkerProfilePage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          profileImage: profileImage || undefined,
           bio,
           skills,
           experience,
@@ -189,6 +193,19 @@ export default function WorkerProfilePage() {
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
+            </div>
+
+            {/* Worker Profile Photo (Optional) */}
+            <div className="pt-2 border-t border-slate-100">
+              <ImageUpload
+                label="Worker Profile Photo"
+                required={false}
+                aspectRatio="square"
+                placeholderIcon="user"
+                description="A clear photo of yourself helps employers recognize you on the job site."
+                value={profileImage}
+                onChange={setProfileImage}
+              />
             </div>
 
             <div>

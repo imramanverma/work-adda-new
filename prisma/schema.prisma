@@ -70,6 +70,7 @@ model EmployerProfile {
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   businessName       String
   businessType       String   @default("Local Business")
+  shopImage          String?  // Shop / Storefront / Workplace Image
   description        String?
   address            String?
   location           String?

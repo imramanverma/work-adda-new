@@ -1,19 +1,34 @@
 import { z } from "zod";
 
-export const RegisterSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  role: z.enum(["WORKER", "EMPLOYER"], {
-    errorMap: () => ({ message: "Please select either WORKER or EMPLOYER" }),
-  }),
-  location: z.string().min(2, "Location is required"),
-  latitude: z.number().optional().nullable(),
-  longitude: z.number().optional().nullable(),
-  businessName: z.string().optional(),
-  businessType: z.string().optional(),
-});
+export const RegisterSchema = z
+  .object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    phone: z.string().min(10, "Phone number must be at least 10 digits"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    role: z.enum(["WORKER", "EMPLOYER"], {
+      errorMap: () => ({ message: "Please select either WORKER or EMPLOYER" }),
+    }),
+    location: z.string().min(2, "Location is required"),
+    latitude: z.number().optional().nullable(),
+    longitude: z.number().optional().nullable(),
+    businessName: z.string().optional(),
+    businessType: z.string().optional(),
+    shopImage: z.string().optional(),
+    profileImage: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.role === "EMPLOYER") {
+        return Boolean(data.shopImage && data.shopImage.trim().length > 0);
+      }
+      return true;
+    },
+    {
+      message: "Shop image is compulsory for employer registration",
+      path: ["shopImage"],
+    }
+  );
 
 export const LoginSchema = z
   .object({
@@ -39,11 +54,13 @@ export const WorkerProfileUpdateSchema = z.object({
   location: z.string().optional(),
   latitude: z.number().optional().nullable(),
   longitude: z.number().optional().nullable(),
+  profileImage: z.string().optional(),
 });
 
 export const EmployerProfileUpdateSchema = z.object({
   businessName: z.string().min(2, "Business name is required"),
   businessType: z.string().min(2, "Business type is required"),
+  shopImage: z.string().optional(),
   description: z.string().max(1500).optional(),
   address: z.string().optional(),
   location: z.string().optional(),

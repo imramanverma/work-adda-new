@@ -57,6 +57,7 @@ export async function PUT(req: NextRequest) {
       data: {
         businessName: validated.businessName,
         businessType: validated.businessType,
+        shopImage: validated.shopImage !== undefined ? validated.shopImage : undefined,
         description: validated.description,
         address: validated.address,
         location: validated.location,
