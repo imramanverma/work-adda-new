@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -395,7 +395,7 @@ export default function EmployerWorkPage() {
                           jobTitle={item.job?.title}
                           workerName={item.worker?.name}
                           amount={item.agreedAmount}
-                          buttonText="Deposit in Escrow via Razorpay"
+                          buttonText="Deposit in Escrow"
                           onSuccess={() => {
                             toast.success(
                               "Escrow Deposit Successful! 🔒",
