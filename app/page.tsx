@@ -27,11 +27,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { useLanguage } from "@/context/language-context";
+import { useAuth } from "@/context/auth-context";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { AnimatedAurora } from "@/components/ui/animated-aurora";
 
 export default function HomePage() {
   const router = useRouter();
+  const { user } = useAuth();
   const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<"worker" | "employer">("worker");
   const [heroSearch, setHeroSearch] = useState("");
@@ -565,44 +567,48 @@ export default function HomePage() {
                     {language === "hi" ? "लोकल काम देखें" : "Explore Local Jobs"}
                   </Button>
                 </Link>
-                <Link href="/register">
-                  <Button size="sm" variant="primary" className="font-semibold">
-                    {language === "hi" ? "खाता बनाएं" : "Create Free Account"}
-                  </Button>
-                </Link>
+                {!user && (
+                  <Link href="/register">
+                    <Button size="sm" variant="primary" className="font-semibold">
+                      {language === "hi" ? "खाता बनाएं" : "Create Free Account"}
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           )}
         </div>
       </section>
 
-      {/* 6. High-Impact Call To Action with Animated Aurora Cosmic Waves */}
-      <AnimatedAurora className="py-24 sm:py-28 border-t border-slate-800/80">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
-          <Badge variant="brand" className="bg-white/10 text-white border-white/20 backdrop-blur-md">
-            Join the Local Movement
-          </Badge>
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-            Your next opportunity could be <br className="hidden sm:block" /> just around the corner.
-          </h2>
-          <p className="text-xs sm:text-base text-brand-100/90 max-w-xl mx-auto leading-relaxed">
-            Start earning, hiring, and growing together with your local community on Work Adda.
-          </p>
+      {/* 6. High-Impact Call To Action with Animated Aurora Cosmic Waves (Only shown for guest visitors) */}
+      {!user && (
+        <AnimatedAurora className="py-24 sm:py-28 border-t border-slate-800/80">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
+            <Badge variant="brand" className="bg-white/10 text-white border-white/20 backdrop-blur-md">
+              Join the Local Movement
+            </Badge>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
+              Your next opportunity could be <br className="hidden sm:block" /> just around the corner.
+            </h2>
+            <p className="text-xs sm:text-base text-brand-100/90 max-w-xl mx-auto leading-relaxed">
+              Start earning, hiring, and growing together with your local community on Work Adda.
+            </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
-            <Link href="/register">
-              <Button size="lg" variant="accent" className="font-bold px-8 shadow-xl shadow-accent-500/30 hover:scale-105 transition-transform">
-                Join Work Adda for Free <ArrowRight className="w-4 h-4 ml-1.5" />
-              </Button>
-            </Link>
-            <Link href="/jobs">
-              <Button size="lg" variant="outline" className="bg-white/5 backdrop-blur-md text-white border-white/30 hover:bg-white/15 px-8">
-                Explore All Jobs
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
+              <Link href="/register">
+                <Button size="lg" variant="accent" className="font-bold px-8 shadow-xl shadow-accent-500/30 hover:scale-105 transition-transform">
+                  Join Work Adda for Free <ArrowRight className="w-4 h-4 ml-1.5" />
+                </Button>
+              </Link>
+              <Link href="/jobs">
+                <Button size="lg" variant="outline" className="bg-white/5 backdrop-blur-md text-white border-white/30 hover:bg-white/15 px-8">
+                  Explore All Jobs
+                </Button>
+              </Link>
+            </div>
           </div>
-        </div>
-      </AnimatedAurora>
+        </AnimatedAurora>
+      )}
     </div>
   );
 }
