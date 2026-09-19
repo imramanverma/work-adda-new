@@ -105,7 +105,7 @@ export default function RegisterPage() {
       {/* Beautiful Animated Background */}
       <AuthBackground />
 
-      <div className="max-w-xl w-full space-y-8 bg-white/92 backdrop-blur-xl p-8 sm:p-10 rounded-3xl border border-white/80 shadow-2xl shadow-brand-900/10 relative z-10">
+      <div className="max-w-xl w-full space-y-8 bg-white/92 backdrop-blur-xl p-5 sm:p-10 rounded-3xl border border-white/80 shadow-2xl shadow-brand-900/10 relative z-10">
         <div className="text-center">
           <h2 className="text-3xl font-black text-slate-900 tracking-tight">
             {language === "hi" ? "वर्क अड्डा से जुड़ें" : "Join Work Adda"}

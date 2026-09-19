@@ -32,7 +32,7 @@ export default function LoginPage() {
       {/* Beautiful Animated Background */}
       <AuthBackground />
 
-      <div className="max-w-md w-full space-y-7 bg-white/90 backdrop-blur-xl p-8 sm:p-9 rounded-3xl border border-white/80 shadow-2xl shadow-brand-900/10 relative z-10">
+      <div className="max-w-md w-full space-y-7 bg-white/90 backdrop-blur-xl p-5 sm:p-9 rounded-3xl border border-white/80 shadow-2xl shadow-brand-900/10 relative z-10">
         <div className="text-center">
           <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-brand-700 via-brand-600 to-accent-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-brand-500/25 mb-3 p-0.5">
             <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center">

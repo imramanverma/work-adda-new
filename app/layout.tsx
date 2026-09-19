@@ -32,7 +32,7 @@ export default function RootLayout({
                 {/* Global Ambient Background Animation */}
                 <AnimatedBackground intensity="subtle" className="fixed inset-0" />
                 <Navbar />
-                <main className="flex-1 relative z-10">{children}</main>
+                <main className="flex-1 relative z-10 pb-16 md:pb-0">{children}</main>
                 <Footer />
                 <MobileNav />
               </div>

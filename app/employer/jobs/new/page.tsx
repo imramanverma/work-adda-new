@@ -304,7 +304,7 @@ export default function NewJobPage() {
           <ArrowLeft className="w-4 h-4" /> Back to Dashboard
         </Link>
 
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-8">
+        <div className="bg-white rounded-3xl border border-slate-200 p-4 sm:p-10 shadow-sm space-y-8">
           {/* Header */}
           <div className="border-b border-slate-100 pb-5">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
@@ -1231,13 +1231,13 @@ export default function NewJobPage() {
               </label>
             </div>
 
-            <div className="pt-2 flex justify-end gap-3">
-              <Link href="/employer/dashboard">
-                <Button type="button" variant="secondary">
+            <div className="pt-2 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+              <Link href="/employer/dashboard" className="w-full sm:w-auto">
+                <Button type="button" variant="secondary" className="w-full sm:w-auto">
                   Cancel
                 </Button>
               </Link>
-              <Button type="submit" size="lg" isLoading={loading} className="font-bold px-8 shadow-md shadow-brand-500/20">
+              <Button type="submit" size="lg" isLoading={loading} className="w-full sm:w-auto font-bold px-8 shadow-md shadow-brand-500/20">
                 Publish Work Listing 🚀
               </Button>
             </div>

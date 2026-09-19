@@ -113,14 +113,14 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* 1. Enhanced Hero Section with Animated Ambient Background */}
-      <section className="relative overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28 border-b border-slate-200">
+      <section className="relative overflow-hidden pt-8 pb-14 sm:pt-20 sm:pb-28 border-b border-slate-200">
         {/* Dynamic Multi-Layer Animated Mesh Background */}
         <AnimatedBackground intensity="hero" showGrid={true} showParticles={true} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Col: Hero Value Proposition */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+            <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
               {/* Pop Logo Badge */}
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-brand-200 shadow-sm shadow-brand-500/10">
                 <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
@@ -129,14 +129,14 @@ export default function HomePage() {
                 </span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-[1.12]">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.14] sm:leading-[1.12]">
                 {t("brand.hero_title_1")} <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-700 via-brand-600 to-accent-600">
                   {t("brand.hero_title_2")}
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-600 max-w-2xl leading-relaxed">
+              <p className="text-sm sm:text-lg text-slate-600 max-w-2xl leading-relaxed">
                 {t("brand.hero_desc")}
               </p>
 
@@ -145,40 +145,42 @@ export default function HomePage() {
                 onSubmit={handleHeroSearch}
                 className="bg-white p-2 rounded-2xl sm:rounded-full border-2 border-brand-200 shadow-lg shadow-brand-500/10 flex flex-col sm:flex-row items-center gap-2 max-w-2xl"
               >
-                <div className="flex items-center gap-2 px-4 py-2 w-full sm:w-auto flex-1">
+                <div className="flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 w-full sm:w-auto flex-1">
                   <Search className="w-4 h-4 text-brand-600 shrink-0" />
                   <input
                     type="text"
                     placeholder={t("hero.search_input")}
                     value={heroSearch}
                     onChange={(e) => setHeroSearch(e.target.value)}
-                    className="w-full text-xs sm:text-sm focus:outline-none text-slate-900 bg-transparent placeholder:text-slate-400"
+                    className="w-full text-sm focus:outline-none text-slate-900 bg-transparent placeholder:text-slate-400"
                   />
                 </div>
 
-                <div className="flex items-center gap-2 px-4 py-2 border-t sm:border-t-0 sm:border-l border-slate-200 w-full sm:w-auto">
-                  <MapPin className="w-4 h-4 text-accent-500 shrink-0" />
-                  <select
-                    value={heroLocation}
-                    onChange={(e) => setHeroLocation(e.target.value)}
-                    className="text-xs sm:text-sm font-semibold text-slate-700 bg-transparent focus:outline-none"
-                  >
-                    <option value="Fatehabad">Fatehabad</option>
-                    <option value="Sirsa">Sirsa</option>
-                    <option value="Hisar">Hisar</option>
-                  </select>
+                <div className="flex items-center justify-between sm:justify-start gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 border-t sm:border-t-0 sm:border-l border-slate-200 w-full sm:w-auto">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-accent-500 shrink-0" />
+                    <select
+                      value={heroLocation}
+                      onChange={(e) => setHeroLocation(e.target.value)}
+                      className="text-xs sm:text-sm font-semibold text-slate-700 bg-transparent focus:outline-none cursor-pointer"
+                    >
+                      <option value="Fatehabad">Fatehabad</option>
+                      <option value="Sirsa">Sirsa</option>
+                      <option value="Hisar">Hisar</option>
+                    </select>
+                  </div>
                 </div>
 
-                <Button type="submit" size="md" className="w-full sm:w-auto font-bold rounded-xl sm:rounded-full px-6">
+                <Button type="submit" size="md" className="w-full sm:w-auto font-bold rounded-xl sm:rounded-full px-6 py-2.5 sm:py-2 text-xs sm:text-sm shadow-xs">
                   {t("hero.search_btn")}
                 </Button>
               </form>
 
               {/* Social Proof Strip - 100% Dynamic Database Values */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2 text-xs text-slate-600">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 sm:gap-3 pt-1 sm:pt-2 text-xs text-slate-600">
                 {platformStats.totalWorkers > 0 || platformStats.totalBusinesses > 0 ? (
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100/90 text-slate-700 font-semibold border border-slate-200">
-                    <Users className="w-4 h-4 text-brand-600 shrink-0" />
+                  <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-xl bg-slate-100/90 text-slate-700 font-semibold border border-slate-200 text-[11px] sm:text-xs">
+                    <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-600 shrink-0" />
                     <span>
                       {language === "hi" ? (
                         <>
@@ -194,8 +196,8 @@ export default function HomePage() {
                     </span>
                   </div>
                 ) : (
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-brand-50 border border-brand-200 text-brand-900 font-semibold">
-                    <ShieldCheck className="w-4 h-4 text-brand-600 shrink-0" />
+                  <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-xl bg-brand-50 border border-brand-200 text-brand-900 font-semibold text-[11px] sm:text-xs">
+                    <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-600 shrink-0" />
                     <span>
                       {language === "hi"
                         ? "फतेहाबाद, सिरसा व हिसार का पहला हाइपरलोकल रोजगार नेटवर्क • 100% सत्यापित"
@@ -209,22 +211,22 @@ export default function HomePage() {
             {/* Right Col: Dynamic Visual Card with Authentic Capability Badges */}
             <div className="lg:col-span-5 relative pt-6 pb-8 px-1 sm:px-3">
               {/* Floating Region Verification Badge */}
-              <div className="absolute -top-4 sm:-top-5 left-3 sm:left-6 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl border border-brand-200/90 shadow-xl shadow-brand-500/15 flex items-center gap-2.5 animate-float-slow">
-                <div className="w-8 h-8 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center shrink-0">
-                  <MapPin className="w-4 h-4 text-brand-600" />
+              <div className="absolute -top-3.5 sm:-top-5 left-2 sm:left-6 z-20 bg-white/95 backdrop-blur-md px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-2xl border border-brand-200/90 shadow-xl shadow-brand-500/15 flex items-center gap-2 sm:gap-2.5 animate-float-slow max-w-[calc(100%-1rem)]">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center shrink-0">
+                  <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-600" />
                 </div>
                 <div>
                   <span className="font-black text-xs sm:text-sm text-slate-900 block leading-tight">
                     {language === "hi" ? "हाइपरलोकल नेटवर्क" : "Hyperlocal Network"}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-medium">Fatehabad, Sirsa & Hisar, Haryana</span>
+                  <span className="text-[10px] text-slate-500 font-medium truncate block max-w-[180px] sm:max-w-none">Fatehabad, Sirsa & Hisar, Haryana</span>
                 </div>
               </div>
 
               {/* Main Feature Showcase Card with Animated Glow Aura */}
               <div className="relative group">
                 <div className="absolute -inset-1.5 bg-gradient-to-r from-brand-600 via-accent-400 to-emerald-500 rounded-[32px] blur-xl opacity-25 group-hover:opacity-45 transition duration-1000 animate-pulse-slow" />
-                <div className="bg-white/95 backdrop-blur-xl rounded-3xl border-2 border-white/90 p-6 pt-7 pb-10 sm:pb-12 shadow-2xl shadow-slate-300/40 space-y-4 relative overflow-hidden">
+                <div className="bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl border-2 border-white/90 p-4 sm:p-6 pt-7 sm:pt-7 pb-10 sm:pb-12 shadow-2xl shadow-slate-300/40 space-y-3.5 sm:space-y-4 relative overflow-hidden">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3 pt-1">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
@@ -367,12 +369,12 @@ export default function HomePage() {
                     </Link>
                   </div>
                 ) : user?.role === "BOTH" ? (
-                  <div className="pt-1 grid grid-cols-2 gap-2">
+                  <div className="pt-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <Link href="/jobs">
                       <Button
                         size="md"
                         variant="primary"
-                        className="w-full font-bold text-xs rounded-xl sm:rounded-2xl shadow-xs flex items-center justify-center gap-1.5"
+                        className="w-full font-bold text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-xs flex items-center justify-center gap-1.5"
                       >
                         <Search className="w-3.5 h-3.5" />
                         <span>{language === "hi" ? "काम खोजें" : "Explore Jobs"}</span>
@@ -382,7 +384,7 @@ export default function HomePage() {
                       <Button
                         size="md"
                         variant="accent"
-                        className="w-full font-bold text-xs rounded-xl sm:rounded-2xl shadow-xs flex items-center justify-center gap-1.5 text-slate-950 bg-amber-400 hover:bg-amber-500"
+                        className="w-full font-bold text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-xs flex items-center justify-center gap-1.5 text-slate-950 bg-amber-400 hover:bg-amber-500"
                       >
                         <PlusCircle className="w-3.5 h-3.5" />
                         <span>{language === "hi" ? "काम पोस्ट करें" : "Post a Job"}</span>
@@ -422,9 +424,9 @@ export default function HomePage() {
             </div>
 
               {/* Floating Payment Security Badge */}
-              <div className="absolute -bottom-4 sm:-bottom-5 -right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl border border-blue-200/90 shadow-xl shadow-blue-500/15 flex items-center gap-2.5 animate-float-delayed">
-                <div className="w-8 h-8 rounded-xl bg-blue-100 text-brand-600 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-4 h-4 text-brand-600" />
+              <div className="absolute -bottom-3.5 sm:-bottom-5 right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-2xl border border-blue-200/90 shadow-xl shadow-blue-500/15 flex items-center gap-2 sm:gap-2.5 animate-float-delayed max-w-[calc(100%-1rem)]">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-100 text-brand-600 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-600" />
                 </div>
                 <div>
                   <span className="font-black text-xs sm:text-sm text-slate-900 block leading-tight">
@@ -446,61 +448,61 @@ export default function HomePage() {
       <section className="bg-gradient-to-r from-slate-950 via-brand-950 to-slate-900 py-8 sm:py-10 px-4 sm:px-6 lg:px-8 border-b border-slate-800 text-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-500/20 text-accent-300 text-xs font-bold border border-accent-500/30">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-500/20 text-accent-300 text-[11px] sm:text-xs font-bold border border-accent-500/30">
               <Sparkles className="w-3.5 h-3.5" />
               {user?.role === "WORKER"
                 ? (language === "hi" ? "कामगारों के लिए 100% फ्री • सीधे UPI भुगतान • एस्क्रो सुरक्षित" : "100% Free for Workers • Direct UPI Payouts • Escrow Protected")
                 : (language === "hi" ? "तेज हायरिंग • लोकल व रिमोट • 100% एस्क्रो सुरक्षा" : "Fast Hiring • Local & Remote • 100% Escrow Protected")}
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+            <h2 className="text-xl sm:text-3xl font-black tracking-tight text-white">
               {user?.role === "WORKER"
                 ? (language === "hi" ? "अपनी सुविधा अनुसार लोकल काम करें और कमाएं" : "Ready to earn money on your own schedule?")
                 : user?.role === "EMPLOYER"
                 ? (language === "hi" ? "आपको किस काम के लिए कामगार चाहिए?" : "What work do you need done?")
                 : (language === "hi" ? "लोकल कामगार रखें या काम ढूंढें" : "Need Work Done or Looking for Gigs?")}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl font-medium">
+            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl font-medium leading-relaxed">
               {language === "hi"
                 ? "असाइनमेंट राइटिंग • दुकान • डिलीवरी • कंप्यूटर • होम ट्यूशन • रिपेयर • पार्ट-टाइम वर्क"
                 : "Assignment • Delivery • Design • Data Entry • Tutoring • Repair • Shop Work • Household Work • Freelance Tasks"}
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center justify-center w-full md:w-auto gap-3 shrink-0">
             {user?.role === "WORKER" ? (
-              <Link href="/jobs">
-                <Button size="lg" variant="accent" className="font-extrabold px-8 shadow-xl shadow-accent-500/20 text-slate-950">
+              <Link href="/jobs" className="w-full sm:w-auto">
+                <Button size="lg" variant="accent" className="w-full sm:w-auto font-extrabold px-8 shadow-xl shadow-accent-500/20 text-slate-950">
                   {language === "hi" ? "उपलब्ध काम देखें →" : "Browse Available Jobs →"}
                 </Button>
               </Link>
             ) : user?.role === "EMPLOYER" ? (
-              <Link href="/employer/jobs/new">
-                <Button size="lg" variant="accent" className="font-extrabold px-8 shadow-xl shadow-accent-500/20 text-slate-950">
+              <Link href="/employer/jobs/new" className="w-full sm:w-auto">
+                <Button size="lg" variant="accent" className="w-full sm:w-auto font-extrabold px-8 shadow-xl shadow-accent-500/20 text-slate-950">
                   {language === "hi" ? "काम / टास्क पोस्ट करें →" : "Post a Job / Task Now →"}
                 </Button>
               </Link>
             ) : user?.role === "BOTH" ? (
-              <div className="flex flex-wrap items-center gap-2.5">
-                <Link href="/employer/jobs/new">
-                  <Button size="lg" variant="accent" className="font-extrabold px-6 shadow-xl shadow-accent-500/20 text-slate-950">
+              <div className="flex flex-col sm:flex-row w-full sm:w-auto items-stretch sm:items-center gap-2.5">
+                <Link href="/employer/jobs/new" className="w-full sm:w-auto">
+                  <Button size="lg" variant="accent" className="w-full sm:w-auto font-extrabold px-6 shadow-xl shadow-accent-500/20 text-slate-950">
                     {language === "hi" ? "काम पोस्ट करें →" : "Post a Job →"}
                   </Button>
                 </Link>
-                <Link href="/jobs">
-                  <Button size="lg" variant="outline" className="font-bold px-6 bg-white/10 hover:bg-white/20 text-white border-white/30">
+                <Link href="/jobs" className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto font-bold px-6 bg-white/10 hover:bg-white/20 text-white border-white/30">
                     {language === "hi" ? "काम खोजें →" : "Find Work →"}
                   </Button>
                 </Link>
               </div>
             ) : (
-              <div className="flex flex-wrap items-center gap-2.5">
-                <Link href="/employer/jobs/new">
-                  <Button size="lg" variant="accent" className="font-extrabold px-6 shadow-xl shadow-accent-500/20 text-slate-950">
+              <div className="flex flex-col sm:flex-row w-full sm:w-auto items-stretch sm:items-center gap-2.5">
+                <Link href="/employer/jobs/new" className="w-full sm:w-auto">
+                  <Button size="lg" variant="accent" className="w-full sm:w-auto font-extrabold px-6 shadow-xl shadow-accent-500/20 text-slate-950">
                     {language === "hi" ? "काम पोस्ट करें →" : "Post a Job →"}
                   </Button>
                 </Link>
-                <Link href="/jobs">
-                  <Button size="lg" variant="outline" className="font-bold px-6 bg-white/10 hover:bg-white/20 text-white border-white/30">
+                <Link href="/jobs" className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto font-bold px-6 bg-white/10 hover:bg-white/20 text-white border-white/30">
                     {language === "hi" ? "काम खोजें →" : "Find Work →"}
                   </Button>
                 </Link>
@@ -511,9 +513,9 @@ export default function HomePage() {
       </section>
 
       {/* 2. Popular Categories with Gradient Badges */}
-      <section className="py-16 bg-white border-b border-slate-200">
+      <section className="py-12 sm:py-16 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-3 sm:gap-4">
             <div>
               <span className="text-xs uppercase font-bold tracking-widest text-brand-600">
                 {language === "hi" ? "विविध अवसर" : "Diverse Opportunities"}
@@ -536,22 +538,22 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {categories.map((c, i) => {
               const count = platformStats.categoryCounts[c.key] || 0;
               return (
                 <Link
                   key={i}
                   href={`/jobs?category=${encodeURIComponent(c.key)}`}
-                  className={`p-5 rounded-2xl border border-slate-200 bg-gradient-to-br ${c.bg} ${c.border} hover:shadow-md transition-all group`}
+                  className={`p-3.5 sm:p-5 rounded-2xl border border-slate-200 bg-gradient-to-br ${c.bg} ${c.border} hover:shadow-md transition-all group`}
                 >
-                  <span className="text-3xl block mb-3 group-hover:scale-110 transition-transform">
+                  <span className="text-2xl sm:text-3xl block mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
                     {c.icon}
                   </span>
-                  <h4 className="font-bold text-sm text-slate-900 group-hover:text-brand-600 transition">
+                  <h4 className="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-brand-600 transition line-clamp-1 sm:line-clamp-none">
                     {c.name}
                   </h4>
-                  <span className="text-xs text-slate-500 font-medium mt-1 block">
+                  <span className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5 sm:mt-1 block">
                     {count > 0
                       ? (language === "hi" ? `${count} काम उपलब्ध` : `${count} Open ${count === 1 ? "Gig" : "Gigs"}`)
                       : (language === "hi" ? "कोई काम उपलब्ध नहीं" : "0 Open Gigs")}
@@ -645,21 +647,21 @@ export default function HomePage() {
       )}
 
       {/* 4. How It Works Interactive Tabs */}
-      <section className="py-16 sm:py-20 bg-white border-b border-slate-200">
+      <section className="py-12 sm:py-20 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-10">
+          <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
             <span className="text-xs uppercase font-bold tracking-widest text-brand-600">
               Clear & Straightforward
             </span>
-            <h3 className="text-3xl font-extrabold text-slate-900 mt-1">How Work Adda Works</h3>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">How Work Adda Works</h3>
             <p className="text-xs sm:text-sm text-slate-500 mt-2">
               From finding a shift to getting paid into your UPI account.
             </p>
 
-            <div className="mt-6 inline-flex p-1 bg-slate-100 rounded-2xl border border-slate-200">
+            <div className="mt-6 flex flex-col sm:inline-flex sm:flex-row w-full sm:w-auto max-w-sm sm:max-w-none mx-auto p-1 bg-slate-100 rounded-2xl border border-slate-200 gap-1 sm:gap-0">
               <button
                 onClick={() => setActiveTab("worker")}
-                className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTab === "worker"
                     ? "bg-white text-brand-700 shadow-sm"
                     : "text-slate-600 hover:text-slate-900"
@@ -669,7 +671,7 @@ export default function HomePage() {
               </button>
               <button
                 onClick={() => setActiveTab("employer")}
-                className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTab === "employer"
                     ? "bg-white text-brand-700 shadow-sm"
                     : "text-slate-600 hover:text-slate-900"
@@ -681,7 +683,7 @@ export default function HomePage() {
           </div>
 
           {activeTab === "worker" ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
               {[
                 { step: "01", title: "Create Profile", desc: "Add skills, availability, and commute radius." },
                 { step: "02", title: "Discover Work", desc: "Filter jobs by distance (2–25 km) & see match scores." },
@@ -692,16 +694,16 @@ export default function HomePage() {
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className="bg-slate-50 rounded-2xl p-5 border border-slate-200 flex flex-col justify-between hover:border-brand-300 hover:shadow-md transition"
+                  className="bg-slate-50 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-200 flex flex-col justify-between hover:border-brand-300 hover:shadow-md transition"
                 >
-                  <span className="text-2xl font-black text-brand-600/40">{item.step}</span>
-                  <h4 className="font-bold text-slate-900 text-sm mt-3">{item.title}</h4>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">{item.desc}</p>
+                  <span className="text-xl sm:text-2xl font-black text-brand-600/40">{item.step}</span>
+                  <h4 className="font-bold text-slate-900 text-xs sm:text-sm mt-2 sm:mt-3">{item.title}</h4>
+                  <p className="text-[11px] sm:text-xs text-slate-500 mt-1 leading-snug sm:leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
               {[
                 { step: "01", title: "Post Work", desc: "Specify required skills, shift hours, and compensation." },
                 { step: "02", title: "Review Talent", desc: "Inspect candidate ratings and past completed gigs." },
@@ -712,11 +714,11 @@ export default function HomePage() {
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className="bg-amber-50/50 rounded-2xl p-5 border border-amber-200 flex flex-col justify-between hover:shadow-md transition"
+                  className="bg-amber-50/50 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-amber-200 flex flex-col justify-between hover:shadow-md transition"
                 >
-                  <span className="text-2xl font-black text-accent-600/40">{item.step}</span>
-                  <h4 className="font-bold text-slate-900 text-sm mt-3">{item.title}</h4>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
+                  <span className="text-xl sm:text-2xl font-black text-accent-600/40">{item.step}</span>
+                  <h4 className="font-bold text-slate-900 text-xs sm:text-sm mt-2 sm:mt-3">{item.title}</h4>
+                  <p className="text-[11px] sm:text-xs text-slate-600 mt-1 leading-snug sm:leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -725,7 +727,7 @@ export default function HomePage() {
       </section>
 
       {/* 5. Community Testimonials */}
-      <section className="py-16 bg-slate-50 border-b border-slate-200">
+      <section className="py-12 sm:py-16 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-xl mx-auto">
             <span className="text-xs uppercase font-bold tracking-widest text-brand-600">
@@ -737,9 +739,9 @@ export default function HomePage() {
           </div>
 
           {reviews.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {reviews.slice(0, 3).map((review) => (
-                <div key={review.id} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-3">
+                <div key={review.id} className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-3">
                   <div className="flex items-center gap-1 text-amber-500 text-xs">
                     {Array.from({ length: review.rating || 5 }).map((_, i) => (
                       <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
@@ -763,7 +765,7 @@ export default function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xs text-center max-w-xl mx-auto space-y-3">
+            <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs text-center max-w-xl mx-auto space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 mx-auto flex items-center justify-center">
                 <Award className="w-6 h-6" />
               </div>
@@ -804,26 +806,26 @@ export default function HomePage() {
 
       {/* 6. High-Impact Call To Action with Animated Aurora Cosmic Waves (Only shown for guest visitors) */}
       {!user && (
-        <AnimatedAurora className="py-24 sm:py-28 border-t border-slate-800/80">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
+        <AnimatedAurora className="py-16 sm:py-28 border-t border-slate-800/80">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-5 sm:space-y-6">
             <Badge variant="brand" className="bg-white/10 text-white border-white/20 backdrop-blur-md">
               Join the Local Movement
             </Badge>
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
+            <h2 className="text-2xl sm:text-5xl font-black tracking-tight leading-tight">
               Your next opportunity could be <br className="hidden sm:block" /> just around the corner.
             </h2>
             <p className="text-xs sm:text-base text-brand-100/90 max-w-xl mx-auto leading-relaxed">
               Start earning, hiring, and growing together with your local community on Work Adda.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
-              <Link href="/register">
-                <Button size="lg" variant="accent" className="font-bold px-8 shadow-xl shadow-accent-500/30 hover:scale-105 transition-transform">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-2 max-w-xs sm:max-w-none mx-auto">
+              <Link href="/register" className="w-full sm:w-auto">
+                <Button size="lg" variant="accent" className="w-full sm:w-auto font-bold px-8 shadow-xl shadow-accent-500/30 hover:scale-105 transition-transform">
                   Join Work Adda for Free <ArrowRight className="w-4 h-4 ml-1.5" />
                 </Button>
               </Link>
-              <Link href="/jobs">
-                <Button size="lg" variant="outline" className="bg-white/5 backdrop-blur-md text-white border-white/30 hover:bg-white/15 px-8">
+              <Link href="/jobs" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white/5 backdrop-blur-md text-white border-white/30 hover:bg-white/15 px-8">
                   Explore All Jobs
                 </Button>
               </Link>

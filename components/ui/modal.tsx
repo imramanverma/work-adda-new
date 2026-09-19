@@ -52,9 +52,9 @@ export function Modal({
           maxWidthClasses[maxWidth]
         )}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <div className="flex items-center justify-between px-4 py-3.5 sm:px-6 sm:py-4 border-b border-slate-100">
           <div>
-            <h3 className="font-bold text-lg text-slate-900">{title}</h3>
+            <h3 className="font-bold text-base sm:text-lg text-slate-900">{title}</h3>
             {description && <p className="text-xs text-slate-500 mt-0.5">{description}</p>}
           </div>
           <button
@@ -64,7 +64,7 @@ export function Modal({
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="p-6 max-h-[80vh] overflow-y-auto">{children}</div>
+        <div className="p-4 sm:p-6 max-h-[80vh] overflow-y-auto">{children}</div>
       </div>
     </div>
   );

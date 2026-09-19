@@ -258,7 +258,7 @@ export function Navbar() {
                 </button>
 
                 {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-200 py-3 z-50 animate-in fade-in zoom-in-95">
+                  <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-96 max-w-sm bg-white rounded-2xl shadow-xl border border-slate-200 py-3 z-50 animate-in fade-in zoom-in-95">
                     <div className="flex items-center justify-between px-4 pb-2 border-b border-slate-100">
                       <div className="flex items-center gap-2">
                         <h4 className="font-bold text-sm text-slate-900">Notifications</h4>

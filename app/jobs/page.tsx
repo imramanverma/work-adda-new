@@ -210,7 +210,7 @@ export default function JobsDiscoveryPage() {
                 }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
@@ -222,7 +222,7 @@ export default function JobsDiscoveryPage() {
                 value={selectedLocation}
                 disabled={isRemoteOnly}
                 onChange={(e) => setSelectedLocation(e.target.value)}
-                className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+                className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 ${
                   isRemoteOnly ? "bg-slate-100 text-slate-400 cursor-not-allowed" : "bg-white"
                 }`}
               />
@@ -232,7 +232,7 @@ export default function JobsDiscoveryPage() {
               <select
                 value={selectedJobType}
                 onChange={(e) => setSelectedJobType(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-xs bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
               >
                 {jobTypes.map((type) => (
                   <option key={type} value={type}>
@@ -246,7 +246,7 @@ export default function JobsDiscoveryPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-xs bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
               >
                 <option value="recently_posted">{t("jobs.sort_recent")}</option>
                 <option value="highest_pay">{t("jobs.sort_pay")}</option>
