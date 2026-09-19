@@ -22,6 +22,7 @@ import {
   Star,
   IndianRupee,
   Phone,
+  PlusCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +37,14 @@ export default function HomePage() {
   const { user } = useAuth();
   const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<"worker" | "employer">("worker");
+
+  useEffect(() => {
+    if (user?.role === "EMPLOYER") {
+      setActiveTab("employer");
+    } else if (user?.role === "WORKER") {
+      setActiveTab("worker");
+    }
+  }, [user?.role]);
   const [heroSearch, setHeroSearch] = useState("");
   const [heroLocation, setHeroLocation] = useState("Fatehabad");
   const [platformStats, setPlatformStats] = useState<{
@@ -223,13 +232,35 @@ export default function HomePage() {
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
                     <span className="text-xs font-bold text-slate-400 ml-2">Work Adda Live Feed</span>
                   </div>
-                  <Badge variant="brand" className="text-[10px] font-bold">
-                    {platformStats.latestJob ? "● Active Dispatch" : "● Network Ready"}
+                  <Badge variant={user?.role === "EMPLOYER" ? "warning" : "brand"} className="text-[10px] font-bold">
+                    {user?.role === "EMPLOYER"
+                      ? (language === "hi" ? "● एंप्लॉयर हायरिंग" : "● Employer Hiring")
+                      : user?.role === "WORKER"
+                      ? (platformStats.latestJob ? (language === "hi" ? "● नया काम उपलब्ध" : "● Active Gigs") : (language === "hi" ? "● कामगार हब" : "● Worker Hub"))
+                      : (platformStats.latestJob ? "● Active Dispatch" : "● Network Ready")}
                   </Badge>
                 </div>
 
                 <div className="space-y-3">
-                  {platformStats.latestJob ? (
+                  {user?.role === "EMPLOYER" ? (
+                    <div className="p-4 bg-amber-50/60 rounded-2xl border border-amber-200/80 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Badge variant="warning">{language === "hi" ? "हायरिंग सहायता" : "Instant Hiring"}</Badge>
+                        <span className="font-black text-sm text-brand-700">
+                          {platformStats.totalWorkers > 0 ? `${platformStats.totalWorkers}+ ${language === "hi" ? "सत्यापित कामगार" : "Verified Workers"}` : (language === "hi" ? "सत्यापित नेटवर्क" : "Verified Talent")}
+                        </span>
+                      </div>
+                      <h4 className="font-bold text-sm text-slate-900 line-clamp-1">
+                        {language === "hi" ? "असाइनमेंट, दुकान, डिलीवरी या फील्ड टास्क पोस्ट करें" : "Post for Assignments, Shop, Delivery or Gigs"}
+                      </h4>
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                        <span className="truncate">{user.name || "Local Employer"}</span>
+                        <span>•</span>
+                        <span className="text-brand-700 font-bold">{user.location || "Fatehabad, Sirsa & Hisar"}</span>
+                      </div>
+                    </div>
+                  ) : platformStats.latestJob ? (
                     <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
                       <div className="flex items-center justify-between">
                         <Badge variant="brand">{platformStats.latestJob.category}</Badge>
@@ -255,39 +286,138 @@ export default function HomePage() {
                         <Briefcase className="w-5 h-5" />
                       </div>
                       <h4 className="font-bold text-sm text-slate-900">
-                        {language === "hi" ? "पहला काम पोस्ट करें या खोजें" : "Be the First to Post or Apply"}
+                        {user?.role === "WORKER"
+                          ? (language === "hi" ? "लोकल काम खोजें और आवेदन करें" : "Explore & Apply for Local Gigs")
+                          : (language === "hi" ? "पहला काम पोस्ट करें या खोजें" : "Be the First to Post or Apply")}
                       </h4>
                       <p className="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto">
-                        {language === "hi"
-                          ? "फतेहाबाद, सिरसा व हिसार में असली कामगारों और व्यापारियों को सीधे जोड़ें।"
-                          : "Connect directly with authentic local workers and verified businesses across Fatehabad, Sirsa & Hisar."}
+                        {user?.role === "WORKER"
+                          ? (language === "hi"
+                            ? "फतेहाबाद, सिरसा व हिसार में सत्यापित नियोक्ताओं से सीधे जुड़ें और 100% सुरक्षित भुगतान पाएं।"
+                            : "Connect directly with verified hirers across Fatehabad, Sirsa & Hisar with guaranteed payments.")
+                          : (language === "hi"
+                            ? "फतेहाबाद, सिरसा व हिसार में असली कामगारों और व्यापारियों को सीधे जोड़ें।"
+                            : "Connect directly with authentic local workers and verified businesses across Fatehabad, Sirsa & Hisar.")}
                       </p>
                     </div>
                   )}
 
                   <div className="grid grid-cols-2 gap-2.5 text-xs">
                     <div className="p-3 bg-brand-50/50 rounded-xl border border-brand-100">
-                      <span className="text-slate-400 block text-[10px]">{t("hero.hiring_time_label")}</span>
-                      <span className="font-bold text-brand-900">{t("hero.hiring_time_val")}</span>
+                      <span className="text-slate-400 block text-[10px]">
+                        {user?.role === "EMPLOYER"
+                          ? (language === "hi" ? "औसत हायरिंग समय" : "Avg Hire Time")
+                          : t("hero.hiring_time_label")}
+                      </span>
+                      <span className="font-bold text-brand-900">
+                        {user?.role === "EMPLOYER"
+                          ? (language === "hi" ? "15 मिनट में" : "Within 15 mins")
+                          : t("hero.hiring_time_val")}
+                      </span>
                     </div>
                     <div className="p-3 bg-amber-50/50 rounded-xl border border-amber-100">
-                      <span className="text-slate-400 block text-[10px]">{t("hero.fee_label")}</span>
-                      <span className="font-bold text-accent-900">{t("hero.fee_val")}</span>
+                      <span className="text-slate-400 block text-[10px]">
+                        {user?.role === "EMPLOYER"
+                          ? (language === "hi" ? "भुगतान सुरक्षा" : "Payment Security")
+                          : t("hero.fee_label")}
+                      </span>
+                      <span className="font-bold text-accent-900">
+                        {user?.role === "EMPLOYER"
+                          ? (language === "hi" ? "100% एस्क्रो सुरक्षित" : "100% Escrow")
+                          : t("hero.fee_val")}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Primary Action Button */}
-                <Link href={platformStats.latestJob ? `/jobs/${platformStats.latestJob.id}` : "/jobs"} className="block pt-1">
-                  <Button size="md" variant="primary" className="w-full font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-md shadow-brand-500/20 hover:shadow-brand-500/30 flex items-center justify-center gap-2">
-                    <span>
-                      {platformStats.openJobs > 0
-                        ? (language === "hi" ? `अभी ${platformStats.openJobs} खुले काम देखें` : `Explore ${platformStats.openJobs} Open Gigs Now`)
-                        : (language === "hi" ? "काम पोस्ट करें या काम ढूंढें" : "Post Work or Explore Jobs")}
-                    </span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                </Link>
+                {/* Primary Action Button(s) - Strictly Role Separated */}
+                {user?.role === "WORKER" ? (
+                  <Link href={platformStats.latestJob ? `/jobs/${platformStats.latestJob.id}` : "/jobs"} className="block pt-1">
+                    <Button
+                      size="md"
+                      variant="primary"
+                      className="w-full font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-md shadow-brand-500/20 hover:shadow-brand-500/30 flex items-center justify-center gap-2"
+                    >
+                      <Search className="w-4 h-4" />
+                      <span>
+                        {platformStats.openJobs > 0
+                          ? (language === "hi" ? `अभी ${platformStats.openJobs} काम देखें` : `Explore ${platformStats.openJobs} Open Gigs Now`)
+                          : (language === "hi" ? "उपलब्ध काम और नौकरियां देखें" : "Explore Available Jobs")}
+                      </span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </Link>
+                ) : user?.role === "EMPLOYER" ? (
+                  <div className="space-y-1.5 pt-1">
+                    <Link href="/employer/jobs/new" className="block">
+                      <Button
+                        size="md"
+                        variant="accent"
+                        className="w-full font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-2 text-slate-950 bg-amber-400 hover:bg-amber-500"
+                      >
+                        <PlusCircle className="w-4 h-4 text-slate-950" />
+                        <span>
+                          {language === "hi" ? "नया काम / गिग पोस्ट करें" : "Post a New Job / Task"}
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-slate-950" />
+                      </Button>
+                    </Link>
+                    <Link href="/employer/dashboard" className="block text-center text-xs font-bold text-brand-600 hover:text-brand-800 transition">
+                      {language === "hi" ? "एंप्लॉयर डैशबोर्ड खोलें →" : "View Employer Dashboard →"}
+                    </Link>
+                  </div>
+                ) : user?.role === "BOTH" ? (
+                  <div className="pt-1 grid grid-cols-2 gap-2">
+                    <Link href="/jobs">
+                      <Button
+                        size="md"
+                        variant="primary"
+                        className="w-full font-bold text-xs rounded-xl sm:rounded-2xl shadow-xs flex items-center justify-center gap-1.5"
+                      >
+                        <Search className="w-3.5 h-3.5" />
+                        <span>{language === "hi" ? "काम खोजें" : "Explore Jobs"}</span>
+                      </Button>
+                    </Link>
+                    <Link href="/employer/jobs/new">
+                      <Button
+                        size="md"
+                        variant="accent"
+                        className="w-full font-bold text-xs rounded-xl sm:rounded-2xl shadow-xs flex items-center justify-center gap-1.5 text-slate-950 bg-amber-400 hover:bg-amber-500"
+                      >
+                        <PlusCircle className="w-3.5 h-3.5" />
+                        <span>{language === "hi" ? "काम पोस्ट करें" : "Post a Job"}</span>
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="pt-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <Link href="/jobs">
+                      <Button
+                        size="md"
+                        variant="primary"
+                        className="w-full font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-md shadow-brand-500/20 hover:shadow-brand-500/30 flex items-center justify-center gap-1.5"
+                      >
+                        <Search className="w-4 h-4" />
+                        <span>
+                          {platformStats.openJobs > 0
+                            ? (language === "hi" ? `काम खोजें (${platformStats.openJobs})` : `Explore Jobs (${platformStats.openJobs})`)
+                            : (language === "hi" ? "काम खोजें" : "Explore Jobs")}
+                        </span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Button>
+                    </Link>
+                    <Link href="/employer/jobs/new">
+                      <Button
+                        size="md"
+                        variant="outline"
+                        className="w-full font-bold text-xs sm:text-sm rounded-xl sm:rounded-2xl border-brand-300 hover:bg-brand-50 text-brand-800 flex items-center justify-center gap-1.5"
+                      >
+                        <PlusCircle className="w-4 h-4 text-brand-600" />
+                        <span>{language === "hi" ? "काम पोस्ट करें" : "Post a Job / Task"}</span>
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -312,27 +442,70 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Hyperlocal Task Poster Banner */}
+      {/* Hyperlocal Task / Work Banner - Role Tailored */}
       <section className="bg-gradient-to-r from-slate-950 via-brand-950 to-slate-900 py-8 sm:py-10 px-4 sm:px-6 lg:px-8 border-b border-slate-800 text-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-500/20 text-accent-300 text-xs font-bold border border-accent-500/30">
-              <Sparkles className="w-3.5 h-3.5" /> Fast • Local & Remote • 100% Escrow Protected
+              <Sparkles className="w-3.5 h-3.5" />
+              {user?.role === "WORKER"
+                ? (language === "hi" ? "कामगारों के लिए 100% फ्री • सीधे UPI भुगतान • एस्क्रो सुरक्षित" : "100% Free for Workers • Direct UPI Payouts • Escrow Protected")
+                : (language === "hi" ? "तेज हायरिंग • लोकल व रिमोट • 100% एस्क्रो सुरक्षा" : "Fast Hiring • Local & Remote • 100% Escrow Protected")}
             </div>
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-              What work do you need done?
+              {user?.role === "WORKER"
+                ? (language === "hi" ? "अपनी सुविधा अनुसार लोकल काम करें और कमाएं" : "Ready to earn money on your own schedule?")
+                : user?.role === "EMPLOYER"
+                ? (language === "hi" ? "आपको किस काम के लिए कामगार चाहिए?" : "What work do you need done?")
+                : (language === "hi" ? "लोकल कामगार रखें या काम ढूंढें" : "Need Work Done or Looking for Gigs?")}
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 max-w-2xl font-medium">
-              Assignment • Delivery • Design • Data Entry • Tutoring • Repair • Shop Work • Household Work • Freelance Tasks
+              {language === "hi"
+                ? "असाइनमेंट राइटिंग • दुकान • डिलीवरी • कंप्यूटर • होम ट्यूशन • रिपेयर • पार्ट-टाइम वर्क"
+                : "Assignment • Delivery • Design • Data Entry • Tutoring • Repair • Shop Work • Household Work • Freelance Tasks"}
             </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <Link href="/employer/jobs/new">
-              <Button size="lg" variant="accent" className="font-extrabold px-8 shadow-xl shadow-accent-500/20 text-slate-950">
-                Post a Job / Task Now &rarr;
-              </Button>
-            </Link>
+            {user?.role === "WORKER" ? (
+              <Link href="/jobs">
+                <Button size="lg" variant="accent" className="font-extrabold px-8 shadow-xl shadow-accent-500/20 text-slate-950">
+                  {language === "hi" ? "उपलब्ध काम देखें →" : "Browse Available Jobs →"}
+                </Button>
+              </Link>
+            ) : user?.role === "EMPLOYER" ? (
+              <Link href="/employer/jobs/new">
+                <Button size="lg" variant="accent" className="font-extrabold px-8 shadow-xl shadow-accent-500/20 text-slate-950">
+                  {language === "hi" ? "काम / टास्क पोस्ट करें →" : "Post a Job / Task Now →"}
+                </Button>
+              </Link>
+            ) : user?.role === "BOTH" ? (
+              <div className="flex flex-wrap items-center gap-2.5">
+                <Link href="/employer/jobs/new">
+                  <Button size="lg" variant="accent" className="font-extrabold px-6 shadow-xl shadow-accent-500/20 text-slate-950">
+                    {language === "hi" ? "काम पोस्ट करें →" : "Post a Job →"}
+                  </Button>
+                </Link>
+                <Link href="/jobs">
+                  <Button size="lg" variant="outline" className="font-bold px-6 bg-white/10 hover:bg-white/20 text-white border-white/30">
+                    {language === "hi" ? "काम खोजें →" : "Find Work →"}
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center gap-2.5">
+                <Link href="/employer/jobs/new">
+                  <Button size="lg" variant="accent" className="font-extrabold px-6 shadow-xl shadow-accent-500/20 text-slate-950">
+                    {language === "hi" ? "काम पोस्ट करें →" : "Post a Job →"}
+                  </Button>
+                </Link>
+                <Link href="/jobs">
+                  <Button size="lg" variant="outline" className="font-bold px-6 bg-white/10 hover:bg-white/20 text-white border-white/30">
+                    {language === "hi" ? "काम खोजें →" : "Find Work →"}
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -457,8 +630,10 @@ export default function HomePage() {
                       {job.applicantsCount || 0} applied
                     </span>
                     <Link href={`/jobs/${job.id}`}>
-                      <Button size="sm" variant="primary">
-                        Apply Now
+                      <Button size="sm" variant={user?.role === "EMPLOYER" ? "outline" : "primary"}>
+                        {user?.role === "EMPLOYER"
+                          ? (language === "hi" ? "विवरण देखें" : "View Details")
+                          : (language === "hi" ? "आवेदन करें" : "Apply Now")}
                       </Button>
                     </Link>
                   </div>
@@ -601,11 +776,19 @@ export default function HomePage() {
                   : "Reviews are recorded exclusively upon verified completion of contracts between local employers and workers in Fatehabad, Sirsa & Hisar. Complete your first gig to earn verified ratings!"}
               </p>
               <div className="pt-2 flex justify-center gap-3">
-                <Link href="/jobs">
-                  <Button size="sm" variant="outline" className="font-semibold">
-                    {language === "hi" ? "लोकल काम देखें" : "Explore Local Jobs"}
-                  </Button>
-                </Link>
+                {user?.role === "EMPLOYER" ? (
+                  <Link href="/employer/jobs/new">
+                    <Button size="sm" variant="accent" className="font-semibold text-slate-950 bg-amber-400 hover:bg-amber-500">
+                      {language === "hi" ? "नया काम पोस्ट करें" : "Post a New Job"}
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/jobs">
+                    <Button size="sm" variant="outline" className="font-semibold">
+                      {language === "hi" ? "लोकल काम देखें" : "Explore Local Jobs"}
+                    </Button>
+                  </Link>
+                )}
                 {!user && (
                   <Link href="/register">
                     <Button size="sm" variant="primary" className="font-semibold">

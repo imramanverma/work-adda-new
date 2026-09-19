@@ -115,6 +115,47 @@ export function MobileNav() {
         </>
       )}
 
+      {user?.role === "BOTH" && (
+        <>
+          <Link
+            href="/jobs"
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg text-[10px] font-medium transition ${
+              pathname === "/jobs" ? "text-brand-600 font-bold" : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <Search className="w-5 h-5 mb-0.5" />
+            <span>Jobs</span>
+          </Link>
+          <Link
+            href="/employer/jobs/new"
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg text-[10px] font-medium transition ${
+              pathname === "/employer/jobs/new" ? "text-accent-600 font-bold" : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <PlusCircle className="w-5 h-5 mb-0.5 text-accent-500" />
+            <span>Post</span>
+          </Link>
+          <Link
+            href="/worker/work"
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg text-[10px] font-medium transition ${
+              pathname === "/worker/work" ? "text-brand-600 font-bold" : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <Briefcase className="w-5 h-5 mb-0.5" />
+            <span>Work</span>
+          </Link>
+          <Link
+            href="/worker/dashboard"
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg text-[10px] font-medium transition ${
+              pathname === "/worker/dashboard" ? "text-brand-600 font-bold" : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <User className="w-5 h-5 mb-0.5" />
+            <span>Hub</span>
+          </Link>
+        </>
+      )}
+
       {user?.role === "ADMIN" && (
         <Link
           href="/admin"
