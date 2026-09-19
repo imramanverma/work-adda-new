@@ -21,6 +21,7 @@ import {
   Users,
   CheckCircle2,
   ChevronRight,
+  Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -206,7 +207,7 @@ export function Navbar() {
             />
             <div className="hidden md:flex items-center gap-1 shrink-0 ml-2 px-2.5 py-0.5 rounded-full bg-brand-50 border border-brand-200/70 text-[10px] font-extrabold text-brand-700">
               <MapPin className="w-3 h-3 text-brand-600" />
-              <span>Fatehabad & Sirsa</span>
+              <span>Fatehabad, Sirsa & Hisar</span>
             </div>
             <button
               type="submit"
@@ -222,7 +223,7 @@ export function Navbar() {
           {/* Language Switcher */}
           <LanguageSwitcher className="hidden sm:inline-flex" />
 
-          {user?.role === "EMPLOYER" && (
+          {(user?.role === "EMPLOYER" || user?.role === "BOTH") && (
             <Link href="/employer/jobs/new">
               <Button size="sm" variant="accent" className="hidden sm:inline-flex">
                 <PlusCircle className="w-4 h-4 mr-1" /> {t("nav.post_work")}
@@ -389,19 +390,45 @@ export function Navbar() {
                       <p className="text-xs text-slate-500 truncate">{user.email}</p>
                     </div>
 
-                    <Link
-                      href={
-                        user.role === "WORKER"
-                          ? "/worker/profile"
-                          : user.role === "EMPLOYER"
-                          ? "/employer/profile"
-                          : "/admin"
-                      }
-                      onClick={() => setShowUserMenu(false)}
-                      className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100"
-                    >
-                      <User className="w-4 h-4 text-slate-400" /> {t("nav.profile")}
-                    </Link>
+                    {user.role === "BOTH" ? (
+                      <>
+                        <Link
+                          href="/worker/dashboard"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100"
+                        >
+                          <Briefcase className="w-4 h-4 text-brand-600" /> Worker Hub
+                        </Link>
+                        <Link
+                          href="/employer/dashboard"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100"
+                        >
+                          <Building2 className="w-4 h-4 text-amber-600" /> Employer Hub
+                        </Link>
+                        <Link
+                          href="/worker/profile"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100"
+                        >
+                          <User className="w-4 h-4 text-slate-400" /> My Profile
+                        </Link>
+                      </>
+                    ) : (
+                      <Link
+                        href={
+                          user.role === "WORKER"
+                            ? "/worker/profile"
+                            : user.role === "EMPLOYER"
+                            ? "/employer/profile"
+                            : "/admin"
+                        }
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100"
+                      >
+                        <User className="w-4 h-4 text-slate-400" /> {t("nav.profile")}
+                      </Link>
+                    )}
 
                     <button
                       onClick={() => {

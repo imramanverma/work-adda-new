@@ -9,7 +9,7 @@ export interface SessionUser {
   id: string;
   email: string;
   name: string;
-  role: "WORKER" | "EMPLOYER" | "ADMIN";
+  role: "WORKER" | "EMPLOYER" | "ADMIN" | "BOTH";
   phone: string;
   isVerified: boolean;
 }

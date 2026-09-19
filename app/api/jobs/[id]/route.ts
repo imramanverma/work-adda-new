@@ -117,6 +117,22 @@ export async function GET(
             return [];
           }
         })(),
+        categoryDetails: (() => {
+          if (!job.categoryDetails) return null;
+          try {
+            return typeof job.categoryDetails === "string" ? JSON.parse(job.categoryDetails) : job.categoryDetails;
+          } catch {
+            return null;
+          }
+        })(),
+        attachmentUrls: (() => {
+          if (!job.attachmentUrls) return [];
+          try {
+            return typeof job.attachmentUrls === "string" ? JSON.parse(job.attachmentUrls) : job.attachmentUrls;
+          } catch {
+            return [];
+          }
+        })(),
         distanceKm,
         matchScore: matchData?.score ?? null,
         matchReasons: matchData?.reasons ?? [],

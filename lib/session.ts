@@ -58,7 +58,7 @@ export async function getRequestUser(req: Request | NextRequest): Promise<Sessio
  */
 export async function requireAuth(
   req: Request | NextRequest,
-  allowedRoles?: ("WORKER" | "EMPLOYER" | "ADMIN")[]
+  allowedRoles?: ("WORKER" | "EMPLOYER" | "ADMIN" | "BOTH")[]
 ): Promise<{ user: SessionUser } | { error: NextResponse }> {
   const user = await getRequestUser(req);
 
@@ -86,13 +86,20 @@ export async function requireAuth(
     };
   }
 
-  if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-    return {
-      error: NextResponse.json(
-        { error: `Forbidden. This action requires one of the following roles: ${allowedRoles.join(", ")}` },
-        { status: 403 }
-      ),
-    };
+  if (allowedRoles && allowedRoles.length > 0) {
+    const isDirectMatch = allowedRoles.includes(user.role);
+    const isDualUserAllowed =
+      user.role === "BOTH" &&
+      (allowedRoles.includes("WORKER") || allowedRoles.includes("EMPLOYER"));
+
+    if (!isDirectMatch && !isDualUserAllowed) {
+      return {
+        error: NextResponse.json(
+          { error: `Forbidden. This action requires one of the following roles: ${allowedRoles.join(", ")}` },
+          { status: 403 }
+        ),
+      };
+    }
   }
 
   return { user };

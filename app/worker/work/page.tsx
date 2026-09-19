@@ -16,6 +16,11 @@ import {
   ShieldCheck,
   AlertTriangle,
   Lock,
+  FileText,
+  Plus,
+  X,
+  ExternalLink,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +36,20 @@ export default function WorkerWorkPage() {
   // Completion modal state
   const [selectedAssignment, setSelectedAssignment] = useState<any | null>(null);
   const [completing, setCompleting] = useState(false);
+  const [submissionNote, setSubmissionNote] = useState("");
+  const [submissionFiles, setSubmissionFiles] = useState<string[]>([]);
+  const [newFileUrl, setNewFileUrl] = useState("");
+
+  const addSubmissionFile = () => {
+    if (newFileUrl.trim() && !submissionFiles.includes(newFileUrl.trim())) {
+      setSubmissionFiles([...submissionFiles, newFileUrl.trim()]);
+      setNewFileUrl("");
+    }
+  };
+
+  const removeSubmissionFile = (url: string) => {
+    setSubmissionFiles(submissionFiles.filter((u) => u !== url));
+  };
 
   // Dispute modal state
   const [disputeItem, setDisputeItem] = useState<any | null>(null);
@@ -62,17 +81,25 @@ export default function WorkerWorkPage() {
     fetchAssignments();
   }, []);
 
-  const handleMarkComplete = async () => {
+  const handleMarkComplete = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!selectedAssignment) return;
     setCompleting(true);
     try {
       const res = await fetch(`/api/assignments/${selectedAssignment.id}/complete`, {
         method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          submissionNote: submissionNote.trim() || undefined,
+          submissionFiles: submissionFiles.length > 0 ? submissionFiles : undefined,
+        }),
       });
 
       if (res.ok) {
-        toast.success("Work Submitted! 📋", "Employer has been notified to verify and release escrow funds.");
+        toast.success("Work Submitted! 📋", "Hirer has been notified to verify deliverables and release escrow funds.");
         setSelectedAssignment(null);
+        setSubmissionNote("");
+        setSubmissionFiles([]);
         fetchAssignments();
       } else {
         const data = await res.json();
@@ -294,6 +321,52 @@ export default function WorkerWorkPage() {
                     </div>
                   </div>
 
+                  {/* Delivery Address & Addons Strip for Assignment Work */}
+                  {(() => {
+                    let details: any = null;
+                    try {
+                      details = typeof item.job?.categoryDetails === "string" ? JSON.parse(item.job.categoryDetails) : item.job?.categoryDetails;
+                    } catch {}
+
+                    if (!details) return null;
+
+                    return (
+                      <div className="space-y-2 pt-2 border-t border-slate-100">
+                        {details.addons && details.addons.length > 0 && (
+                          <div className="p-3 bg-amber-50/60 rounded-xl border border-amber-200/80 text-xs">
+                            <span className="font-bold text-amber-950 flex items-center gap-1.5 mb-1.5">
+                              <Sparkles className="w-3.5 h-3.5 text-amber-600" /> Included Paid Addons & Extras (+₹{details.addons.reduce((acc: number, a: any) => acc + Number(a.amount || 0), 0)}):
+                            </span>
+                            <div className="flex flex-wrap gap-2">
+                              {details.addons.map((addon: any, idx: number) => (
+                                <span key={idx} className="px-2 py-1 rounded-md bg-white border border-amber-200 font-semibold text-slate-800 text-[11px] flex items-center gap-1">
+                                  <span>{addon.title}</span>
+                                  <span className="font-bold text-amber-800">+₹{addon.amount}</span>
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {details.deliveryAddress && (
+                          <div className="p-3 bg-blue-50/60 rounded-xl border border-blue-200/80 text-xs space-y-1">
+                            <span className="font-bold text-blue-950 flex items-center gap-1.5">
+                              <MapPin className="w-3.5 h-3.5 text-blue-600" /> Physical Handover / Delivery Destination:
+                            </span>
+                            <p className="text-slate-800 font-semibold">
+                              {[details.deliveryAddress.collegeOrCampus, details.deliveryAddress.addressLine, details.deliveryAddress.landmark, details.deliveryAddress.city, details.deliveryAddress.pincode].filter(Boolean).join(", ")}
+                            </p>
+                            {details.deliveryAddress.handoverInstructions && (
+                              <p className="text-[11px] text-blue-900 font-medium bg-white/70 p-2 rounded-lg border border-blue-100">
+                                <strong>Instructions:</strong> {details.deliveryAddress.handoverInstructions}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+
                   {/* Escrow Guidance Banner */}
                   {isEscrowFunded && (
                     <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs text-emerald-900 flex items-start gap-2.5">
@@ -331,12 +404,34 @@ export default function WorkerWorkPage() {
                     </div>
                   )}
 
+                  {/* Revision Requested Callout */}
+                  {item.status === "REVISION_REQUESTED" && (
+                    <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-950 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold flex items-center gap-1.5 text-amber-900">
+                          <AlertTriangle className="w-4 h-4 text-amber-600" /> Hirer Requested Revisions
+                        </span>
+                        {item.revisionCount > 0 && (
+                          <span className="px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900 text-[10px] font-bold">
+                            Revision #{item.revisionCount}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-amber-900 bg-white/80 p-2.5 rounded-xl border border-amber-200 leading-relaxed font-medium">
+                        &ldquo;{item.revisionRequestedNote || "Please review the feedback and make the required updates."}&rdquo;
+                      </p>
+                      <p className="text-[11px] text-amber-800">
+                        Please update your work according to the instructions above and click <strong>Submit Revised Work</strong>.
+                      </p>
+                    </div>
+                  )}
+
                   {/* Action Controls */}
                   <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
                     <div className="flex items-center gap-2">
                       <Link href="/worker/messages">
                         <Button size="sm" variant="outline">
-                          <MessageSquare className="w-3.5 h-3.5 mr-1.5" /> Message Employer
+                          <MessageSquare className="w-3.5 h-3.5 mr-1.5" /> Message Hirer
                         </Button>
                       </Link>
 
@@ -362,9 +457,18 @@ export default function WorkerWorkPage() {
                         >
                           <CheckCircle2 className="w-4 h-4 mr-1.5" /> Mark as Completed
                         </Button>
+                      ) : item.status === "REVISION_REQUESTED" ? (
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          className="font-bold bg-amber-600 hover:bg-amber-700 text-white"
+                          onClick={() => setSelectedAssignment(item)}
+                        >
+                          <CheckCircle2 className="w-4 h-4 mr-1.5" /> Submit Revised Work
+                        </Button>
                       ) : item.status === "COMPLETED" ? (
                         <span className="text-xs text-amber-700 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 font-semibold flex items-center gap-1.5">
-                          <Clock className="w-4 h-4" /> Completion Submitted. Waiting for Employer Escrow Release.
+                          <Clock className="w-4 h-4" /> Completion Submitted. Waiting for Hirer Escrow Release.
                         </span>
                       ) : item.status === "APPROVED" || payment?.escrowStatus === "RELEASE_ELIGIBLE" ? (
                         <span className="text-xs text-brand-700 bg-brand-50 px-3 py-1.5 rounded-xl border border-brand-200 font-semibold flex items-center gap-1.5">
@@ -376,7 +480,7 @@ export default function WorkerWorkPage() {
                           variant="secondary"
                           onClick={() => setReviewAssignment(item)}
                         >
-                          <Star className="w-3.5 h-3.5 mr-1 text-amber-500" /> Rate Employer
+                          <Star className="w-3.5 h-3.5 mr-1 text-amber-500" /> Rate Hirer
                         </Button>
                       ) : null}
                     </div>
@@ -387,34 +491,86 @@ export default function WorkerWorkPage() {
           </div>
         )}
 
-        {/* Modal: Confirm Work Completion */}
+        {/* Modal: Confirm Work Completion / Deliverable Submission */}
         <Modal
           isOpen={!!selectedAssignment}
           onClose={() => setSelectedAssignment(null)}
-          title="Mark Task as Completed"
-          description="Confirm you have finished the required work for this job."
+          title={
+            selectedAssignment?.status === "REVISION_REQUESTED"
+              ? "Submit Revised Deliverables"
+              : "Submit Completed Work"
+          }
+          description="Provide deliverables, files, and completion notes for the hirer to verify."
         >
-          <div className="space-y-4 text-left">
+          <form onSubmit={handleMarkComplete} className="space-y-4 text-left">
             <p className="text-xs text-slate-600 leading-relaxed">
-              You are about to submit completion for <strong>{selectedAssignment?.job?.title}</strong>.
-              The employer will be notified to inspect your work and release your payment of{" "}
-              <strong className="text-emerald-700">{formatCurrency(selectedAssignment?.agreedAmount || 0)}</strong>.
+              Submitting work for <strong>{selectedAssignment?.job?.title}</strong>.
+              Upon verification, your payout of{" "}
+              <strong className="text-emerald-700">{formatCurrency(selectedAssignment?.agreedAmount || 0)}</strong>{" "}
+              will be released from Escrow.
             </p>
 
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="secondary" onClick={() => setSelectedAssignment(null)}>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Completion Note / Summary of Deliverables
+              </label>
+              <textarea
+                rows={3}
+                required
+                value={submissionNote}
+                onChange={(e) => setSubmissionNote(e.target.value)}
+                placeholder="e.g. Completed all 40 handwritten pages using blue & black ink. Scanned PDF link attached below..."
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Deliverable Links (Google Drive, Dropbox, OneDrive, etc.)
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  placeholder="Paste URL to files or scanned PDF..."
+                  value={newFileUrl}
+                  onChange={(e) => setNewFileUrl(e.target.value)}
+                  className="flex-1 px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500"
+                />
+                <Button type="button" variant="secondary" size="sm" onClick={addSubmissionFile}>
+                  <Plus className="w-3.5 h-3.5 mr-1" /> Add Link
+                </Button>
+              </div>
+
+              {submissionFiles.length > 0 && (
+                <div className="mt-2 space-y-1">
+                  {submissionFiles.map((f, i) => (
+                    <div key={i} className="flex items-center justify-between text-xs p-2 bg-slate-50 rounded-lg border border-slate-200">
+                      <span className="truncate text-blue-600 max-w-[85%]">{f}</span>
+                      <button type="button" onClick={() => removeSubmissionFile(f)} className="text-red-500">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <Button type="button" variant="secondary" onClick={() => setSelectedAssignment(null)}>
                 Cancel
               </Button>
               <Button
+                type="submit"
                 variant="primary"
                 isLoading={completing}
-                onClick={handleMarkComplete}
                 className="font-bold"
               >
-                Confirm Completion
+                {selectedAssignment?.status === "REVISION_REQUESTED"
+                  ? "Submit Revised Work"
+                  : "Submit Deliverables"}
               </Button>
             </div>
-          </div>
+          </form>
         </Modal>
 
         {/* Modal: Raise Dispute */}

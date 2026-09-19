@@ -7,7 +7,7 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const authResult = await requireAuth(req, ["EMPLOYER", "ADMIN"]);
+    const authResult = await requireAuth(req, ["EMPLOYER", "ADMIN", "BOTH"]);
     if ("error" in authResult) return authResult.error;
     const { user } = authResult;
 

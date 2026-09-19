@@ -15,20 +15,20 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     // Brand & Taglines
     "brand.tagline": "Local Work. Local People. Local Growth.",
-    "brand.badge": "Local Employment • Fatehabad & Sirsa",
+    "brand.badge": "Local Employment • Fatehabad, Sirsa & Hisar",
     "brand.hero_title_1": "Find Local Work.",
     "brand.hero_title_2": "Build Your Future.",
     "brand.hero_desc":
       "Work Adda connects ambitious students, gig seekers, and skilled workers with neighborhood stores, warehouses, and businesses — quickly, safely, and nearby.",
-    "brand.active_district": "Active: Fatehabad & Sirsa",
-    "brand.active_district_full": "Active across Fatehabad & Sirsa, Haryana",
-    "brand.scanning": "Scanning Fatehabad & Sirsa Network...",
-    "brand.tasks_found": "Hyperlocal Employment Network • Fatehabad & Sirsa",
+    "brand.active_district": "Active: Fatehabad, Sirsa & Hisar",
+    "brand.active_district_full": "Active across Fatehabad, Sirsa & Hisar, Haryana",
+    "brand.scanning": "Scanning Fatehabad, Sirsa & Hisar Network...",
+    "brand.tasks_found": "Hyperlocal Employment Network • Fatehabad, Sirsa & Hisar",
     "brand.ready_deal": "Ready! Instant Settlement & 5% Fee",
 
     // Navigation & Common Actions
     "nav.menu": "Menu",
-    "nav.search_placeholder": "Search local jobs & skills in Fatehabad & Sirsa...",
+    "nav.search_placeholder": "Search local jobs & skills in Fatehabad, Sirsa & Hisar...",
     "nav.search_btn": "Search",
     "nav.find_work": "Find Work",
     "nav.worker_hub": "Worker Hub",
@@ -69,7 +69,7 @@ const translations: Record<Language, Record<string, string>> = {
     "jobs.subtitle": "Find verified shifts, gigs, and jobs within your neighborhood radius.",
     "jobs.browsing_near": "Browsing near:",
     "jobs.filter_input": "Search job title, skills, or business...",
-    "jobs.district_filter": "Filter Fatehabad or Sirsa...",
+    "jobs.district_filter": "Filter Fatehabad, Sirsa or Hisar...",
     "jobs.districts_label": "Districts:",
     "jobs.radius_label": "Distance Radius:",
     "jobs.within_2km": "Within 2 km",
@@ -92,7 +92,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.for_workers": "For Workers",
     "footer.for_employers": "For Employers",
     "footer.trust": "Trust & Safety",
-    "footer.copyright": "© 2026 Work Adda. Built for Fatehabad & Sirsa, Haryana.",
+    "footer.copyright": "© 2026 Work Adda. Built for Fatehabad, Sirsa & Hisar, Haryana.",
 
     // Auth
     "auth.welcome_back": "Sign In to Work Adda",
@@ -123,20 +123,20 @@ const translations: Record<Language, Record<string, string>> = {
   hi: {
     // Brand & Taglines
     "brand.tagline": "लोकल काम. लोकल लोग. लोकल तरक्की।",
-    "brand.badge": "लोकल रोजगार • फतेहाबाद और सिरसा",
+    "brand.badge": "लोकल रोजगार • फतेहाबाद, सिरसा व हिसार",
     "brand.hero_title_1": "आस-पास काम पाएं।",
     "brand.hero_title_2": "अपना भविष्य बनाएं।",
     "brand.hero_desc":
       "वर्क अड्डा मेहनती छात्रों, गिग वर्कर्स और कुशल कामगारों को नजदीकी दुकानों, गोदामों और व्यापारियों से जोड़ता है — तेजी से, सुरक्षित और सीधे आपके इलाके में।",
-    "brand.active_district": "सक्रिय: फतेहाबाद व सिरसा",
-    "brand.active_district_full": "फतेहाबाद व सिरसा, हरियाणा में सक्रिय",
-    "brand.scanning": "फतेहाबाद व सिरसा नेटवर्क स्कैन हो रहा है...",
-    "brand.tasks_found": "सक्रिय लोकल नेटवर्क • फतेहाबाद व सिरसा",
+    "brand.active_district": "सक्रिय: फतेहाबाद, सिरसा व हिसार",
+    "brand.active_district_full": "फतेहाबाद, सिरसा व हिसार, हरियाणा में सक्रिय",
+    "brand.scanning": "फतेहाबाद, सिरसा व हिसार नेटवर्क स्कैन हो रहा है...",
+    "brand.tasks_found": "सक्रिय लोकल नेटवर्क • फतेहाबाद, सिरसा व हिसार",
     "brand.ready_deal": "तैयार! तुरंत पेमेंट और मात्र 5% शुल्क",
 
     // Navigation & Common Actions
     "nav.menu": "मेनू",
-    "nav.search_placeholder": "फतेहाबाद और सिरसा में काम व हुनर खोजें...",
+    "nav.search_placeholder": "फतेहाबाद, सिरसा और हिसार में काम व हुनर खोजें...",
     "nav.search_btn": "खोजें",
     "nav.find_work": "काम खोजें",
     "nav.worker_hub": "वर्कर हब",
@@ -177,7 +177,7 @@ const translations: Record<Language, Record<string, string>> = {
     "jobs.subtitle": "अपने पड़ोस और नजदीकी इलाके में सत्यापित शिफ्ट, गिग्स और काम पाएं।",
     "jobs.browsing_near": "आस-पास खोज रहे हैं:",
     "jobs.filter_input": "नौकरी का नाम, हुनर या दुकान खोजें...",
-    "jobs.district_filter": "फतेहाबाद या सिरसा फ़िल्टर करें...",
+    "jobs.district_filter": "फतेहाबाद, सिरसा या हिसार फ़िल्टर करें...",
     "jobs.districts_label": "जिले:",
     "jobs.radius_label": "दूरी का दायरा:",
     "jobs.within_2km": "2 किमी के अंदर",
@@ -200,7 +200,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.for_workers": "कामगारों के लिए",
     "footer.for_employers": "नियोक्ताओं के लिए",
     "footer.trust": "विश्वास और सुरक्षा",
-    "footer.copyright": "© 2026 वर्क अड्डा। फतेहाबाद और सिरसा, हरियाणा के लिए निर्मित।",
+    "footer.copyright": "© 2026 वर्क अड्डा। फतेहाबाद, सिरसा और हिसार, हरियाणा के लिए निर्मित।",
 
     // Auth
     "auth.welcome_back": "वर्क अड्डा में लॉग इन करें",

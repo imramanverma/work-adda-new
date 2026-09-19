@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, formatJobPay } from "@/lib/utils";
 import { formatDistance } from "@/lib/location";
 
 export default function WorkerDashboardPage() {
@@ -237,11 +237,22 @@ export default function WorkerDashboardPage() {
                       </div>
                     </div>
 
-                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0">
-                      <span className="font-black text-base text-slate-900">
-                        {formatCurrency(job.payAmount)}
-                        <span className="text-[10px] text-slate-500 font-normal"> /{job.payType.toLowerCase()}</span>
-                      </span>
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1.5 shrink-0">
+                      {(() => {
+                        const { rateText, subText } = formatJobPay(job);
+                        return (
+                          <div className="text-right">
+                            <span className="font-black text-base text-slate-900 block">
+                              {rateText}
+                            </span>
+                            {subText && (
+                              <span className="text-[11px] font-semibold text-emerald-700 block">
+                                {subText}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })()}
                       <Link href={`/jobs/${job.id}`}>
                         <Button size="sm" variant="outline">
                           View & Apply

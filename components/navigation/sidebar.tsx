@@ -113,7 +113,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <span className="inline-block px-1.5 py-0.2 rounded bg-brand-100 text-brand-800 font-bold text-[9px] uppercase tracking-wider">
                     {user.role}
                   </span>
-                  <span className="text-[10px] text-slate-400">• Fatehabad & Sirsa</span>
+                  <span className="text-[10px] text-slate-400">• Fatehabad, Sirsa & Hisar</span>
                 </div>
               </div>
             </div>
@@ -125,8 +125,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             </h4>
             <p className="text-[11px] text-slate-500 mt-0.5">
               {language === "hi"
-                ? "फतेहाबाद व सिरसा के लिए लोकल रोजगार व काम मंच।"
-                : "Local employment & task marketplace for Fatehabad & Sirsa."}
+                ? "फतेहाबाद, सिरसा व हिसार के लिए लोकल रोजगार व काम मंच।"
+                : "Local employment & task marketplace for Fatehabad, Sirsa & Hisar."}
             </p>
           </div>
         )}
@@ -150,7 +150,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           )}
 
           {/* Worker Navigation Links */}
-          {user?.role === "WORKER" && (
+          {(user?.role === "WORKER" || user?.role === "BOTH") && (
             <div className="pt-2 space-y-1">
               <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
                 {t("nav.worker_hub")}
@@ -231,7 +231,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           )}
 
           {/* Employer Navigation Links */}
-          {user?.role === "EMPLOYER" && (
+          {(user?.role === "EMPLOYER" || user?.role === "BOTH") && (
             <div className="pt-2 space-y-1">
               <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
                 {t("nav.employer_hub")}

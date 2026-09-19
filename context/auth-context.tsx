@@ -9,7 +9,7 @@ export interface AuthUser {
   name: string;
   email: string;
   phone: string;
-  role: "WORKER" | "EMPLOYER" | "ADMIN";
+  role: "WORKER" | "EMPLOYER" | "ADMIN" | "BOTH";
   location?: string | null;
   latitude?: number | null;
   longitude?: number | null;

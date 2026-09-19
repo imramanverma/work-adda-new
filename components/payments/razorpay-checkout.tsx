@@ -15,6 +15,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { formatCurrency } from "@/lib/utils";
+import { CustomUpiModal } from "./custom-upi-modal";
+
+export { CustomUpiModal };
 
 declare global {
   interface Window {
@@ -69,6 +72,7 @@ export function RazorpayCheckoutButton({
 }: RazorpayCheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
   const [showGatewayModal, setShowGatewayModal] = useState(false);
+  const [showUpiModal, setShowUpiModal] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("UPI");
   const [upiId, setUpiId] = useState("employer@upi");
   const [processingPayment, setProcessingPayment] = useState(false);
@@ -107,19 +111,19 @@ export function RazorpayCheckoutButton({
   };
 
   const handleButtonClick = async () => {
-    setLoading(true);
+    // Check payment gateway mode
+    const gatewayPreference = process.env.NEXT_PUBLIC_PAYMENT_GATEWAY || "DIRECT_UPI";
+    const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+    const hasRealKeys =
+      keyId &&
+      keyId.startsWith("rzp_") &&
+      !keyId.includes("placeholder") &&
+      keyId !== "rzp_test_placeholder";
 
-    try {
-      // Check if real Razorpay keys are configured on the server
-      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-      const hasRealKeys =
-        keyId &&
-        keyId.startsWith("rzp_") &&
-        !keyId.includes("placeholder") &&
-        keyId !== "rzp_test_placeholder";
-
-      if (hasRealKeys) {
-        // Try real Razorpay checkout if valid keys are present
+    // If configured explicitly for Razorpay and real keys are present
+    if (gatewayPreference === "RAZORPAY" && hasRealKeys) {
+      setLoading(true);
+      try {
         const scriptLoaded = await loadRazorpayScript();
         if (scriptLoaded) {
           const orderRes = await fetch("/api/payments/create-order", {
@@ -178,15 +182,14 @@ export function RazorpayCheckoutButton({
             return;
           }
         }
+      } catch {
+        setShowUpiModal(true);
+      } finally {
+        setLoading(false);
       }
-
-      // If Razorpay keys are not configured or not required, open the built-in Escrow Payment Gateway
-      setShowGatewayModal(true);
-    } catch {
-      // Fallback seamlessly to the Escrow Payment Gateway
-      setShowGatewayModal(true);
-    } finally {
-      setLoading(false);
+    } else {
+      // Default: Zero-commission direct UPI payment with QR code & mobile intent
+      setShowUpiModal(true);
     }
   };
 
@@ -373,6 +376,21 @@ export function RazorpayCheckoutButton({
           </div>
         </div>
       </Modal>
+
+      {/* Zero-Commission Direct UPI Modal */}
+      <CustomUpiModal
+        isOpen={showUpiModal}
+        onClose={() => setShowUpiModal(false)}
+        assignmentId={assignmentId}
+        amount={amount}
+        jobTitle={jobTitle}
+        workerName={workerName}
+        onSuccess={(payment) => {
+          setShowUpiModal(false);
+          onSuccess(payment);
+        }}
+        onError={onError}
+      />
     </>
   );
 }

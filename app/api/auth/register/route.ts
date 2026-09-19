@@ -24,6 +24,17 @@ export async function POST(req: NextRequest) {
 
     const passwordHash = await hashPassword(validatedData.password);
 
+    const isWorker = validatedData.role === "WORKER" || validatedData.role === "BOTH";
+    const isEmployer = validatedData.role === "EMPLOYER" || validatedData.role === "BOTH";
+
+    const defaultBusinessName =
+      validatedData.businessName?.trim() ||
+      (validatedData.posterType === "STUDENT"
+        ? `${validatedData.name} (Student)`
+        : validatedData.posterType === "INDIVIDUAL"
+        ? `${validatedData.name} (Personal)`
+        : `${validatedData.name}'s Tasks`);
+
     const user = await db.user.create({
       data: {
         name: validatedData.name,
@@ -37,7 +48,7 @@ export async function POST(req: NextRequest) {
         profileImage: validatedData.profileImage || null,
         isVerified: true, // Auto-verified for instant marketplace usage
         phoneVerified: true,
-        ...(validatedData.role === "WORKER"
+        ...(isWorker
           ? {
               workerProfile: {
                 create: {
@@ -49,20 +60,24 @@ export async function POST(req: NextRequest) {
                 },
               },
             }
-          : {
+          : {}),
+        ...(isEmployer
+          ? {
               employerProfile: {
                 create: {
-                  businessName: validatedData.businessName || `${validatedData.name}'s Enterprise`,
-                  businessType: validatedData.businessType || "Local Business",
+                  posterType: validatedData.posterType || "INDIVIDUAL",
+                  businessName: defaultBusinessName,
+                  businessType: validatedData.businessType || "Personal / Individual",
                   shopImage: validatedData.shopImage || null,
-                  description: "Local employer on Work Adda",
+                  description: "Job poster on Work Adda",
                   location: validatedData.location,
                   latitude: validatedData.latitude,
                   longitude: validatedData.longitude,
                   verificationStatus: "VERIFIED",
                 },
               },
-            }),
+            }
+          : {}),
       },
       include: {
         workerProfile: true,
@@ -74,7 +89,7 @@ export async function POST(req: NextRequest) {
       id: user.id,
       email: user.email,
       name: user.name,
-      role: user.role as "WORKER" | "EMPLOYER" | "ADMIN",
+      role: user.role as "WORKER" | "EMPLOYER" | "ADMIN" | "BOTH",
       phone: user.phone,
       isVerified: user.isVerified,
     };

@@ -14,7 +14,7 @@ model User {
   email        String    @unique
   phone        String    @unique
   passwordHash String
-  role         String    // "WORKER", "EMPLOYER", "ADMIN"
+  role         String    // "WORKER", "EMPLOYER", "ADMIN", "BOTH"
   profileImage String?
   location     String?
   latitude     Float?
@@ -52,10 +52,14 @@ model WorkerProfile {
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   bio               String?
   skills            String   @default("[]") // JSON string array of skills
+  categories        String?  @default("[]") // JSON string array of preferred categories
+  languages         String?  @default("[]") // JSON string array of languages spoken
+  portfolio         String?  // JSON string or links
   experience        String?
   education         String?
   availability      String?  @default("Flexible")
   preferredJobType  String?  @default("ANY")
+  preferredWorkType String?  @default("ANY") // "REMOTE", "LOCAL", "ANY"
   preferredDistance Int      @default(10) // km
   expectedPay       Float?
   rating            Float    @default(0.0)
@@ -68,9 +72,10 @@ model EmployerProfile {
   id                 String   @id @default(cuid())
   userId             String   @unique
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posterType         String?  @default("INDIVIDUAL") // "INDIVIDUAL", "STUDENT", "FREELANCER", "SHOP_OWNER", "COMPANY", "WHOLESALER", "HOUSEHOLD", "OTHER"
   businessName       String
   businessType       String   @default("Local Business")
-  shopImage          String?  // Shop / Storefront / Workplace Image
+  shopImage          String?  // Shop / Storefront / Workplace Image (optional)
   description        String?
   address            String?
   location           String?
@@ -99,7 +104,19 @@ model Job {
   employer        EmployerProfile @relation(fields: [employerId], references: [id], onDelete: Cascade)
   title           String
   description     String
-  category        String          // Retail, Delivery, Sales, Hospitality, Construction, Events, Office Assistance, Data Entry, IT & Technology, Repair & Maintenance, Education, Logistics, General Labour
+  category        String          // Retail, Delivery, Sales, Hospitality, Construction, Events, Office Assistance, Data Entry, IT & Technology, Repair & Maintenance, Education, Logistics, General Labour, Academic & Assignment Work, etc.
+  subcategory     String?         // Specific subcategory (e.g. "Assignment Writing", "Graphic Design")
+  isRemote        Boolean         @default(false)
+  urgency         String?         @default("NORMAL") // "NORMAL", "URGENT", "VERY_URGENT"
+  budgetType      String?         @default("FIXED") // "PER_PAGE", "FIXED", "HOURLY", "DAILY", "MONTHLY", "NEGOTIABLE"
+  pricePerUnit    Float?          // e.g. price per page
+  unitType        String?         // "PAGE", "HOUR", "TASK", "PIECE", "DAY"
+  quantity        Int?            // e.g. number of pages
+  deliveryMethod  String?         // "DIGITAL_UPLOAD", "PHYSICAL_DELIVERY", "PICKUP", "LOCAL_DELIVERY", "ONLINE_SUBMISSION", "ON_SITE"
+  revisionsAllowed Int?           @default(2)
+  categoryDetails String?         // JSON string for structured category specs (subject, academic level, handwriting/typed specs, etc.)
+  milestones      String?         // JSON string array for milestones
+  attachmentUrls  String?         // JSON string array for sample/reference material URLs
   requiredSkills  String          @default("[]") // JSON string array
   jobType         String          // FULL_TIME, PART_TIME, TEMPORARY, GIG, FLEXIBLE, INTERNSHIP
   location        String
@@ -124,44 +141,53 @@ model Job {
   disputes        Dispute[]
 
   @@index([category])
+  @@index([subcategory])
   @@index([status])
   @@index([jobType])
   @@index([location])
+  @@index([isRemote])
 }
 
 model Application {
-  id           String   @id @default(cuid())
-  jobId        String
-  job          Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  workerId     String
-  worker       User     @relation(fields: [workerId], references: [id], onDelete: Cascade)
-  coverMessage String?
-  proposedPay  Float?
-  status       String   @default("PENDING") // PENDING, SHORTLISTED, ACCEPTED, REJECTED, WITHDRAWN
-  appliedAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String   @id @default(cuid())
+  jobId           String
+  job             Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  workerId        String
+  worker          User     @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  coverMessage    String?
+  proposedPay     Float?
+  completionTime  String?  // e.g. "3 days"
+  relevantSkills  String?  // JSON string array
+  sampleWorkUrls  String?  // JSON string array or links
+  status          String   @default("PENDING") // PENDING, SHORTLISTED, ACCEPTED, REJECTED, WITHDRAWN
+  appliedAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@unique([jobId, workerId])
   @@index([status])
 }
 
 model WorkAssignment {
-  id               String   @id @default(cuid())
-  jobId            String
-  job              Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  workerId         String
-  worker           User     @relation("WorkerAssignments", fields: [workerId], references: [id], onDelete: Cascade)
-  employerId       String
-  employer         User     @relation("EmployerAssignments", fields: [employerId], references: [id], onDelete: Cascade)
-  agreedAmount     Float
-  startDate        DateTime?
-  endDate          DateTime?
-  status           String   @default("ASSIGNED") // ASSIGNED, IN_PROGRESS, COMPLETED, APPROVED, PAYMENT_PENDING, PAID, CANCELLED
-  completionStatus String   @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, SUBMITTED, APPROVED
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                     String   @id @default(cuid())
+  jobId                  String
+  job                    Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  workerId               String
+  worker                 User     @relation("WorkerAssignments", fields: [workerId], references: [id], onDelete: Cascade)
+  employerId             String
+  employer               User     @relation("EmployerAssignments", fields: [employerId], references: [id], onDelete: Cascade)
+  agreedAmount           Float
+  startDate              DateTime?
+  endDate                DateTime?
+  status                 String   @default("ASSIGNED") // ASSIGNED, IN_PROGRESS, COMPLETED, APPROVED, PAYMENT_PENDING, PAID, CANCELLED, REVISION_REQUESTED
+  completionStatus       String   @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, SUBMITTED, APPROVED, REVISION_REQUESTED
+  submissionNote         String?
+  submissionFiles        String?  // JSON string array of submitted deliverables
+  revisionCount          Int      @default(0)
+  revisionRequestedNote  String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
-  payment          Payment?
+  payment                Payment?
 
   @@index([status])
 }

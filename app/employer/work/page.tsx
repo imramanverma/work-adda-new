@@ -17,6 +17,8 @@ import {
   AlertTriangle,
   Lock,
   ExternalLink,
+  FileText,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +35,11 @@ export default function EmployerWorkPage() {
   const [approveAssignment, setApproveAssignment] = useState<any | null>(null);
   const [approving, setApproving] = useState(false);
 
+  // Revision modal state
+  const [revisionModalItem, setRevisionModalItem] = useState<any | null>(null);
+  const [revisionNote, setRevisionNote] = useState("");
+  const [submittingRevision, setSubmittingRevision] = useState(false);
+
   // Release payment modal state
   const [releasePaymentItem, setReleasePaymentItem] = useState<any | null>(null);
   const [releasing, setReleasing] = useState(false);
@@ -48,6 +55,32 @@ export default function EmployerWorkPage() {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [submittingReview, setSubmittingReview] = useState(false);
+
+  const handleRequestRevision = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!revisionModalItem) return;
+    setSubmittingRevision(true);
+    try {
+      const res = await fetch(`/api/assignments/${revisionModalItem.id}/revision`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ revisionNote }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success("Revision Requested 📋", "Worker has been notified with your feedback notes.");
+        setRevisionModalItem(null);
+        setRevisionNote("");
+        fetchAssignments();
+      } else {
+        toast.error("Error", data.error || "Could not request revision");
+      }
+    } catch (err: any) {
+      toast.error("Network Error", err.message);
+    } finally {
+      setSubmittingRevision(false);
+    }
+  };
 
   const fetchAssignments = async () => {
     try {
@@ -337,6 +370,52 @@ export default function EmployerWorkPage() {
                     </div>
                   </div>
 
+                  {/* Delivery Address & Addons Strip for Assignment Work */}
+                  {(() => {
+                    let details: any = null;
+                    try {
+                      details = typeof item.job?.categoryDetails === "string" ? JSON.parse(item.job.categoryDetails) : item.job?.categoryDetails;
+                    } catch {}
+
+                    if (!details) return null;
+
+                    return (
+                      <div className="space-y-2 pt-2 border-t border-slate-100">
+                        {details.addons && details.addons.length > 0 && (
+                          <div className="p-3 bg-amber-50/60 rounded-xl border border-amber-200/80 text-xs">
+                            <span className="font-bold text-amber-950 flex items-center gap-1.5 mb-1.5">
+                              <Sparkles className="w-3.5 h-3.5 text-amber-600" /> Included Paid Addons & Extras (+₹{details.addons.reduce((acc: number, a: any) => acc + Number(a.amount || 0), 0)}):
+                            </span>
+                            <div className="flex flex-wrap gap-2">
+                              {details.addons.map((addon: any, idx: number) => (
+                                <span key={idx} className="px-2 py-1 rounded-md bg-white border border-amber-200 font-semibold text-slate-800 text-[11px] flex items-center gap-1">
+                                  <span>{addon.title}</span>
+                                  <span className="font-bold text-amber-800">+₹{addon.amount}</span>
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {details.deliveryAddress && (
+                          <div className="p-3 bg-blue-50/60 rounded-xl border border-blue-200/80 text-xs space-y-1">
+                            <span className="font-bold text-blue-950 flex items-center gap-1.5">
+                              <MapPin className="w-3.5 h-3.5 text-blue-600" /> Handover & Delivery Address:
+                            </span>
+                            <p className="text-slate-800 font-semibold">
+                              {[details.deliveryAddress.collegeOrCampus, details.deliveryAddress.addressLine, details.deliveryAddress.landmark, details.deliveryAddress.city, details.deliveryAddress.pincode].filter(Boolean).join(", ")}
+                            </p>
+                            {details.deliveryAddress.handoverInstructions && (
+                              <p className="text-[11px] text-blue-900 font-medium bg-white/70 p-2 rounded-lg border border-blue-100">
+                                <strong>Instructions:</strong> {details.deliveryAddress.handoverInstructions}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+
                   {/* Escrow Guidance Banner */}
                   {isAwaitingPayment && (
                     <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
@@ -373,6 +452,59 @@ export default function EmployerWorkPage() {
                         <p className="font-bold">Dispute Under Administrative Review</p>
                         <p className="text-red-800 mt-0.5">
                           Escrow funds are frozen. Work Adda dispute arbitration team is investigating the submitted details.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Worker Submission Deliverables */}
+                  {(item.submissionNote || (item.submissionFiles && item.submissionFiles.length > 0)) && (
+                    <div className="p-4 bg-blue-50/80 rounded-2xl border border-blue-200 text-xs space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-blue-950 flex items-center gap-1.5">
+                          <FileText className="w-4 h-4 text-blue-700" /> Worker Submission Deliverables
+                        </span>
+                        {item.revisionCount > 0 && (
+                          <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-bold">
+                            Revision #{item.revisionCount}
+                          </span>
+                        )}
+                      </div>
+                      {item.submissionNote && (
+                        <p className="text-blue-900 leading-relaxed bg-white/80 p-2.5 rounded-xl border border-blue-100 font-medium">
+                          &ldquo;{item.submissionNote}&rdquo;
+                        </p>
+                      )}
+                      {item.submissionFiles && item.submissionFiles.length > 0 && (
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {item.submissionFiles.map((file: string, fIdx: number) => (
+                            <a
+                              key={fIdx}
+                              href={file}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-blue-200 text-xs font-semibold text-blue-700 hover:bg-blue-100 transition shadow-2xs"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                              <span>Deliverable Link #{fIdx + 1}</span>
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Revision Requested Notice */}
+                  {item.status === "REVISION_REQUESTED" && (
+                    <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
+                      <Clock className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="font-bold">Revision Requested (Awaiting Worker Submission)</p>
+                        <p className="text-amber-800 mt-0.5 leading-relaxed">
+                          Your instructions: &ldquo;{item.revisionRequestedNote || "Changes requested"}&rdquo;
+                        </p>
+                        <p className="text-[11px] text-amber-700 mt-1 font-semibold">
+                          Revisions used: {item.revisionCount || 1}
                         </p>
                       </div>
                     </div>
@@ -419,14 +551,31 @@ export default function EmployerWorkPage() {
                           }}
                         />
                       ) : item.status === "COMPLETED" ? (
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          onClick={() => setApproveAssignment(item)}
-                          className="font-bold bg-amber-600 hover:bg-amber-700 shadow-sm text-white"
-                        >
-                          <CheckCircle2 className="w-4 h-4 mr-1.5" /> Review & Approve Completion
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setRevisionModalItem(item);
+                              setRevisionNote("");
+                            }}
+                            className="font-bold border-amber-300 text-amber-900 hover:bg-amber-50"
+                          >
+                            <Clock className="w-3.5 h-3.5 mr-1 text-amber-600" /> Request Revision
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={() => setApproveAssignment(item)}
+                            className="font-bold bg-amber-600 hover:bg-amber-700 shadow-sm text-white"
+                          >
+                            <CheckCircle2 className="w-4 h-4 mr-1.5" /> Approve Work
+                          </Button>
+                        </div>
+                      ) : item.status === "REVISION_REQUESTED" ? (
+                        <span className="text-xs text-amber-800 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 font-bold flex items-center gap-1.5">
+                          <Clock className="w-4 h-4 text-amber-600" /> Revision Requested ({item.revisionCount || 1})
+                        </span>
                       ) : item.status === "APPROVED" || payment?.escrowStatus === "RELEASE_ELIGIBLE" ? (
                         <Button
                           size="sm"
@@ -643,6 +792,52 @@ export default function EmployerWorkPage() {
               </Button>
               <Button type="submit" variant="primary" isLoading={submittingReview} className="font-bold">
                 Submit Worker Rating
+              </Button>
+            </div>
+          </form>
+        </Modal>
+
+        {/* Modal: Request Revision */}
+        <Modal
+          isOpen={!!revisionModalItem}
+          onClose={() => setRevisionModalItem(null)}
+          title="Request Revision from Worker"
+          description="Specify what changes or corrections are needed before approving work."
+        >
+          <form onSubmit={handleRequestRevision} className="space-y-4 text-left">
+            <p className="text-xs text-slate-600">
+              Request changes for <strong>{revisionModalItem?.job?.title}</strong> assigned to{" "}
+              <strong>{revisionModalItem?.worker?.name}</strong>.
+            </p>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Revision Feedback & Instructions
+              </label>
+              <textarea
+                rows={4}
+                required
+                value={revisionNote}
+                onChange={(e) => setRevisionNote(e.target.value)}
+                placeholder="e.g. Please redraw diagram #2 with clear headings, fix spelling on page 14, and re-format font size..."
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+            </div>
+
+            <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 leading-relaxed">
+              ℹ️ The worker will be notified to revise their submission and re-upload deliverables. Escrow funds will remain safely held.
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="secondary" onClick={() => setRevisionModalItem(null)}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                isLoading={submittingRevision}
+                className="font-bold bg-amber-600 hover:bg-amber-700 text-white"
+              >
+                Send Revision Request
               </Button>
             </div>
           </form>

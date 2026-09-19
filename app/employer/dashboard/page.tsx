@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, formatJobPay } from "@/lib/utils";
 
 export default function EmployerDashboardPage() {
   const { user } = useAuth();
@@ -92,17 +92,17 @@ export default function EmployerDashboardPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs uppercase tracking-wider font-bold text-accent-400">
-                Employer Command Center
+                Hirer & Task Center
               </span>
               <Badge variant="success" className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-[10px]">
-                Verified Business
+                {profile?.posterType ? profile.posterType.replace("_", " ") : "Verified Account"}
               </Badge>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black">
-              {profile?.businessName || user?.name || "Business Enterprise"}
+              {profile?.businessName || user?.name || "Task Hirer"}
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
-              {profile?.businessType || "Local Business"} • Manage active job postings, hire local candidates, and disburse payouts.
+              Post tasks, assignments & shifts • Review applicant proposals • Escrow-safeguarded payments.
             </p>
           </div>
 
@@ -226,7 +226,11 @@ export default function EmployerDashboardPage() {
                             </h4>
                           </Link>
                           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mt-1">
-                            <span>{formatCurrency(job.payAmount)}/{job.payType.toLowerCase()}</span>
+                            <span className="font-semibold text-slate-700">
+                              {job.budgetType === "PER_PAGE" || job.payType === "PER_PAGE"
+                                ? `₹${job.pricePerUnit || 3}/page (Total: ${formatCurrency(job.payAmount)})`
+                                : `${formatCurrency(job.payAmount)}/${job.payType?.toLowerCase()?.replace("_", " ")}`}
+                            </span>
                             <span>•</span>
                             <span>{job.location}</span>
                             <span>•</span>

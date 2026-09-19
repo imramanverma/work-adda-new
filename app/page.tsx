@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatJobPay } from "@/lib/utils";
 import { useLanguage } from "@/context/language-context";
 import { useAuth } from "@/context/auth-context";
 import { AnimatedBackground } from "@/components/ui/animated-background";
@@ -91,14 +91,14 @@ export default function HomePage() {
   };
 
   const categories = [
-    { name: "Delivery & Courier", key: "Delivery", icon: "🛵", bg: "from-blue-500/10 to-blue-500/5", border: "hover:border-blue-300" },
-    { name: "Retail & Stores", key: "Retail", icon: "🏪", bg: "from-emerald-500/10 to-emerald-500/5", border: "hover:border-emerald-300" },
-    { name: "Events & Catering", key: "Events", icon: "🎪", bg: "from-amber-500/10 to-amber-500/5", border: "hover:border-amber-300" },
-    { name: "Hospitality & Cafe", key: "Hospitality", icon: "☕", bg: "from-rose-500/10 to-rose-500/5", border: "hover:border-rose-300" },
-    { name: "Warehouse Logistics", key: "Logistics", icon: "📦", bg: "from-indigo-500/10 to-indigo-500/5", border: "hover:border-indigo-300" },
-    { name: "Data Entry & Office", key: "Data Entry", icon: "💻", bg: "from-cyan-500/10 to-cyan-500/5", border: "hover:border-cyan-300" },
-    { name: "Technicians & Repair", key: "Repair & Maintenance", icon: "🔧", bg: "from-orange-500/10 to-orange-500/5", border: "hover:border-orange-300" },
-    { name: "Sales & Promoters", key: "Sales", icon: "📈", bg: "from-purple-500/10 to-purple-500/5", border: "hover:border-purple-300" },
+    { name: "Assignment & Academic", key: "Academic & Assignment Work", icon: "📚", bg: "from-blue-500/10 to-indigo-500/5", border: "hover:border-blue-400 ring-1 ring-blue-500/20" },
+    { name: "Local Business & Retail", key: "Local Business Jobs", icon: "🏪", bg: "from-emerald-500/10 to-emerald-500/5", border: "hover:border-emerald-300" },
+    { name: "Digital & Computer", key: "Digital Work", icon: "💻", bg: "from-cyan-500/10 to-cyan-500/5", border: "hover:border-cyan-300" },
+    { name: "Delivery & Errands", key: "Delivery & Errands", icon: "🛵", bg: "from-amber-500/10 to-amber-500/5", border: "hover:border-amber-300" },
+    { name: "Skilled Trades & Repair", key: "Skilled Work", icon: "🔧", bg: "from-orange-500/10 to-orange-500/5", border: "hover:border-orange-300" },
+    { name: "Household Services", key: "Household Services", icon: "🏠", bg: "from-rose-500/10 to-rose-500/5", border: "hover:border-rose-300" },
+    { name: "Creative & Media", key: "Creative Work", icon: "🎨", bg: "from-purple-500/10 to-purple-500/5", border: "hover:border-purple-300" },
+    { name: "Tutoring & Education", key: "Tutoring & Education", icon: "🎓", bg: "from-emerald-600/10 to-green-500/5", border: "hover:border-emerald-300" },
   ];
 
   return (
@@ -156,6 +156,7 @@ export default function HomePage() {
                   >
                     <option value="Fatehabad">Fatehabad</option>
                     <option value="Sirsa">Sirsa</option>
+                    <option value="Hisar">Hisar</option>
                   </select>
                 </div>
 
@@ -188,8 +189,8 @@ export default function HomePage() {
                     <ShieldCheck className="w-4 h-4 text-brand-600 shrink-0" />
                     <span>
                       {language === "hi"
-                        ? "फतेहाबाद व सिरसा का पहला हाइपरलोकल रोजगार नेटवर्क • 100% सत्यापित"
-                        : "Fatehabad & Sirsa's Verified Employment Network • Direct & Hyperlocal"}
+                        ? "फतेहाबाद, सिरसा व हिसार का पहला हाइपरलोकल रोजगार नेटवर्क • 100% सत्यापित"
+                        : "Fatehabad, Sirsa & Hisar's Verified Employment Network • Direct & Hyperlocal"}
                     </span>
                   </div>
                 )}
@@ -207,7 +208,7 @@ export default function HomePage() {
                   <span className="font-black text-xs sm:text-sm text-slate-900 block leading-tight">
                     {language === "hi" ? "हाइपरलोकल नेटवर्क" : "Hyperlocal Network"}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-medium">Fatehabad & Sirsa, Haryana</span>
+                  <span className="text-[10px] text-slate-500 font-medium">Fatehabad, Sirsa & Hisar, Haryana</span>
                 </div>
               </div>
 
@@ -233,7 +234,9 @@ export default function HomePage() {
                       <div className="flex items-center justify-between">
                         <Badge variant="brand">{platformStats.latestJob.category}</Badge>
                         <span className="font-black text-sm text-emerald-600">
-                          {formatCurrency(platformStats.latestJob.payAmount)}/{platformStats.latestJob.payType.toLowerCase()}
+                          {platformStats.latestJob.budgetType === "PER_PAGE" || platformStats.latestJob.payType === "PER_PAGE"
+                            ? `₹${platformStats.latestJob.pricePerUnit || 3}/page`
+                            : `${formatCurrency(platformStats.latestJob.payAmount)}/${platformStats.latestJob.payType?.toLowerCase()?.replace("_", " ")}`}
                         </span>
                       </div>
                       <h4 className="font-bold text-sm text-slate-900 line-clamp-1">
@@ -256,8 +259,8 @@ export default function HomePage() {
                       </h4>
                       <p className="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto">
                         {language === "hi"
-                          ? "फतेहाबाद व सिरसा में असली कामगारों और व्यापारियों को सीधे जोड़ें।"
-                          : "Connect directly with authentic local workers and verified businesses across Fatehabad & Sirsa."}
+                          ? "फतेहाबाद, सिरसा व हिसार में असली कामगारों और व्यापारियों को सीधे जोड़ें।"
+                          : "Connect directly with authentic local workers and verified businesses across Fatehabad, Sirsa & Hisar."}
                       </p>
                     </div>
                   )}
@@ -305,6 +308,31 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Hyperlocal Task Poster Banner */}
+      <section className="bg-gradient-to-r from-slate-950 via-brand-950 to-slate-900 py-8 sm:py-10 px-4 sm:px-6 lg:px-8 border-b border-slate-800 text-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+          <div className="space-y-2 text-center md:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-500/20 text-accent-300 text-xs font-bold border border-accent-500/30">
+              <Sparkles className="w-3.5 h-3.5" /> Fast • Local & Remote • 100% Escrow Protected
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+              What work do you need done?
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl font-medium">
+              Assignment • Delivery • Design • Data Entry • Tutoring • Repair • Shop Work • Household Work • Freelance Tasks
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <Link href="/employer/jobs/new">
+              <Button size="lg" variant="accent" className="font-extrabold px-8 shadow-xl shadow-accent-500/20 text-slate-950">
+                Post a Job / Task Now &rarr;
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -392,8 +420,19 @@ export default function HomePage() {
                     <div className="flex items-center justify-between">
                       <Badge variant="brand">{job.category}</Badge>
                       <span className="font-black text-base text-slate-900">
-                        {formatCurrency(job.payAmount)}
-                        <span className="text-xs font-normal text-slate-500">/{job.payType.toLowerCase()}</span>
+                        {job.budgetType === "PER_PAGE" || job.payType === "PER_PAGE" ? (
+                          <>
+                            ₹{job.pricePerUnit || 3}
+                            <span className="text-xs font-semibold text-slate-600">/page</span>
+                          </>
+                        ) : (
+                          <>
+                            {formatCurrency(job.payAmount)}
+                            <span className="text-xs font-normal text-slate-500">
+                              /{job.payType?.toLowerCase()?.replace("_", " ")}
+                            </span>
+                          </>
+                        )}
                       </span>
                     </div>
 
@@ -558,8 +597,8 @@ export default function HomePage() {
               </h4>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                 {language === "hi"
-                  ? "समीक्षाएं केवल फतेहाबाद व सिरसा में पूरे किए गए कार्यों और सत्यापित अनुबंधों के बाद ही दर्ज की जाती हैं। पहला काम पूरा करें और अपनी पहली रेटिंग प्राप्त करें!"
-                  : "Reviews are recorded exclusively upon verified completion of contracts between local employers and workers in Fatehabad & Sirsa. Complete your first gig to earn verified ratings!"}
+                  ? "समीक्षाएं केवल फतेहाबाद, सिरसा व हिसार में पूरे किए गए कार्यों और सत्यापित अनुबंधों के बाद ही दर्ज की जाती हैं। पहला काम पूरा करें और अपनी पहली रेटिंग प्राप्त करें!"
+                  : "Reviews are recorded exclusively upon verified completion of contracts between local employers and workers in Fatehabad, Sirsa & Hisar. Complete your first gig to earn verified ratings!"}
               </p>
               <div className="pt-2 flex justify-center gap-3">
                 <Link href="/jobs">

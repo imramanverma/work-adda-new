@@ -5,11 +5,11 @@ import { EmployerProfileUpdateSchema } from "@/lib/validations";
 
 export async function GET(req: NextRequest) {
   try {
-    const authResult = await requireAuth(req, ["EMPLOYER"]);
+    const authResult = await requireAuth(req, ["EMPLOYER", "BOTH"]);
     if ("error" in authResult) return authResult.error;
     const { user } = authResult;
 
-    const employer = await db.employerProfile.findUnique({
+    let employer = await db.employerProfile.findUnique({
       where: { userId: user.id },
       include: {
         user: {
@@ -34,7 +34,38 @@ export async function GET(req: NextRequest) {
     });
 
     if (!employer) {
-      return NextResponse.json({ error: "Employer profile not found" }, { status: 404 });
+      // Auto-create for individual poster
+      const fullUser = await db.user.findUnique({ where: { id: user.id } });
+      employer = await db.employerProfile.create({
+        data: {
+          userId: user.id,
+          posterType: "INDIVIDUAL",
+          businessName: fullUser?.name || "Personal Profile",
+          businessType: "Personal / Individual",
+          description: "Task poster on Work Adda",
+          location: fullUser?.location || "Local",
+          verificationStatus: "VERIFIED",
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+              location: true,
+              isVerified: true,
+            },
+          },
+          jobs: {
+            include: {
+              _count: {
+                select: { applications: true, assignments: true },
+              },
+            },
+          },
+        },
+      });
     }
 
     return NextResponse.json({ employer, profile: employer });
@@ -45,16 +76,30 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const authResult = await requireAuth(req, ["EMPLOYER"]);
+    const authResult = await requireAuth(req, ["EMPLOYER", "BOTH"]);
     if ("error" in authResult) return authResult.error;
     const { user } = authResult;
 
     const body = await req.json();
     const validated = EmployerProfileUpdateSchema.parse(body);
 
-    const updated = await db.employerProfile.update({
+    const updated = await db.employerProfile.upsert({
       where: { userId: user.id },
-      data: {
+      create: {
+        userId: user.id,
+        posterType: validated.posterType || "INDIVIDUAL",
+        businessName: validated.businessName,
+        businessType: validated.businessType || "Personal / Individual",
+        shopImage: validated.shopImage !== undefined ? validated.shopImage : null,
+        description: validated.description || "",
+        address: validated.address || "",
+        location: validated.location || "",
+        latitude: validated.latitude || null,
+        longitude: validated.longitude || null,
+        website: validated.website || "",
+      },
+      update: {
+        posterType: validated.posterType !== undefined ? validated.posterType : undefined,
         businessName: validated.businessName,
         businessType: validated.businessType,
         shopImage: validated.shopImage !== undefined ? validated.shopImage : undefined,

@@ -5,11 +5,11 @@ import { WorkerProfileUpdateSchema } from "@/lib/validations";
 
 export async function GET(req: NextRequest) {
   try {
-    const authResult = await requireAuth(req, ["WORKER"]);
+    const authResult = await requireAuth(req, ["WORKER", "BOTH"]);
     if ("error" in authResult) return authResult.error;
     const { user } = authResult;
 
-    const fullUser = await db.user.findUnique({
+    let fullUser = await db.user.findUnique({
       where: { id: user.id },
       include: {
         workerProfile: true,
@@ -28,28 +28,50 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    if (!fullUser || !fullUser.workerProfile) {
-      return NextResponse.json({ error: "Worker profile not found" }, { status: 404 });
+    if (!fullUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    const workerProfile = fullUser.workerProfile || (await db.workerProfile.create({
+      data: {
+        userId: user.id,
+        bio: `Local ${fullUser.name} ready for tasks.`,
+        skills: "[]",
+        categories: "[]",
+        languages: "[]",
+        preferredWorkType: "ANY",
+      },
+    }));
 
     let skillsList: string[] = [];
     try {
-      skillsList = JSON.parse(fullUser.workerProfile.skills || "[]");
+      skillsList = JSON.parse(workerProfile.skills || "[]");
+    } catch {}
+
+    let categoriesList: string[] = [];
+    try {
+      categoriesList = JSON.parse(workerProfile.categories || "[]");
+    } catch {}
+
+    let languagesList: string[] = [];
+    try {
+      languagesList = JSON.parse(workerProfile.languages || "[]");
     } catch {}
 
     // Calculate profile completion percentage
-    let completion = 20; // Base for user registration
+    let completion = 20;
     if (skillsList.length > 0) completion += 20;
-    if (fullUser.workerProfile.experience) completion += 15;
-    if (fullUser.workerProfile.bio) completion += 15;
-    if (fullUser.workerProfile.education) completion += 10;
-    if (fullUser.workerProfile.availability) completion += 10;
+    if (workerProfile.experience) completion += 15;
+    if (workerProfile.bio) completion += 15;
+    if (workerProfile.education) completion += 10;
+    if (workerProfile.availability) completion += 10;
     if (fullUser.location) completion += 10;
-    if (fullUser.profileImage) completion += 10;
 
     const workerData = {
-      ...fullUser.workerProfile,
+      ...workerProfile,
       skills: skillsList,
+      categories: categoriesList,
+      languages: languagesList,
       name: fullUser.name,
       fullName: fullUser.name,
       email: fullUser.email,
@@ -74,7 +96,7 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const authResult = await requireAuth(req, ["WORKER"]);
+    const authResult = await requireAuth(req, ["WORKER", "BOTH"]);
     if ("error" in authResult) return authResult.error;
     const { user } = authResult;
 
@@ -100,11 +122,30 @@ export async function PUT(req: NextRequest) {
     }
 
     // Update WorkerProfile
-    const updated = await db.workerProfile.update({
+    const updated = await db.workerProfile.upsert({
       where: { userId: user.id },
-      data: {
+      create: {
+        userId: user.id,
         bio: validated.bio,
         skills: JSON.stringify(validated.skills),
+        categories: validated.categories ? JSON.stringify(validated.categories) : "[]",
+        languages: validated.languages ? JSON.stringify(validated.languages) : "[]",
+        portfolio: validated.portfolio || null,
+        preferredWorkType: validated.preferredWorkType || "ANY",
+        experience: validated.experience,
+        education: validated.education,
+        availability: validated.availability,
+        preferredJobType: validated.preferredJobType,
+        preferredDistance: validated.preferredDistance,
+        expectedPay: validated.expectedPay,
+      },
+      update: {
+        bio: validated.bio,
+        skills: JSON.stringify(validated.skills),
+        categories: validated.categories ? JSON.stringify(validated.categories) : undefined,
+        languages: validated.languages ? JSON.stringify(validated.languages) : undefined,
+        portfolio: validated.portfolio !== undefined ? validated.portfolio : undefined,
+        preferredWorkType: validated.preferredWorkType || undefined,
         experience: validated.experience,
         education: validated.education,
         availability: validated.availability,
@@ -120,6 +161,8 @@ export async function PUT(req: NextRequest) {
       profile: {
         ...updated,
         skills: validated.skills,
+        categories: validated.categories || [],
+        languages: validated.languages || [],
       },
     });
   } catch (err: any) {

@@ -19,11 +19,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { AuthBackground } from "@/components/brand/auth-background";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { JOB_POSTER_PROFILES } from "@/lib/constants/categories";
 
 export default function RegisterPage() {
   const { register } = useAuth();
   const { t, language } = useLanguage();
-  const [role, setRole] = useState<"WORKER" | "EMPLOYER">("WORKER");
+  const [role, setRole] = useState<"WORKER" | "EMPLOYER" | "BOTH">("WORKER");
+  const [posterType, setPosterType] = useState<string>("INDIVIDUAL");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,7 +34,7 @@ export default function RegisterPage() {
     confirmPassword: "",
     location: "Fatehabad",
     businessName: "",
-    businessType: "Retail Shop",
+    businessType: "Personal / Individual",
     shopImage: "",
     profileImage: "",
   });
@@ -42,18 +44,7 @@ export default function RegisterPage() {
   const locations = [
     "Fatehabad",
     "Sirsa",
-  ];
-
-  const businessTypes = [
-    "Retail Shop",
-    "Logistics & Delivery",
-    "Cafe & Restaurant",
-    "Events & Catering",
-    "Warehouse & Wholesale",
-    "IT & Tech Startup",
-    "Healthcare / Clinic",
-    "Repair & Workshop",
-    "Individual / Household",
+    "Hisar",
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,16 +71,6 @@ export default function RegisterPage() {
       return;
     }
 
-    // Compulsory Shop Image Validation for Employers
-    if (role === "EMPLOYER" && (!formData.shopImage || !formData.shopImage.trim())) {
-      setError(
-        language === "hi"
-          ? "नियोक्ता पंजीकरण के लिए दुकान / कार्यस्थल की तस्वीर अनिवार्य है।"
-          : "Shop / Storefront image is compulsory for employer registration."
-      );
-      return;
-    }
-
     setLoading(true);
     const res = await register({
       name: formData.name,
@@ -97,11 +78,20 @@ export default function RegisterPage() {
       phone: formData.phone,
       password: formData.password,
       role,
+      posterType: role !== "WORKER" ? posterType : undefined,
       location: formData.location,
-      businessName: role === "EMPLOYER" ? formData.businessName : undefined,
-      businessType: role === "EMPLOYER" ? formData.businessType : undefined,
-      shopImage: role === "EMPLOYER" ? formData.shopImage : undefined,
-      profileImage: role === "WORKER" ? formData.profileImage : undefined,
+      businessName:
+        role !== "WORKER"
+          ? formData.businessName.trim() ||
+            (posterType === "STUDENT"
+              ? `${formData.name} (Student)`
+              : posterType === "INDIVIDUAL"
+              ? `${formData.name} (Personal)`
+              : `${formData.name}'s Tasks`)
+          : undefined,
+      businessType: role !== "WORKER" ? formData.businessType : undefined,
+      shopImage: role !== "WORKER" ? formData.shopImage : undefined,
+      profileImage: formData.profileImage || undefined,
     });
 
     if (!res.success && res.error) {
@@ -122,38 +112,84 @@ export default function RegisterPage() {
           </h2>
           <p className="text-xs text-slate-500 mt-1.5 font-medium">
             {language === "hi"
-              ? "शुरू करने के लिए अपना खाता प्रकार चुनें"
-              : "Choose your account type to get started"}
+              ? "शुरू करने के लिए अपना उद्देश्य चुनें"
+              : "What would you like to do on Work Adda?"}
           </p>
         </div>
 
-        {/* Role Selector Tabs */}
-        <div className="grid grid-cols-2 gap-3 p-1.5 bg-slate-100 rounded-2xl border border-slate-200">
+        {/* 3-Way Role Selector Tabs */}
+        <div className="grid grid-cols-3 gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200">
           <button
             type="button"
             onClick={() => setRole("WORKER")}
-            className={`flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-xs transition-all ${
+            className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-xl font-bold text-xs transition-all ${
               role === "WORKER"
                 ? "bg-white text-brand-700 shadow-sm border border-slate-200"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <User className="w-4 h-4" />{" "}
-            {language === "hi" ? "काम खोजना चाहते हैं (वर्कर)" : "I Want to Work / Gig"}
+            <User className="w-4 h-4 mb-1" />
+            <span>{language === "hi" ? "काम खोजें" : "Find Work"}</span>
           </button>
           <button
             type="button"
             onClick={() => setRole("EMPLOYER")}
-            className={`flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-xs transition-all ${
+            className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-xl font-bold text-xs transition-all ${
               role === "EMPLOYER"
                 ? "bg-white text-brand-700 shadow-sm border border-slate-200"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <Building2 className="w-4 h-4" />{" "}
-            {language === "hi" ? "कामगार रखना चाहते हैं (नियोक्ता)" : "I Want to Hire"}
+            <Building2 className="w-4 h-4 mb-1" />
+            <span>{language === "hi" ? "काम पोस्ट करें" : "Post a Job"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRole("BOTH")}
+            className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-xl font-bold text-xs transition-all ${
+              role === "BOTH"
+                ? "bg-white text-brand-700 shadow-sm border border-slate-200"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <Briefcase className="w-4 h-4 mb-1" />
+            <span>{language === "hi" ? "दोनों (खोजें व पोस्ट करें)" : "Both"}</span>
           </button>
         </div>
+
+        {/* Job Poster Profile Selector (When posting jobs or both) */}
+        {(role === "EMPLOYER" || role === "BOTH") && (
+          <div className="space-y-2 p-4 bg-amber-50/60 rounded-2xl border border-amber-200/80">
+            <label className="block text-xs font-bold text-slate-800">
+              {language === "hi" ? "आपका प्रोफाइल प्रकार चुनें:" : "Your Job Poster Profile:"}
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {JOB_POSTER_PROFILES.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => {
+                    setPosterType(p.id);
+                    setFormData((prev) => ({
+                      ...prev,
+                      businessType: p.label,
+                    }));
+                  }}
+                  className={`p-2 rounded-xl text-left text-xs border transition-all ${
+                    posterType === p.id
+                      ? "bg-white border-brand-600 shadow-xs font-bold text-brand-700 ring-2 ring-brand-500/20"
+                      : "bg-white/70 border-slate-200 text-slate-700 hover:bg-white"
+                  }`}
+                >
+                  <p className="leading-tight">{p.label}</p>
+                </button>
+              ))}
+            </div>
+            <p className="text-[11px] text-slate-500 italic mt-1">
+              {JOB_POSTER_PROFILES.find((p) => p.id === posterType)?.desc}
+            </p>
+          </div>
+        )}
 
         {error && (
           <div className="p-3 text-xs bg-red-50 border border-red-200 text-red-700 rounded-xl">
@@ -170,7 +206,7 @@ export default function RegisterPage() {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="e.g. Jaspreet Singh"
+                placeholder="e.g. Jaspreet Singh / Priya Sharma"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
@@ -204,15 +240,16 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Employer Specific Fields */}
-          {role === "EMPLOYER" && (
-            <div className="space-y-4 p-4 bg-amber-50/50 rounded-2xl border border-amber-100">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Shop / Business Specific Fields (Only shown if posterType === 'SHOP_OWNER' or 'COMPANY' or 'WHOLESALER') */}
+          {(role === "EMPLOYER" || role === "BOTH") &&
+            ["SHOP_OWNER", "COMPANY", "WHOLESALER"].includes(posterType) && (
+              <div className="space-y-4 p-4 bg-slate-50 rounded-2xl border border-slate-200">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Business Name</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Business / Store Name (Optional)
+                  </label>
                   <input
                     type="text"
-                    required
                     value={formData.businessName}
                     onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
                     placeholder="e.g. Singh Retail Supermarket"
@@ -220,51 +257,35 @@ export default function RegisterPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Business Category</label>
-                  <select
-                    value={formData.businessType}
-                    onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  >
-                    {businessTypes.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {/* Optional Shop Image */}
+                <ImageUpload
+                  label={language === "hi" ? "दुकान/व्यवसाय की तस्वीर (वैकल्पिक)" : "Shop / Storefront Image (Optional)"}
+                  required={false}
+                  aspectRatio="video"
+                  placeholderIcon="store"
+                  description={
+                    language === "hi"
+                      ? "यदि आपके पास दुकान या स्टोर है, तो उसकी तस्वीर अपलोड कर सकते हैं।"
+                      : "Optional: Upload a photo of your storefront or business if applicable."
+                  }
+                  value={formData.shopImage}
+                  onChange={(val) => setFormData({ ...formData, shopImage: val || "" })}
+                />
               </div>
+            )}
 
-              {/* Compulsory Shop Image */}
-              <ImageUpload
-                label={language === "hi" ? "दुकान/व्यवसाय की तस्वीर" : "Shop / Storefront Image"}
-                required={true}
-                aspectRatio="video"
-                placeholderIcon="store"
-                description={
-                  language === "hi"
-                    ? "अपनी दुकान या कार्यस्थल की स्पष्ट तस्वीर अपलोड करें। सत्यापन के लिए यह अनिवार्य है।"
-                    : "Upload a clear photo of your store, workshop, or business premises. Compulsory for employer verification."
-                }
-                value={formData.shopImage}
-                onChange={(val) => setFormData({ ...formData, shopImage: val || "" })}
-              />
-            </div>
-          )}
-
-          {/* Worker Specific Fields: Optional Profile Photo */}
-          {role === "WORKER" && (
+          {/* Profile Photo for Worker or Dual user */}
+          {(role === "WORKER" || role === "BOTH") && (
             <div className="p-4 bg-blue-50/40 rounded-2xl border border-blue-100">
               <ImageUpload
-                label={language === "hi" ? "प्रोफ़ाइल तस्वीर" : "Worker Profile Photo"}
+                label={language === "hi" ? "प्रोफ़ाइल तस्वीर (वैकल्पिक)" : "Profile Photo (Optional)"}
                 required={false}
                 aspectRatio="square"
                 placeholderIcon="user"
                 description={
                   language === "hi"
-                    ? "अपनी तस्वीर अपलोड करें ताकि नियोक्ता आपको आसानी से पहचान सकें।"
-                    : "Upload a photo of yourself. Helps employers recognize and trust your profile."
+                    ? "अपनी तस्वीर अपलोड करें ताकि लोग आपको आसानी से पहचान सकें।"
+                    : "Upload a photo of yourself. Helps build trust in the community."
                 }
                 value={formData.profileImage}
                 onChange={(val) => setFormData({ ...formData, profileImage: val || "" })}

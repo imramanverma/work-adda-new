@@ -138,7 +138,9 @@ export default function AdminJobsPage() {
                         <Badge variant="brand">{j.category}</Badge>
                       </td>
                       <td className="px-6 py-4 font-bold text-slate-900">
-                        {formatCurrency(j.payAmount)}/{j.payType.toLowerCase()}
+                        {j.budgetType === "PER_PAGE" || j.payType === "PER_PAGE"
+                          ? `₹${j.pricePerUnit || 3}/page`
+                          : `${formatCurrency(j.payAmount)}/${j.payType.toLowerCase().replace("_", " ")}`}
                       </td>
                       <td className="px-6 py-4">{j._count?.applications || 0}</td>
                       <td className="px-6 py-4">

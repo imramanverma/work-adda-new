@@ -6,7 +6,7 @@
 
 ## ✨ Features
 
-- **⚡ Instant Radar Job Discovery**: Local radar scan matching workers with gigs in their radius across Fatehabad and Sirsa.
+- **⚡ Instant Radar Job Discovery**: Local radar scan matching workers with gigs in their radius across Fatehabad, Sirsa, and Hisar.
 - **🛡️ Multi-Role Ecosystem**: Tailored dashboards and workflows for **Workers**, **Employers**, and **System Admins**.
 - **📍 Live Task Pipeline**: End-to-end status lifecycle (`APPLIED` → `ASSIGNED` → `IN_PROGRESS` → `COMPLETED` → `PAID`).
 - **💬 Real-Time Direct Messaging**: In-app messaging between employers and job applicants.

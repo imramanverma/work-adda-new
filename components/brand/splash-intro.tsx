@@ -75,10 +75,15 @@ export function SplashIntro() {
               <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
               Fatehabad
             </div>
-            {/* Bottom Beacon: Sirsa */}
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-slate-900/90 border border-emerald-400/60 text-[10px] font-bold text-emerald-300 shadow-md shadow-emerald-500/20 flex items-center gap-1.5">
+            {/* Bottom-Left Beacon: Sirsa */}
+            <div className="absolute -bottom-2 left-3 px-2 py-0.5 rounded-full bg-slate-900/90 border border-emerald-400/60 text-[10px] font-bold text-emerald-300 shadow-md shadow-emerald-500/20 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
               Sirsa
+            </div>
+            {/* Bottom-Right Beacon: Hisar */}
+            <div className="absolute -bottom-2 right-3 px-2 py-0.5 rounded-full bg-slate-900/90 border border-amber-400/60 text-[10px] font-bold text-amber-300 shadow-md shadow-amber-500/20 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+              Hisar
             </div>
           </div>
 
@@ -165,13 +170,13 @@ export function SplashIntro() {
           {phase === 1 && (
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/30 text-xs font-semibold text-blue-300 animate-in fade-in duration-300">
               <Radio className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
-              <span>Scanning Fatehabad & Sirsa Network...</span>
+              <span>Scanning Fatehabad, Sirsa & Hisar Network...</span>
             </div>
           )}
           {phase === 2 && (
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-xs font-semibold text-emerald-300 animate-in fade-in duration-300">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Live Hyperlocal Network • Fatehabad & Sirsa</span>
+              <span>Live Hyperlocal Network • Fatehabad, Sirsa & Hisar</span>
             </div>
           )}
           {phase === 3 && (

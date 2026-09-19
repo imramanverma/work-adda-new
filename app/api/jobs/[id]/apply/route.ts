@@ -8,7 +8,7 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const authResult = await requireAuth(req, ["WORKER"]);
+    const authResult = await requireAuth(req, ["WORKER", "BOTH"]);
     if ("error" in authResult) return authResult.error;
     const { user } = authResult;
 
@@ -23,6 +23,13 @@ export async function POST(
 
     if (!job) {
       return NextResponse.json({ error: "Job not found" }, { status: 404 });
+    }
+
+    if (job.employer.userId === user.id) {
+      return NextResponse.json(
+        { error: "You cannot apply to your own job listing." },
+        { status: 400 }
+      );
     }
 
     if (job.status !== "OPEN") {
@@ -58,6 +65,9 @@ export async function POST(
         workerId: user.id,
         coverMessage: validated.coverMessage,
         proposedPay: validated.proposedPay ?? job.payAmount,
+        completionTime: validated.completionTime || null,
+        relevantSkills: validated.relevantSkills ? JSON.stringify(validated.relevantSkills) : null,
+        sampleWorkUrls: validated.sampleWorkUrls || null,
         status: "PENDING",
       },
     });

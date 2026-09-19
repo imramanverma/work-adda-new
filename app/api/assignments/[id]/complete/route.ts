@@ -7,7 +7,7 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const authResult = await requireAuth(req, ["WORKER", "ADMIN"]);
+    const authResult = await requireAuth(req, ["WORKER", "ADMIN", "BOTH"]);
     if ("error" in authResult) return authResult.error;
     const { user } = authResult;
 
@@ -27,11 +27,15 @@ export async function PATCH(
       return NextResponse.json({ error: "Forbidden. Only the assigned worker can submit completion." }, { status: 403 });
     }
 
+    const body = await req.json().catch(() => ({}));
+
     const updated = await db.workAssignment.update({
       where: { id: params.id },
       data: {
         status: "COMPLETED",
         completionStatus: "SUBMITTED",
+        submissionNote: body.submissionNote || undefined,
+        submissionFiles: body.submissionFiles || undefined,
       },
     });
 
@@ -39,15 +43,15 @@ export async function PATCH(
     await db.notification.create({
       data: {
         userId: assignment.employerId,
-        title: "Work Marked Completed! 📋",
-        message: `${assignment.worker.name} has completed the task for "${assignment.job.title}". Please review and approve completion to release payment.`,
+        title: "Work Submitted for Review! 📋",
+        message: `${assignment.worker.name} has submitted the work for "${assignment.job.title}". Please inspect and approve completion to release payment, or request revisions.`,
         type: "ASSIGNMENT",
       },
     });
 
     return NextResponse.json({
       success: true,
-      message: "Work submitted as completed. The employer has been asked to verify and approve.",
+      message: "Work submitted for employer review and escrow approval.",
       assignment: updated,
     });
   } catch (err: any) {

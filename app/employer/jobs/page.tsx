@@ -203,7 +203,9 @@ export default function EmployerJobsManagerPage() {
 
                   <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
                     <span className="font-bold text-slate-900">
-                      {formatCurrency(job.payAmount)}/{job.payType.toLowerCase()}
+                      {job.budgetType === "PER_PAGE" || job.payType === "PER_PAGE"
+                        ? `₹${job.pricePerUnit || 3}/page (Total: ${formatCurrency(job.payAmount)})`
+                        : `${formatCurrency(job.payAmount)}/${job.payType?.toLowerCase()?.replace("_", " ")}`}
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1">

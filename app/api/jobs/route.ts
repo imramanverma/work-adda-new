@@ -10,10 +10,16 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const q = searchParams.get("q") || "";
     const category = searchParams.get("category") || "";
+    const subcategory = searchParams.get("subcategory") || "";
+    const isRemote = searchParams.get("isRemote");
+    const urgency = searchParams.get("urgency");
+    const budgetType = searchParams.get("budgetType");
     const jobType = searchParams.get("jobType") || "";
     const location = searchParams.get("location") || "";
     const minPay = searchParams.get("minPay") ? parseFloat(searchParams.get("minPay")!) : undefined;
     const maxPay = searchParams.get("maxPay") ? parseFloat(searchParams.get("maxPay")!) : undefined;
+    const minPages = searchParams.get("minPages") ? parseInt(searchParams.get("minPages")!, 10) : undefined;
+    const maxPages = searchParams.get("maxPages") ? parseInt(searchParams.get("maxPages")!, 10) : undefined;
     const maxDistance = searchParams.get("maxDistance") ? parseFloat(searchParams.get("maxDistance")!) : undefined;
     const userLat = searchParams.get("lat") ? parseFloat(searchParams.get("lat")!) : undefined;
     const userLng = searchParams.get("lng") ? parseFloat(searchParams.get("lng")!) : undefined;
@@ -30,9 +36,43 @@ export async function GET(req: NextRequest) {
     if (category && category !== "All") {
       const trimmedCat = category.trim();
       const capitalizedCat = trimmedCat.charAt(0).toUpperCase() + trimmedCat.slice(1).toLowerCase();
-      where.category = {
-        in: [trimmedCat, trimmedCat.toLowerCase(), trimmedCat.toUpperCase(), capitalizedCat],
-      };
+      // Handle synonyms like Assignment vs Academic & Assignment Work
+      const isAcademic =
+        trimmedCat.toLowerCase().includes("assignment") ||
+        trimmedCat.toLowerCase().includes("academic");
+
+      if (isAcademic) {
+        where.category = {
+          in: [
+            "Assignment & Academic Work",
+            "Academic & Assignment Work",
+            "Assignment",
+            "Academic",
+          ],
+        };
+      } else {
+        where.category = {
+          in: [trimmedCat, trimmedCat.toLowerCase(), trimmedCat.toUpperCase(), capitalizedCat],
+        };
+      }
+    }
+
+    if (subcategory && subcategory !== "All") {
+      where.subcategory = { contains: subcategory };
+    }
+
+    if (isRemote === "true") {
+      where.isRemote = true;
+    } else if (isRemote === "false") {
+      where.isRemote = false;
+    }
+
+    if (urgency && urgency !== "ALL") {
+      where.urgency = urgency;
+    }
+
+    if (budgetType && budgetType !== "ALL") {
+      where.budgetType = budgetType;
     }
 
     if (jobType && jobType !== "All") {
@@ -49,11 +89,19 @@ export async function GET(req: NextRequest) {
       if (maxPay !== undefined) where.payAmount.lte = maxPay;
     }
 
+    if (minPages !== undefined || maxPages !== undefined) {
+      where.quantity = {};
+      if (minPages !== undefined) where.quantity.gte = minPages;
+      if (maxPages !== undefined) where.quantity.lte = maxPages;
+    }
+
     if (q) {
       where.OR = [
         { title: { contains: q } },
         { description: { contains: q } },
         { category: { contains: q } },
+        { subcategory: { contains: q } },
+        { categoryDetails: { contains: q } },
         { location: { contains: q } },
         { requiredSkills: { contains: q } },
         { employer: { businessName: { contains: q } } },
@@ -74,6 +122,7 @@ export async function GET(req: NextRequest) {
           employer: {
             select: {
               id: true,
+              posterType: true,
               businessName: true,
               businessType: true,
               rating: true,
@@ -160,6 +209,22 @@ export async function GET(req: NextRequest) {
             return [];
           }
         })(),
+        categoryDetails: (() => {
+          if (!job.categoryDetails) return null;
+          try {
+            return typeof job.categoryDetails === "string" ? JSON.parse(job.categoryDetails) : job.categoryDetails;
+          } catch {
+            return null;
+          }
+        })(),
+        attachmentUrls: (() => {
+          if (!job.attachmentUrls) return [];
+          try {
+            return typeof job.attachmentUrls === "string" ? JSON.parse(job.attachmentUrls) : job.attachmentUrls;
+          } catch {
+            return [];
+          }
+        })(),
         distanceKm,
         matchScore: matchData ? matchData.score : null,
         matchReasons: matchData ? matchData.reasons : [],
@@ -206,19 +271,28 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const authResult = await requireAuth(req, ["EMPLOYER"]);
+    const authResult = await requireAuth(req, ["EMPLOYER", "BOTH"]);
     if ("error" in authResult) return authResult.error;
     const { user } = authResult;
 
-    const employer = await db.employerProfile.findUnique({
+    let employer = await db.employerProfile.findUnique({
       where: { userId: user.id },
     });
 
     if (!employer) {
-      return NextResponse.json(
-        { error: "Employer profile not found. Please complete your employer profile first." },
-        { status: 400 }
-      );
+      // Auto-create employer profile for individual / student / freelancer poster
+      const fullUser = await db.user.findUnique({ where: { id: user.id } });
+      employer = await db.employerProfile.create({
+        data: {
+          userId: user.id,
+          posterType: "INDIVIDUAL",
+          businessName: fullUser?.name ? `${fullUser.name} (Task Poster)` : "Individual Poster",
+          businessType: "Personal / Individual",
+          description: "Task poster on Work Adda",
+          location: fullUser?.location || "Remote",
+          verificationStatus: "VERIFIED",
+        },
+      });
     }
 
     const body = await req.json();
@@ -230,11 +304,35 @@ export async function POST(req: NextRequest) {
         title: validated.title,
         description: validated.description,
         category: validated.category,
+        subcategory: validated.subcategory || null,
+        isRemote: Boolean(validated.isRemote),
+        urgency: validated.urgency || "NORMAL",
+        budgetType: validated.budgetType || "FIXED",
+        pricePerUnit: validated.pricePerUnit ? Number(validated.pricePerUnit) : null,
+        unitType: validated.unitType || null,
+        quantity: validated.quantity ? Number(validated.quantity) : null,
+        deliveryMethod: validated.deliveryMethod || null,
+        revisionsAllowed: validated.revisionsAllowed ?? 2,
+        categoryDetails: validated.categoryDetails
+          ? typeof validated.categoryDetails === "string"
+            ? validated.categoryDetails
+            : JSON.stringify(validated.categoryDetails)
+          : null,
+        milestones: validated.milestones
+          ? typeof validated.milestones === "string"
+            ? validated.milestones
+            : JSON.stringify(validated.milestones)
+          : null,
+        attachmentUrls: validated.attachmentUrls
+          ? typeof validated.attachmentUrls === "string"
+            ? validated.attachmentUrls
+            : JSON.stringify(validated.attachmentUrls)
+          : null,
         requiredSkills: JSON.stringify(validated.requiredSkills),
         jobType: validated.jobType,
-        location: validated.location,
-        latitude: validated.latitude ?? employer.latitude,
-        longitude: validated.longitude ?? employer.longitude,
+        location: validated.isRemote ? "Remote / Online" : validated.location,
+        latitude: validated.isRemote ? null : (validated.latitude ?? employer.latitude),
+        longitude: validated.isRemote ? null : (validated.longitude ?? employer.longitude),
         payAmount: validated.payAmount,
         payType: validated.payType,
         workersRequired: validated.workersRequired,

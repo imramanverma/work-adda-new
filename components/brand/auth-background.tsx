@@ -78,7 +78,7 @@ export function AuthBackground() {
         </div>
         <div>
           <span className="font-extrabold text-xs text-slate-800 block">Hyperlocal Radius</span>
-          <span className="text-[10px] text-brand-600 font-bold">Fatehabad & Sirsa, Haryana</span>
+          <span className="text-[10px] text-brand-600 font-bold">Fatehabad, Sirsa & Hisar, Haryana</span>
         </div>
       </div>
 
