@@ -111,9 +111,9 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden">
       {/* 1. Enhanced Hero Section with Animated Ambient Background */}
-      <section className="relative overflow-hidden pt-8 pb-14 sm:pt-20 sm:pb-28 border-b border-slate-200">
+      <section className="relative overflow-hidden pt-8 pb-14 sm:pt-20 sm:pb-28 border-b border-slate-200 w-full max-w-full">
         {/* Dynamic Multi-Layer Animated Mesh Background */}
         <AnimatedBackground intensity="hero" showGrid={true} showParticles={true} />
 
@@ -224,8 +224,8 @@ export default function HomePage() {
               </div>
 
               {/* Main Feature Showcase Card with Animated Glow Aura */}
-              <div className="relative group">
-                <div className="absolute -inset-1.5 bg-gradient-to-r from-brand-600 via-accent-400 to-emerald-500 rounded-[32px] blur-xl opacity-25 group-hover:opacity-45 transition duration-1000 animate-pulse-slow" />
+              <div className="relative group w-full max-w-full">
+                <div className="absolute inset-0 sm:-inset-1.5 bg-gradient-to-r from-brand-600 via-accent-400 to-emerald-500 rounded-2xl sm:rounded-[32px] blur-md sm:blur-xl opacity-25 group-hover:opacity-45 transition duration-1000 animate-pulse-slow" />
                 <div className="bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl border-2 border-white/90 p-4 sm:p-6 pt-7 sm:pt-7 pb-10 sm:pb-12 shadow-2xl shadow-slate-300/40 space-y-3.5 sm:space-y-4 relative overflow-hidden">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3 pt-1">
                   <div className="flex items-center gap-2">
@@ -424,7 +424,7 @@ export default function HomePage() {
             </div>
 
               {/* Floating Payment Security Badge */}
-              <div className="absolute -bottom-3.5 sm:-bottom-5 right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-2xl border border-blue-200/90 shadow-xl shadow-blue-500/15 flex items-center gap-2 sm:gap-2.5 animate-float-delayed max-w-[calc(100%-1rem)]">
+              <div className="absolute -bottom-3.5 sm:-bottom-5 right-2 sm:right-2 z-20 bg-white/95 backdrop-blur-md px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-2xl border border-blue-200/90 shadow-xl shadow-blue-500/15 flex items-center gap-2 sm:gap-2.5 animate-float-delayed max-w-[calc(100%-1rem)]">
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-100 text-brand-600 flex items-center justify-center shrink-0">
                   <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-600" />
                 </div>
@@ -445,7 +445,7 @@ export default function HomePage() {
       </section>
 
       {/* Hyperlocal Task / Work Banner - Role Tailored */}
-      <section className="bg-gradient-to-r from-slate-950 via-brand-950 to-slate-900 py-8 sm:py-10 px-4 sm:px-6 lg:px-8 border-b border-slate-800 text-white relative overflow-hidden">
+      <section className="bg-gradient-to-r from-slate-950 via-brand-950 to-slate-900 py-8 sm:py-10 px-4 sm:px-6 lg:px-8 border-b border-slate-800 text-white relative overflow-hidden w-full max-w-full">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-500/20 text-accent-300 text-[11px] sm:text-xs font-bold border border-accent-500/30">
@@ -513,7 +513,7 @@ export default function HomePage() {
       </section>
 
       {/* 2. Popular Categories with Gradient Badges */}
-      <section className="py-12 sm:py-16 bg-white border-b border-slate-200">
+      <section className="py-12 sm:py-16 bg-white border-b border-slate-200 w-full max-w-full overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-3 sm:gap-4">
             <div>
@@ -567,7 +567,7 @@ export default function HomePage() {
 
       {/* 3. Featured Live Jobs Preview */}
       {featuredJobs.length > 0 && (
-        <section className="py-16 bg-slate-50 border-b border-slate-200">
+        <section className="py-16 bg-slate-50 border-b border-slate-200 w-full max-w-full overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
@@ -647,7 +647,7 @@ export default function HomePage() {
       )}
 
       {/* 4. How It Works Interactive Tabs */}
-      <section className="py-12 sm:py-20 bg-white border-b border-slate-200">
+      <section className="py-12 sm:py-20 bg-white border-b border-slate-200 w-full max-w-full overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
             <span className="text-xs uppercase font-bold tracking-widest text-brand-600">
@@ -727,7 +727,7 @@ export default function HomePage() {
       </section>
 
       {/* 5. Community Testimonials */}
-      <section className="py-12 sm:py-16 bg-slate-50 border-b border-slate-200">
+      <section className="py-12 sm:py-16 bg-slate-50 border-b border-slate-200 w-full max-w-full overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-xl mx-auto">
             <span className="text-xs uppercase font-bold tracking-widest text-brand-600">

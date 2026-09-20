@@ -5,13 +5,16 @@ import { Sparkles, MapPin, Zap, CheckCircle2, Star, Building2, Package, ShieldCh
 
 export function AuthBackground() {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none select-none -z-10">
+    <div
+      className="absolute inset-0 overflow-hidden pointer-events-none select-none -z-10 w-full max-w-full [contain:paint]"
+      style={{ clipPath: "inset(0)" }}
+    >
       {/* 1. Subtle Dot Grid Background Overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-40" />
 
       {/* 2. Large Animated Ambient Glow Orbs */}
-      <div className="absolute -top-36 -left-36 w-[450px] h-[450px] bg-gradient-to-tr from-brand-600/25 via-blue-500/20 to-indigo-500/15 rounded-full blur-[100px] animate-float-slow" />
-      <div className="absolute -bottom-36 -right-36 w-[450px] h-[450px] bg-gradient-to-tr from-amber-500/25 via-orange-500/20 to-rose-500/15 rounded-full blur-[100px] animate-float-delayed" />
+      <div className="absolute -top-36 -left-36 w-72 sm:w-[450px] h-72 sm:h-[450px] bg-gradient-to-tr from-brand-600/25 via-blue-500/20 to-indigo-500/15 rounded-full blur-[60px] sm:blur-[100px] animate-float-slow" />
+      <div className="absolute -bottom-36 -right-36 w-72 sm:w-[450px] h-72 sm:h-[450px] bg-gradient-to-tr from-amber-500/25 via-orange-500/20 to-rose-500/15 rounded-full blur-[60px] sm:blur-[100px] animate-float-delayed" />
       <div className="absolute top-1/3 -right-28 w-80 h-80 bg-emerald-500/15 rounded-full blur-[90px] animate-pulse" />
       <div className="absolute bottom-1/4 -left-24 w-80 h-80 bg-indigo-500/15 rounded-full blur-[90px] animate-float-slow" />
 

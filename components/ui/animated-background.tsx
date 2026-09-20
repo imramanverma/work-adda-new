@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 
@@ -23,7 +23,8 @@ export function AnimatedBackground({
 
   return (
     <div
-      className={`absolute inset-0 overflow-hidden pointer-events-none select-none -z-10 ${className}`}
+      className={`absolute inset-0 overflow-hidden pointer-events-none select-none -z-10 w-full max-w-full [contain:paint] ${className}`}
+      style={{ clipPath: "inset(0)" }}
       aria-hidden="true"
     >
       {/* 1. Geometric Grid / Dot Matrix with Vignette Falloff */}
@@ -34,13 +35,13 @@ export function AnimatedBackground({
       )}
 
       {/* 2. Primary Morphing Gradient Mesh Orbs */}
-      <div className="absolute top-[-10%] left-[-8%] w-[550px] sm:w-[700px] h-[550px] sm:h-[700px] rounded-full bg-gradient-to-tr from-brand-500/25 via-blue-400/20 to-indigo-500/15 blur-[120px] animate-blob-1" />
+      <div className="absolute top-[-10%] left-[-8%] w-64 sm:w-[700px] h-64 sm:h-[700px] rounded-full bg-gradient-to-tr from-brand-500/25 via-blue-400/20 to-indigo-500/15 blur-[50px] sm:blur-[120px] animate-blob-1" />
 
-      <div className="absolute top-[20%] right-[-10%] w-[500px] sm:w-[650px] h-[500px] sm:h-[650px] rounded-full bg-gradient-to-br from-amber-400/20 via-emerald-400/15 to-teal-500/15 blur-[120px] animate-blob-2" />
+      <div className="absolute top-[20%] right-0 sm:right-[-10%] w-60 sm:w-[650px] h-60 sm:h-[650px] rounded-full bg-gradient-to-br from-amber-400/20 via-emerald-400/15 to-teal-500/15 blur-[50px] sm:blur-[120px] animate-blob-2" />
 
-      <div className="absolute bottom-[-15%] left-[25%] w-[600px] sm:w-[750px] h-[600px] sm:h-[750px] rounded-full bg-gradient-to-tr from-cyan-400/20 via-sky-400/15 to-blue-600/15 blur-[130px] animate-blob-3" />
+      <div className="absolute bottom-[-15%] left-[10%] sm:left-[25%] w-72 sm:w-[750px] h-72 sm:h-[750px] rounded-full bg-gradient-to-tr from-cyan-400/20 via-sky-400/15 to-blue-600/15 blur-[55px] sm:blur-[130px] animate-blob-3" />
 
-      <div className="absolute bottom-[20%] right-[15%] w-[400px] sm:w-[500px] h-[400px] sm:h-[500px] rounded-full bg-gradient-to-tl from-purple-400/15 via-rose-300/10 to-indigo-400/15 blur-[110px] animate-blob-1" />
+      <div className="absolute bottom-[20%] right-2 sm:right-[15%] w-56 sm:w-[500px] h-56 sm:h-[500px] rounded-full bg-gradient-to-tl from-purple-400/15 via-rose-300/10 to-indigo-400/15 blur-[45px] sm:blur-[110px] animate-blob-1" />
 
       {/* 3. Floating Micro-Stardust Particles */}
       {showParticles && (

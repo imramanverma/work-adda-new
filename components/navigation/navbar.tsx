@@ -172,8 +172,8 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/90 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 w-full max-w-full border-b border-slate-200 bg-white/90 backdrop-blur-md overflow-x-hidden">
+      <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
         {/* Left Section: Sidebar Toggle & Brand Logo */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <button

@@ -10,7 +10,7 @@ export function Footer() {
   const { t, language } = useLanguage();
 
   return (
-    <footer className="border-t border-slate-200 bg-white pt-12 pb-20 md:pb-12 text-slate-600 text-sm">
+    <footer className="border-t border-slate-200 bg-white pt-12 pb-20 md:pb-12 text-slate-600 text-sm w-full max-w-full overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand Info */}

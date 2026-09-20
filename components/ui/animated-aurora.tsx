@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 
@@ -9,15 +9,18 @@ interface AnimatedAuroraProps {
 
 export function AnimatedAurora({ className = "", children }: AnimatedAuroraProps) {
   return (
-    <div className={`relative overflow-hidden bg-slate-950 text-white ${className}`}>
+    <div
+      className={`relative overflow-hidden bg-slate-950 text-white w-full max-w-full [contain:paint] ${className}`}
+      style={{ clipPath: "inset(0)" }}
+    >
       {/* 1. Deep Cosmic Aurora Gradients */}
       <div className="absolute inset-0 bg-gradient-to-r from-brand-950 via-slate-950 to-brand-950 opacity-90" />
 
       {/* 2. Floating Radiant Aurora Waves */}
-      <div className="absolute -top-1/2 left-[-10%] w-[120%] h-[200%] opacity-45 pointer-events-none -z-0">
-        <div className="absolute top-[10%] left-[15%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-brand-500/40 via-cyan-400/30 to-emerald-400/20 blur-[130px] animate-blob-1" />
-        <div className="absolute top-[25%] right-[15%] w-[550px] h-[550px] rounded-full bg-gradient-to-br from-indigo-500/40 via-purple-500/30 to-rose-400/20 blur-[130px] animate-blob-2" />
-        <div className="absolute bottom-[10%] left-[35%] w-[700px] h-[500px] rounded-full bg-gradient-to-t from-teal-400/30 via-emerald-500/25 to-blue-600/20 blur-[140px] animate-blob-3" />
+      <div className="absolute -top-1/2 left-0 sm:left-[-10%] w-full sm:w-[120%] h-[200%] opacity-45 pointer-events-none -z-0 overflow-hidden">
+        <div className="absolute top-[10%] left-[15%] w-72 sm:w-[600px] h-72 sm:h-[600px] rounded-full bg-gradient-to-tr from-brand-500/40 via-cyan-400/30 to-emerald-400/20 blur-[60px] sm:blur-[130px] animate-blob-1" />
+        <div className="absolute top-[25%] right-0 sm:right-[15%] w-64 sm:w-[550px] h-64 sm:h-[550px] rounded-full bg-gradient-to-br from-indigo-500/40 via-purple-500/30 to-rose-400/20 blur-[60px] sm:blur-[130px] animate-blob-2" />
+        <div className="absolute bottom-[10%] left-[10%] sm:left-[35%] w-80 sm:w-[700px] h-64 sm:h-[500px] rounded-full bg-gradient-to-t from-teal-400/30 via-emerald-500/25 to-blue-600/20 blur-[60px] sm:blur-[140px] animate-blob-3" />
       </div>
 
       {/* 3. Subtle Cyber Dot Matrix */}
