@@ -112,7 +112,7 @@ export default function AdminOverviewPage() {
               <CreditCard className="w-5 h-5 text-emerald-600" />
             </div>
             <p className="text-[11px] text-slate-400 mt-1">
-              {formatCurrency(s.totalPlatformRevenue || 0)} platform fee (5%)
+              {formatCurrency(s.totalPlatformRevenue || 0)} platform fee (0%)
             </p>
           </div>
 

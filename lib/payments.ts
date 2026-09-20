@@ -18,7 +18,7 @@ export interface PaymentProvider {
   }>;
 }
 
-export const PLATFORM_FEE_PERCENTAGE = 5.0; // 5% Work Adda Platform Fee
+export const PLATFORM_FEE_PERCENTAGE = 0.0; // 0% Work Adda Platform Fee (100% Free)
 
 export function calculatePaymentBreakdown(grossAmount: number) {
   const platformFee = Math.round(grossAmount * (PLATFORM_FEE_PERCENTAGE / 100) * 100) / 100;

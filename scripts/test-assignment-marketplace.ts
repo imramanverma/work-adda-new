@@ -170,8 +170,8 @@ async function runVerification() {
       payerId: posterUser.id,
       receiverId: writerUser.id,
       amount: 600,
-      platformFee: 30, // 5% fee
-      workerAmount: 570,
+      platformFee: 0, // 0% fee
+      workerAmount: 600,
       status: "HELD",
       escrowStatus: "HELD",
       transactionId: `TXN_${Date.now()}`,

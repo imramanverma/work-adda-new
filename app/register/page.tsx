@@ -337,7 +337,7 @@ export default function RegisterPage() {
           <div className="flex items-start gap-2 pt-1 text-xs text-slate-500">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
             <span>
-              By signing up, you agree to Work Adda's community guidelines, verified task policies, and 5% platform escrow terms.
+              By signing up, you agree to Work Adda's community guidelines, verified task policies, and ₹0 platform fee escrow terms.
             </span>
           </div>
 

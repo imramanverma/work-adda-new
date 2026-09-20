@@ -111,8 +111,8 @@ export function Footer() {
               </div>
               <p className="text-[11px] text-slate-500 leading-normal">
                 {language === "hi"
-                  ? "वर्क अड्डा 5% न्यूनतम प्लेटफ़ॉर्म शुल्क के साथ पारदर्शी काम सुनिश्चित करता है।"
-                  : "Work Adda guarantees transparent platform fee calculations (5%) with no hidden commissions."}
+                  ? "वर्क अड्डा ₹0 प्लेटफ़ॉर्म शुल्क (0% कमीशन) के साथ पारदर्शी काम सुनिश्चित करता है।"
+                  : "Work Adda guarantees ₹0 platform fee (0% commission) with zero hidden deductions."}
               </p>
             </div>
           </div>

@@ -24,7 +24,7 @@ const translations: Record<Language, Record<string, string>> = {
     "brand.active_district_full": "Active across Fatehabad, Sirsa & Hisar, Haryana",
     "brand.scanning": "Scanning Fatehabad, Sirsa & Hisar Network...",
     "brand.tasks_found": "Hyperlocal Employment Network • Fatehabad, Sirsa & Hisar",
-    "brand.ready_deal": "Ready! Instant Settlement & 5% Fee",
+    "brand.ready_deal": "Ready! Instant Settlement & 0% Fee",
 
     // Navigation & Common Actions
     "nav.menu": "Menu",
@@ -60,7 +60,7 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.hiring_time_label": "Hiring Time",
     "hero.hiring_time_val": "< 15 Minutes",
     "hero.fee_label": "Platform Fee",
-    "hero.fee_val": "Standard 5%",
+    "hero.fee_val": "₹0 (100% Free)",
     "hero.verified_label": "Local Workers",
     "hero.verified_val": "Aadhaar Verified",
 
@@ -132,7 +132,7 @@ const translations: Record<Language, Record<string, string>> = {
     "brand.active_district_full": "फतेहाबाद, सिरसा व हिसार, हरियाणा में सक्रिय",
     "brand.scanning": "फतेहाबाद, सिरसा व हिसार नेटवर्क स्कैन हो रहा है...",
     "brand.tasks_found": "सक्रिय लोकल नेटवर्क • फतेहाबाद, सिरसा व हिसार",
-    "brand.ready_deal": "तैयार! तुरंत पेमेंट और मात्र 5% शुल्क",
+    "brand.ready_deal": "तैयार! तुरंत पेमेंट और ₹0 शुल्क",
 
     // Navigation & Common Actions
     "nav.menu": "मेनू",
@@ -168,7 +168,7 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.hiring_time_label": "नियुक्ति समय",
     "hero.hiring_time_val": "15 मिनट से कम",
     "hero.fee_label": "प्लेटफ़ॉर्म शुल्क",
-    "hero.fee_val": "मात्र 5%",
+    "hero.fee_val": "₹0 (100% फ्री)",
     "hero.verified_label": "लोकल कामगार",
     "hero.verified_val": "आधार सत्यापित",
 

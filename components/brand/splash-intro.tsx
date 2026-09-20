@@ -182,7 +182,7 @@ export function SplashIntro() {
           {phase === 3 && (
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-400/30 text-xs font-semibold text-amber-300 animate-in fade-in duration-300">
               <Zap className="w-3.5 h-3.5 text-amber-400" />
-              <span>Ready! Instant Settlement & 5% Fee</span>
+              <span>Ready! Instant Settlement & 0% Fee</span>
             </div>
           )}
         </div>

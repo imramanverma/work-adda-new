@@ -220,11 +220,11 @@ async function runE2EWorkflow() {
   });
   console.log(`   ✔ Work Approved by employer. Worker completedJobs incremented.`);
 
-  // 8. Payment Processing with 5% Platform Fee Deduction
+  // 8. Payment Processing with 0% Platform Fee Deduction
   console.log("\n8️⃣ Step 8: Payment Processing & Fee Calculation");
   const breakdown = calculatePaymentBreakdown(approvedAssignment.agreedAmount);
   console.log(`   Gross Amount:        ₹${breakdown.grossAmount}`);
-  console.log(`   Platform Fee (5%):   ₹${breakdown.platformFee}`);
+  console.log(`   Platform Fee (${breakdown.platformFeePercentage}%):   ₹${breakdown.platformFee}`);
   console.log(`   Net Worker Payout:   ₹${breakdown.workerPayout}`);
 
   const order = await paymentProvider.createOrder(breakdown.grossAmount);

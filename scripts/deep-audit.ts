@@ -251,7 +251,7 @@ async function runAudit() {
       const expectedPayout = Number((p.amount - p.platformFee).toFixed(2));
       return Math.abs(p.workerPayout - expectedPayout) < 0.05;
     });
-    record('Payments', '5% Platform Fee formula integrity', feeVerified ? 'PASS' : 'WARN', `Audited ${list.length} payments, total: ₹${wPayments.json?.stats?.totalEarned || 0}`);
+    record('Payments', '0% Platform Fee formula integrity', feeVerified ? 'PASS' : 'WARN', `Audited ${list.length} payments, total: ₹${wPayments.json?.stats?.totalEarned || 0}`);
   } else {
     record('Payments', 'Worker Payments List', 'FAIL', `Status: ${wPayments.status}`);
   }
