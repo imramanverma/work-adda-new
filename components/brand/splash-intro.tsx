@@ -7,19 +7,13 @@ export function SplashIntro() {
   const [visible, setVisible] = useState(true);
   const [fadingOut, setFadingOut] = useState(false);
   const [phase, setPhase] = useState<1 | 2 | 3>(1);
-  const [secondsRemaining, setSecondsRemaining] = useState(3);
 
   useEffect(() => {
-    // Dynamic sequential phase transitions across the 3.5-second experience
+    // Dynamic sequential phase transitions across the experience
     const phase2Timer = setTimeout(() => setPhase(2), 1100);
     const phase3Timer = setTimeout(() => setPhase(3), 2200);
 
-    // Countdown interval
-    const countdownInterval = setInterval(() => {
-      setSecondsRemaining((prev) => Math.max(0, prev - 1));
-    }, 1000);
-
-    // Auto-dismiss at precisely 3.5 seconds (within user's requested 3-5s window)
+    // Auto-dismiss at 3.5 seconds
     const exitTimer = setTimeout(() => {
       handleDismiss();
     }, 3500);
@@ -27,7 +21,6 @@ export function SplashIntro() {
     return () => {
       clearTimeout(phase2Timer);
       clearTimeout(phase3Timer);
-      clearInterval(countdownInterval);
       clearTimeout(exitTimer);
     };
   }, []);
@@ -187,24 +180,14 @@ export function SplashIntro() {
           )}
         </div>
 
-        {/* Fast Neon Countdown Progress Bar (3.5s linear fill) */}
-        <div className="w-full max-w-xs space-y-1.5">
-          <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden relative">
-            <div className="h-full bg-gradient-to-r from-brand-400 via-accent-400 to-emerald-400 rounded-full animate-shimmer" />
-          </div>
-        </div>
-
         {/* Interactive Quick Skip Button */}
         <div className="pt-1 flex items-center justify-center gap-3">
           <button
             type="button"
             onClick={handleDismiss}
-            className="group px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs tracking-wide backdrop-blur-md shadow-lg transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-105"
+            className="group px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs tracking-wide backdrop-blur-md shadow-lg transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-105"
           >
             <span>Enter Marketplace</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/20 text-slate-300">
-              {secondsRemaining}s
-            </span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
