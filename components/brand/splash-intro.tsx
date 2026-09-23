@@ -4,29 +4,26 @@ import React, { useState, useEffect } from "react";
 import { ArrowRight, Sparkles, MapPin, Zap, CheckCircle2, Radio, Compass } from "lucide-react";
 
 export function SplashIntro() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [fadingOut, setFadingOut] = useState(false);
   const [phase, setPhase] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {
-    // Check if returning user has already seen the intro
+    // Clear any previous persistent hide flags
     try {
-      if (typeof window !== "undefined" && localStorage.getItem("wa_intro_seen")) {
-        return;
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("wa_intro_seen");
       }
     } catch {}
 
-    // First time visitor: show intro
-    setVisible(true);
+    // Dynamic sequential phase transitions across the brand scanning sequence
+    const phase2Timer = setTimeout(() => setPhase(2), 1000);
+    const phase3Timer = setTimeout(() => setPhase(3), 2000);
 
-    // Fast, punchy phase transitions (under 2 seconds total)
-    const phase2Timer = setTimeout(() => setPhase(2), 500);
-    const phase3Timer = setTimeout(() => setPhase(3), 1050);
-
-    // Auto-dismiss at precisely 1.65 seconds
+    // Auto-dismiss at 3.5 seconds with smooth fade
     const exitTimer = setTimeout(() => {
       handleDismiss();
-    }, 1650);
+    }, 3500);
 
     return () => {
       clearTimeout(phase2Timer);
@@ -37,15 +34,10 @@ export function SplashIntro() {
 
   const handleDismiss = () => {
     if (fadingOut) return;
-    try {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("wa_intro_seen", "true");
-      }
-    } catch {}
     setFadingOut(true);
     setTimeout(() => {
       setVisible(false);
-    }, 350);
+    }, 450);
   };
 
   if (!visible) return null;
