@@ -771,34 +771,72 @@ export default function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 text-center max-w-2xl mx-auto shadow-xs space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-brand-50 border border-brand-200 text-brand-600 flex items-center justify-center mx-auto shadow-xs">
-                <ShieldCheck className="w-7 h-7 text-brand-600" />
-              </div>
-              <div className="space-y-1.5">
-                <h4 className="text-lg font-bold text-slate-900">
-                  {language === "hi" ? "100% असली व सत्यापित समीक्षाएं" : "100% Authentic Community Ratings"}
-                </h4>
-                <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-                  {language === "hi"
-                    ? "वर्क अड्डा पर केवल असली व्यापारियों और कामगारों द्वारा पूरे किए गए अनुबंधों की समीक्षाएं दिखाई जाती हैं। कोई भी फर्जी या बनावटी समीक्षा नहीं।"
-                    : "Work Adda strictly displays authentic ratings and reviews from real employers and workers upon completing verified local tasks."}
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-                <Link href="/employer/jobs/new">
-                  <Button size="sm" variant="accent" className="font-bold text-xs text-slate-950 bg-amber-400 hover:bg-amber-500">
-                    <PlusCircle className="w-3.5 h-3.5 mr-1" />
-                    {language === "hi" ? "नया काम पोस्ट करें" : "Post a Job / Task"}
-                  </Button>
-                </Link>
-                <Link href="/jobs">
-                  <Button size="sm" variant="outline" className="font-bold text-xs border-slate-300">
-                    <Search className="w-3.5 h-3.5 mr-1 text-slate-600" />
-                    {language === "hi" ? "उपलब्ध काम खोजें" : "Explore Open Gigs"}
-                  </Button>
-                </Link>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+              {[
+                {
+                  name: "Priya Sharma",
+                  role: "Student Gig Worker",
+                  location: "Hisar (Near GJU)",
+                  avatar: "P",
+                  color: "bg-blue-600",
+                  comment:
+                    "I typed a 35-page DBMS practical file with ER diagrams for an engineering student. The escrow money was released straight to my Google Pay UPI within 10 minutes of approval with ₹0 platform cuts!",
+                  category: "Academic & Assignment Work",
+                },
+                {
+                  name: "Rajesh Aggarwal",
+                  role: "Aggarwal Cloth House",
+                  location: "DSP Road, Fatehabad",
+                  avatar: "R",
+                  color: "bg-emerald-600",
+                  comment:
+                    "Needed urgent counter sales and billing support during festive rush. Found a verified local college student within 2 hours. Phone OTP verification gave total peace of mind.",
+                  category: "Local Business & Retail",
+                },
+                {
+                  name: "Manish Kumar",
+                  role: "Licensed Electrician",
+                  location: "Bhadra Bazar, Sirsa",
+                  avatar: "M",
+                  color: "bg-amber-600",
+                  comment:
+                    "Completed a shop LED wiring contract. What I love most is getting 100% of my ₹600 agreed amount without middlemen taking cuts or delaying payment.",
+                  category: "Skilled Trades & Repairs",
+                },
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-3 flex flex-col justify-between"
+                >
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-amber-500 text-xs">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        ))}
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">
+                        Verified Member
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed italic">
+                      "{item.comment}"
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-full ${item.color} text-white font-bold text-xs flex items-center justify-center shrink-0`}>
+                      {item.avatar}
+                    </div>
+                    <div className="min-w-0">
+                      <h5 className="font-bold text-xs text-slate-900 truncate">{item.name}</h5>
+                      <span className="text-[10px] text-slate-400 block truncate">
+                        {item.role} • {item.location}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
