@@ -22,6 +22,9 @@ import {
   CheckCircle2,
   ChevronRight,
   Building2,
+  FileText,
+  Wallet,
+  Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,9 +45,9 @@ export function Navbar() {
   const notifRef = React.useRef<HTMLDivElement>(null);
   const userMenuRef = React.useRef<HTMLDivElement>(null);
 
-  // Close popovers on outside click
+  // Close popovers on outside click or touch
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
       if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
         setShowNotifications(false);
       }
@@ -53,7 +56,11 @@ export function Navbar() {
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
   }, []);
 
   const handleNavSearch = (e: React.FormEvent) => {
@@ -172,7 +179,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full max-w-full border-b border-slate-200 bg-white/90 backdrop-blur-md overflow-x-hidden">
+      <header className="sticky top-0 z-40 w-full max-w-full border-b border-slate-200 bg-white/90 backdrop-blur-md">
       <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
         {/* Left Section: Sidebar Toggle & Brand Logo */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
@@ -384,61 +391,163 @@ export function Navbar() {
                 </button>
 
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 z-50 animate-in fade-in zoom-in-95">
-                    <div className="px-3 py-2 border-b border-slate-100">
-                      <p className="font-bold text-sm text-slate-900">{user.name}</p>
-                      <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 z-50 animate-in fade-in zoom-in-95">
+                    <div className="px-3.5 py-2.5 border-b border-slate-100">
+                      <div className="flex items-center justify-between">
+                        <p className="font-bold text-sm text-slate-900 truncate">{user.name}</p>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-50 text-brand-700 border border-brand-200 uppercase">
+                          {user.role}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 truncate mt-0.5">{user.email}</p>
                     </div>
 
-                    {user.role === "BOTH" ? (
-                      <>
-                        <Link
-                          href="/worker/dashboard"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100"
-                        >
-                          <Briefcase className="w-4 h-4 text-brand-600" /> Worker Hub
-                        </Link>
-                        <Link
-                          href="/employer/dashboard"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100"
-                        >
-                          <Building2 className="w-4 h-4 text-amber-600" /> Employer Hub
-                        </Link>
-                        <Link
-                          href="/worker/profile"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100"
-                        >
-                          <User className="w-4 h-4 text-slate-400" /> My Profile
-                        </Link>
-                      </>
-                    ) : (
-                      <Link
-                        href={
-                          user.role === "WORKER"
-                            ? "/worker/profile"
-                            : user.role === "EMPLOYER"
-                            ? "/employer/profile"
-                            : "/admin"
-                        }
-                        onClick={() => setShowUserMenu(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100"
-                      >
-                        <User className="w-4 h-4 text-slate-400" /> {t("nav.profile")}
-                      </Link>
-                    )}
+                    <div className="py-1">
+                      {user.role === "WORKER" && (
+                        <>
+                          <Link
+                            href="/worker/dashboard"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-brand-700 transition"
+                          >
+                            <Briefcase className="w-4 h-4 text-brand-600" /> Worker Hub / Dashboard
+                          </Link>
+                          <Link
+                            href="/worker/applications"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-brand-700 transition"
+                          >
+                            <FileText className="w-4 h-4 text-slate-400" /> My Applications
+                          </Link>
+                          <Link
+                            href="/worker/work"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-brand-700 transition"
+                          >
+                            <CheckCircle2 className="w-4 h-4 text-slate-400" /> Active Work & Tasks
+                          </Link>
+                          <Link
+                            href="/worker/earnings"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-brand-700 transition"
+                          >
+                            <Wallet className="w-4 h-4 text-emerald-600" /> Earnings & Escrow
+                          </Link>
+                          <Link
+                            href="/worker/profile"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-brand-700 transition"
+                          >
+                            <User className="w-4 h-4 text-slate-400" /> Worker Profile
+                          </Link>
+                        </>
+                      )}
 
-                    <button
-                      onClick={() => {
-                        setShowUserMenu(false);
-                        logout();
-                      }}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50"
-                    >
-                      <LogOut className="w-4 h-4" /> {t("nav.sign_out")}
-                    </button>
+                      {user.role === "EMPLOYER" && (
+                        <>
+                          <Link
+                            href="/employer/dashboard"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-amber-700 transition"
+                          >
+                            <Building2 className="w-4 h-4 text-amber-600" /> Employer Hub / Dashboard
+                          </Link>
+                          <Link
+                            href="/employer/jobs/new"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition"
+                          >
+                            <PlusCircle className="w-4 h-4 text-amber-600" /> Post New Task / Job
+                          </Link>
+                          <Link
+                            href="/employer/jobs"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                          >
+                            <Briefcase className="w-4 h-4 text-slate-400" /> My Job Listings
+                          </Link>
+                          <Link
+                            href="/employer/applicants"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                          >
+                            <Users className="w-4 h-4 text-slate-400" /> Applicants
+                          </Link>
+                          <Link
+                            href="/employer/profile"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                          >
+                            <User className="w-4 h-4 text-slate-400" /> Employer Profile
+                          </Link>
+                        </>
+                      )}
+
+                      {user.role === "BOTH" && (
+                        <>
+                          <Link
+                            href="/worker/dashboard"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                          >
+                            <Briefcase className="w-4 h-4 text-brand-600" /> Worker Hub
+                          </Link>
+                          <Link
+                            href="/employer/dashboard"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                          >
+                            <Building2 className="w-4 h-4 text-amber-600" /> Employer Hub
+                          </Link>
+                          <Link
+                            href="/employer/jobs/new"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition"
+                          >
+                            <PlusCircle className="w-4 h-4 text-amber-600" /> Post New Task
+                          </Link>
+                          <Link
+                            href="/worker/profile"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                          >
+                            <User className="w-4 h-4 text-slate-400" /> Profile Settings
+                          </Link>
+                        </>
+                      )}
+
+                      {user.role === "ADMIN" && (
+                        <>
+                          <Link
+                            href="/admin"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                          >
+                            <ShieldCheck className="w-4 h-4 text-brand-600" /> Admin Console
+                          </Link>
+                          <Link
+                            href="/admin/payments"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                          >
+                            <Wallet className="w-4 h-4 text-emerald-600" /> Escrow & Payments
+                          </Link>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="pt-1 border-t border-slate-100">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowUserMenu(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" /> {t("nav.sign_out")}
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
