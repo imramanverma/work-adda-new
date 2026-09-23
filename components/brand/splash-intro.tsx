@@ -4,11 +4,13 @@ import React, { useState, useEffect } from "react";
 import { ArrowRight, Sparkles, MapPin, Zap, CheckCircle2, Radio, Compass } from "lucide-react";
 
 export function SplashIntro() {
+  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(true);
   const [fadingOut, setFadingOut] = useState(false);
   const [phase, setPhase] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {
+    setMounted(true);
     // Clear any previous persistent hide flags
     try {
       if (typeof window !== "undefined") {
@@ -40,7 +42,7 @@ export function SplashIntro() {
     }, 450);
   };
 
-  if (!visible) return null;
+  if (!mounted || !visible) return null;
 
   return (
     <div

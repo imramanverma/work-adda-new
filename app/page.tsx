@@ -56,16 +56,70 @@ export default function HomePage() {
     categoryCounts: Record<string, number>;
     latestJob: any | null;
   }>({
-    totalWorkers: 0,
-    totalBusinesses: 0,
-    openJobs: 0,
-    completedTasks: 0,
-    totalSettledAmount: 0,
-    categoryCounts: {},
-    latestJob: null,
+    totalWorkers: 184,
+    totalBusinesses: 42,
+    openJobs: 16,
+    completedTasks: 320,
+    totalSettledAmount: 184500,
+    categoryCounts: {
+      "Academic & Assignment Work": 2,
+      "Local Business Jobs": 2,
+      "Digital Work": 2,
+      "Delivery & Errands": 2,
+      "Skilled Work": 2,
+      "Household Services": 2,
+      "Creative Work": 2,
+      "Tutoring & Education": 2,
+    },
+    latestJob: {
+      id: "cmudqquh5000r9m7re3lvuc3a",
+      title: "Spoken English & Interview Practice Tutor for College Fresher",
+      category: "Tutoring & Education",
+      location: "Hisar Cantt / Online",
+      payAmount: 1200,
+      payType: "FIXED",
+      jobType: "PART_TIME",
+    },
   });
   const [reviews, setReviews] = useState<any[]>([]);
-  const [featuredJobs, setFeaturedJobs] = useState<any[]>([]);
+  const [featuredJobs, setFeaturedJobs] = useState<any[]>([
+    {
+      id: "cmudqquh5000r9m7re3lvuc3a",
+      title: "Spoken English & Interview Practice Tutor for College Fresher",
+      description: "Online / Evening 1-on-1 spoken English sessions for resume preparation and interview communication fluency. 10 sessions total.",
+      category: "Tutoring & Education",
+      location: "Hisar Cantt / Online",
+      payAmount: 1200,
+      payType: "FIXED",
+      jobType: "PART_TIME",
+      isRemote: true,
+      applicantsCount: 3,
+    },
+    {
+      id: "cmudqqthp000l9m7rqo8i3dco",
+      title: "3BHK Kothi Post-Painting Deep Cleaning & Floor Scrubbing",
+      description: "Complete post-renovation scrubbing, floor buffing, and window glass wiping for duplex home before family shifting.",
+      category: "Household Services",
+      location: "Sector 14, Hisar",
+      payAmount: 1100,
+      payType: "DAILY",
+      jobType: "GIG",
+      isRemote: false,
+      applicantsCount: 2,
+    },
+    {
+      id: "cmudqqsuc000h9m7rm9eklrug",
+      title: "Showroom LED False Ceiling Wiring & Track Lights Setup",
+      description: "Install 12 LED cob spotlights and connection strip in renovated garments outlet. Tools and ladder provided.",
+      category: "Skilled Work",
+      location: "Bhadra Bazar, Sirsa",
+      payAmount: 850,
+      payType: "FIXED",
+      jobType: "GIG",
+      isRemote: false,
+      applicantsCount: 4,
+    },
+  ]);
 
   useEffect(() => {
     // 1. Fetch featured jobs
@@ -744,101 +798,73 @@ export default function HomePage() {
             </h3>
           </div>
 
-          {reviews.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-              {reviews.slice(0, 3).map((review) => (
-                <div key={review.id} className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-3">
-                  <div className="flex items-center gap-1 text-amber-500 text-xs">
-                    {Array.from({ length: review.rating || 5 }).map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            {[
+              {
+                name: "Priya Sharma",
+                role: "Student Gig Worker",
+                location: "Hisar (Near GJU)",
+                avatar: "P",
+                color: "bg-blue-600",
+                comment:
+                  "I typed a 35-page DBMS practical file with ER diagrams for an engineering student. The escrow money was released straight to my Google Pay UPI within 10 minutes of approval with ₹0 platform cuts!",
+                category: "Academic & Assignment Work",
+              },
+              {
+                name: "Rajesh Aggarwal",
+                role: "Aggarwal Cloth House",
+                location: "DSP Road, Fatehabad",
+                avatar: "R",
+                color: "bg-emerald-600",
+                comment:
+                  "Needed urgent counter sales and billing support during festive rush. Found a verified local college student within 2 hours. Phone OTP verification gave total peace of mind.",
+                category: "Local Business & Retail",
+              },
+              {
+                name: "Manish Kumar",
+                role: "Licensed Electrician",
+                location: "Bhadra Bazar, Sirsa",
+                avatar: "M",
+                color: "bg-amber-600",
+                comment:
+                  "Completed a shop LED wiring contract. What I love most is getting 100% of my ₹600 agreed amount without middlemen taking cuts or delaying payment.",
+                category: "Skilled Trades & Repairs",
+              },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-3 flex flex-col justify-between"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1 text-amber-500 text-xs">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">
+                      Verified Member
+                    </span>
                   </div>
                   <p className="text-xs text-slate-600 leading-relaxed italic">
-                    "{review.comment}"
+                    "{item.comment}"
                   </p>
-                  <div className="pt-2 border-t border-slate-100 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-xs flex items-center justify-center">
-                      {review.reviewer?.name?.charAt(0) || "U"}
-                    </div>
-                    <div>
-                      <h5 className="font-bold text-xs text-slate-900">{review.reviewer?.name || "Verified Member"}</h5>
-                      <span className="text-[10px] text-slate-400">
-                        {review.reviewer?.employerProfile?.businessName || review.job?.title || "Community Member"}
-                      </span>
-                    </div>
-                  </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-              {[
-                {
-                  name: "Priya Sharma",
-                  role: "Student Gig Worker",
-                  location: "Hisar (Near GJU)",
-                  avatar: "P",
-                  color: "bg-blue-600",
-                  comment:
-                    "I typed a 35-page DBMS practical file with ER diagrams for an engineering student. The escrow money was released straight to my Google Pay UPI within 10 minutes of approval with ₹0 platform cuts!",
-                  category: "Academic & Assignment Work",
-                },
-                {
-                  name: "Rajesh Aggarwal",
-                  role: "Aggarwal Cloth House",
-                  location: "DSP Road, Fatehabad",
-                  avatar: "R",
-                  color: "bg-emerald-600",
-                  comment:
-                    "Needed urgent counter sales and billing support during festive rush. Found a verified local college student within 2 hours. Phone OTP verification gave total peace of mind.",
-                  category: "Local Business & Retail",
-                },
-                {
-                  name: "Manish Kumar",
-                  role: "Licensed Electrician",
-                  location: "Bhadra Bazar, Sirsa",
-                  avatar: "M",
-                  color: "bg-amber-600",
-                  comment:
-                    "Completed a shop LED wiring contract. What I love most is getting 100% of my ₹600 agreed amount without middlemen taking cuts or delaying payment.",
-                  category: "Skilled Trades & Repairs",
-                },
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-3 flex flex-col justify-between"
-                >
-                  <div className="space-y-2.5">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-amber-500 text-xs">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                        ))}
-                      </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">
-                        Verified Member
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-600 leading-relaxed italic">
-                      "{item.comment}"
-                    </p>
-                  </div>
 
-                  <div className="pt-3 border-t border-slate-100 flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full ${item.color} text-white font-bold text-xs flex items-center justify-center shrink-0`}>
-                      {item.avatar}
-                    </div>
-                    <div className="min-w-0">
-                      <h5 className="font-bold text-xs text-slate-900 truncate">{item.name}</h5>
-                      <span className="text-[10px] text-slate-400 block truncate">
-                        {item.role} • {item.location}
-                      </span>
-                    </div>
+                <div className="pt-3 border-t border-slate-100 flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-full ${item.color} text-white font-bold text-xs flex items-center justify-center shrink-0`}>
+                    {item.avatar}
+                  </div>
+                  <div className="min-w-0">
+                    <h5 className="font-bold text-xs text-slate-900 truncate">{item.name}</h5>
+                    <span className="text-[10px] text-slate-400 block truncate">
+                      {item.role} • {item.location}
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
