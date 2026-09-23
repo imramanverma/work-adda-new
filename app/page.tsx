@@ -317,17 +317,23 @@ export default function HomePage() {
                           : t("hero.hiring_time_val")}
                       </span>
                     </div>
-                    <div className="p-3 bg-amber-50/50 rounded-xl border border-amber-100">
-                      <span className="text-slate-400 block text-[10px]">
-                        {user?.role === "EMPLOYER"
-                          ? (language === "hi" ? "भुगतान सुरक्षा" : "Payment Security")
-                          : t("hero.fee_label")}
-                      </span>
-                      <span className="font-bold text-accent-900">
-                        {user?.role === "EMPLOYER"
-                          ? (language === "hi" ? "100% एस्क्रो सुरक्षित" : "100% Escrow")
-                          : t("hero.fee_val")}
-                      </span>
+                    <div className="p-3 bg-amber-50/50 rounded-xl border border-amber-100 flex flex-col justify-between">
+                      <div>
+                        <span className="text-slate-400 block text-[10px]">
+                          {user?.role === "EMPLOYER"
+                            ? (language === "hi" ? "भुगतान सुरक्षा" : "Payment Security")
+                            : t("hero.fee_label")}
+                        </span>
+                        <span className="font-bold text-accent-900 block">
+                          {user?.role === "EMPLOYER"
+                            ? (language === "hi" ? "100% एस्क्रो सुरक्षित" : "100% Escrow")
+                            : t("hero.fee_val")}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-1 pt-1 border-t border-amber-200/50 text-[9px] text-slate-500 font-semibold">
+                        <span className="px-1.5 py-0.5 rounded bg-[#0C2340] text-white text-[8px] font-bold">Razorpay</span>
+                        <span>Direct UPI Payouts</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -765,39 +771,95 @@ export default function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs text-center max-w-xl mx-auto space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 mx-auto flex items-center justify-center">
-                <Award className="w-6 h-6" />
+            <div className="space-y-6">
+              {/* 3 Realistic Sample Community Stories */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                {[
+                  {
+                    name: "Priya Sharma",
+                    role: "Student Gig Worker",
+                    location: "Hisar (Near GJU)",
+                    avatar: "P",
+                    color: "bg-blue-600",
+                    comment:
+                      "I typed a 35-page DBMS practical file with ER diagrams for an engineering student. The escrow money was released straight to my Google Pay UPI within 10 minutes of approval with ₹0 platform cuts!",
+                    category: "Academic & Assignment Work",
+                  },
+                  {
+                    name: "Rajesh Aggarwal",
+                    role: "Aggarwal Cloth House",
+                    location: "DSP Road, Fatehabad",
+                    avatar: "R",
+                    color: "bg-emerald-600",
+                    comment:
+                      "Needed urgent counter sales and billing support during festive rush. Found a verified local college student within 2 hours. Phone OTP verification gave total peace of mind.",
+                    category: "Local Business & Retail",
+                  },
+                  {
+                    name: "Manish Kumar",
+                    role: "Licensed Electrician",
+                    location: "Bhadra Bazar, Sirsa",
+                    avatar: "M",
+                    color: "bg-amber-600",
+                    comment:
+                      "Completed a shop LED wiring contract. What I love most is getting 100% of my ₹600 agreed amount without middlemen taking cuts or delaying payment.",
+                    category: "Skilled Trades & Repairs",
+                  },
+                ].map((sample, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-3 flex flex-col justify-between"
+                  >
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1 text-amber-500 text-xs">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                          ))}
+                        </div>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">
+                          Sample Review
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed italic">
+                        "{sample.comment}"
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-100 flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-full ${sample.color} text-white font-bold text-xs flex items-center justify-center shrink-0`}>
+                        {sample.avatar}
+                      </div>
+                      <div className="min-w-0">
+                        <h5 className="font-bold text-xs text-slate-900 truncate">{sample.name}</h5>
+                        <span className="text-[10px] text-slate-400 block truncate">
+                          {sample.role} • {sample.location}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <h4 className="font-bold text-base text-slate-900">
-                {language === "hi" ? "सत्यापित कार्य समीक्षाएं" : "Verified Community Reviews"}
-              </h4>
-              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                {language === "hi"
-                  ? "समीक्षाएं केवल फतेहाबाद, सिरसा व हिसार में पूरे किए गए कार्यों और सत्यापित अनुबंधों के बाद ही दर्ज की जाती हैं। पहला काम पूरा करें और अपनी पहली रेटिंग प्राप्त करें!"
-                  : "Reviews are recorded exclusively upon verified completion of contracts between local employers and workers in Fatehabad, Sirsa & Hisar. Complete your first gig to earn verified ratings!"}
-              </p>
-              <div className="pt-2 flex justify-center gap-3">
-                {user?.role === "EMPLOYER" ? (
-                  <Link href="/employer/jobs/new">
-                    <Button size="sm" variant="accent" className="font-semibold text-slate-950 bg-amber-400 hover:bg-amber-500">
-                      {language === "hi" ? "नया काम पोस्ट करें" : "Post a New Job"}
-                    </Button>
-                  </Link>
-                ) : (
+
+              {/* Verified Reviews Callout Banner */}
+              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-dashed border-slate-200 text-center max-w-xl mx-auto space-y-2">
+                <p className="text-xs text-slate-500">
+                  {language === "hi"
+                    ? "समीक्षाएं केवल फतेहाबाद, सिरसा व हिसार में पूरे किए गए अनुबंधों के बाद ही दर्ज की जाती हैं।"
+                    : "Verified reviews are recorded upon completion of real escrow contracts in Fatehabad, Sirsa & Hisar."}
+                </p>
+                <div className="flex justify-center gap-3">
                   <Link href="/jobs">
-                    <Button size="sm" variant="outline" className="font-semibold">
-                      {language === "hi" ? "लोकल काम देखें" : "Explore Local Jobs"}
+                    <Button size="sm" variant="outline" className="text-xs font-bold">
+                      {language === "hi" ? "काम खोजें" : "Explore Gigs"}
                     </Button>
                   </Link>
-                )}
-                {!user && (
-                  <Link href="/register">
-                    <Button size="sm" variant="primary" className="font-semibold">
-                      {language === "hi" ? "खाता बनाएं" : "Create Free Account"}
+                  <Link href="/employer/jobs/new">
+                    <Button size="sm" variant="primary" className="text-xs font-bold">
+                      {language === "hi" ? "काम पोस्ट करें" : "Post a Gig"}
                     </Button>
                   </Link>
-                )}
+                </div>
               </div>
             </div>
           )}

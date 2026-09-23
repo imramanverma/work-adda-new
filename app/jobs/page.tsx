@@ -203,6 +203,7 @@ export default function JobsDiscoveryPage() {
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
               <input
                 type="text"
+                aria-label="Search jobs by title, subject, or skills"
                 placeholder={
                   language === "hi"
                     ? "शीर्षक, विषय, या हुनर से खोजें (उदा. DBMS, असाइनमेंट, सेल्स, डिलीवरी)..."
@@ -210,7 +211,7 @@ export default function JobsDiscoveryPage() {
                 }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus-visible:ring-2 focus-visible:ring-brand-500"
               />
             </div>
 
@@ -218,11 +219,12 @@ export default function JobsDiscoveryPage() {
               <MapPin className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
               <input
                 type="text"
+                aria-label="Filter jobs by location or city"
                 placeholder={language === "hi" ? "स्थान / शहर (उदा. Fatehabad, Sirsa, Hisar)" : "Location / City (Fatehabad, Sirsa, Hisar)..."}
                 value={selectedLocation}
                 disabled={isRemoteOnly}
                 onChange={(e) => setSelectedLocation(e.target.value)}
-                className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+                className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus-visible:ring-2 focus-visible:ring-brand-500 ${
                   isRemoteOnly ? "bg-slate-100 text-slate-400 cursor-not-allowed" : "bg-white"
                 }`}
               />
@@ -230,9 +232,10 @@ export default function JobsDiscoveryPage() {
 
             <div className="sm:col-span-2">
               <select
+                aria-label="Filter by job type"
                 value={selectedJobType}
                 onChange={(e) => setSelectedJobType(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-xs bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-xs bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus-visible:ring-2 focus-visible:ring-brand-500"
               >
                 {jobTypes.map((type) => (
                   <option key={type} value={type}>
@@ -244,9 +247,10 @@ export default function JobsDiscoveryPage() {
 
             <div className="sm:col-span-2">
               <select
+                aria-label="Sort jobs by"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-xs bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm sm:text-xs bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus-visible:ring-2 focus-visible:ring-brand-500"
               >
                 <option value="recently_posted">{t("jobs.sort_recent")}</option>
                 <option value="highest_pay">{t("jobs.sort_pay")}</option>
@@ -266,8 +270,9 @@ export default function JobsDiscoveryPage() {
               {/* Remote Toggle */}
               <button
                 type="button"
+                aria-pressed={isRemoteOnly}
                 onClick={() => setIsRemoteOnly(!isRemoteOnly)}
-                className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
+                className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
                   isRemoteOnly
                     ? "bg-cyan-600 text-white border-cyan-600 shadow-xs"
                     : "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200"
@@ -279,7 +284,7 @@ export default function JobsDiscoveryPage() {
 
               {/* Distance radius (only if not remote only) */}
               {!isRemoteOnly && (
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5" role="group" aria-label="Distance Radius Filters">
                   <span className="font-bold text-slate-600 flex items-center gap-1 text-[11px]">
                     <MapPin className="w-3 h-3 text-brand-600" /> {t("jobs.radius_label")}
                   </span>
@@ -293,8 +298,9 @@ export default function JobsDiscoveryPage() {
                     ].map((d) => (
                       <button
                         key={d.val}
+                        aria-pressed={maxDistance === d.val}
                         onClick={() => setMaxDistance(d.val)}
-                        className={`px-2 py-0.5 rounded-lg text-[11px] font-semibold transition ${
+                        className={`px-2 py-0.5 rounded-lg text-[11px] font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
                           maxDistance === d.val
                             ? "bg-white shadow-xs text-brand-700 font-bold"
                             : "text-slate-600 hover:text-slate-900"
@@ -312,7 +318,7 @@ export default function JobsDiscoveryPage() {
             {hasActiveFilters && (
               <button
                 onClick={resetAllFilters}
-                className="text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1"
+                className="text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 rounded-lg px-1.5 py-0.5"
               >
                 <X className="w-3.5 h-3.5" /> {language === "hi" ? "फ़िल्टर हटाएं" : "Reset Filters"}
               </button>
@@ -320,17 +326,19 @@ export default function JobsDiscoveryPage() {
           </div>
 
           {/* Category Horizontal Scroll Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 scrollbar-none">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 scrollbar-none" role="tablist" aria-label="Job Categories">
             {categories.map((cat) => {
               const isSelected = selectedCategory === cat.id;
               return (
                 <button
                   key={cat.id}
+                  role="tab"
+                  aria-selected={isSelected}
                   onClick={() => {
                     setSelectedCategory(cat.id);
                     setSelectedSubcategory("All");
                   }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
                     isSelected
                       ? "bg-brand-600 text-white shadow-xs"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"

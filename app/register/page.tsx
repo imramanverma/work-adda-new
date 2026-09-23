@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { AuthBackground } from "@/components/brand/auth-background";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { OtpVerificationModal } from "@/components/auth/otp-input";
 import { JOB_POSTER_PROFILES } from "@/lib/constants/categories";
 
 export default function RegisterPage() {
@@ -40,6 +41,7 @@ export default function RegisterPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showOtpModal, setShowOtpModal] = useState(false);
 
   const locations = [
     "Fatehabad",
@@ -47,7 +49,7 @@ export default function RegisterPage() {
     "Hisar",
   ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -71,6 +73,12 @@ export default function RegisterPage() {
       return;
     }
 
+    // Trigger Phone OTP Verification before finalizing registration
+    setShowOtpModal(true);
+  };
+
+  const handleOtpVerified = async () => {
+    setShowOtpModal(false);
     setLoading(true);
     const res = await register({
       name: formData.name,
@@ -355,6 +363,16 @@ export default function RegisterPage() {
             </Link>
           </p>
         </div>
+
+        {/* Mobile Phone OTP Verification Modal */}
+        {showOtpModal && (
+          <OtpVerificationModal
+            phone={formData.phone}
+            purpose="REGISTER"
+            onVerified={handleOtpVerified}
+            onCancel={() => setShowOtpModal(false)}
+          />
+        )}
       </div>
     </div>
   );

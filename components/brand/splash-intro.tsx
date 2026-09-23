@@ -4,19 +4,29 @@ import React, { useState, useEffect } from "react";
 import { ArrowRight, Sparkles, MapPin, Zap, CheckCircle2, Radio, Compass } from "lucide-react";
 
 export function SplashIntro() {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
   const [phase, setPhase] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {
-    // Dynamic sequential phase transitions across the experience
-    const phase2Timer = setTimeout(() => setPhase(2), 1100);
-    const phase3Timer = setTimeout(() => setPhase(3), 2200);
+    // Check if returning user has already seen the intro
+    try {
+      if (typeof window !== "undefined" && localStorage.getItem("wa_intro_seen")) {
+        return;
+      }
+    } catch {}
 
-    // Auto-dismiss at 3.5 seconds
+    // First time visitor: show intro
+    setVisible(true);
+
+    // Fast, punchy phase transitions (under 2 seconds total)
+    const phase2Timer = setTimeout(() => setPhase(2), 500);
+    const phase3Timer = setTimeout(() => setPhase(3), 1050);
+
+    // Auto-dismiss at precisely 1.65 seconds
     const exitTimer = setTimeout(() => {
       handleDismiss();
-    }, 3500);
+    }, 1650);
 
     return () => {
       clearTimeout(phase2Timer);
@@ -27,10 +37,15 @@ export function SplashIntro() {
 
   const handleDismiss = () => {
     if (fadingOut) return;
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("wa_intro_seen", "true");
+      }
+    } catch {}
     setFadingOut(true);
     setTimeout(() => {
       setVisible(false);
-    }, 450);
+    }, 350);
   };
 
   if (!visible) return null;

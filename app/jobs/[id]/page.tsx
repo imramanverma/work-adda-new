@@ -228,8 +228,65 @@ export default function JobDetailsPage() {
   const isOwner = user?.id === job.employer?.user?.id;
   const canApply = (user?.role === "WORKER" || user?.role === "BOTH") && !isOwner;
 
+  // Schema.org JobPosting Structured Data for Google Search & Google for Jobs
+  const jobPostingJsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "JobPosting",
+    title: job.title,
+    description: job.description,
+    identifier: {
+      "@type": "PropertyValue",
+      name: "Work Adda",
+      value: job.id,
+    },
+    datePosted: job.createdAt,
+    validThrough: job.deadline || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    employmentType:
+      job.jobType === "FULL_TIME"
+        ? "FULL_TIME"
+        : job.jobType === "PART_TIME"
+        ? "PART_TIME"
+        : "CONTRACTOR",
+    hiringOrganization: {
+      "@type": "Organization",
+      name: job.employer?.businessName || "Work Adda Verified Hirer",
+      sameAs: "https://work-adda-new.vercel.app",
+    },
+    jobLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: job.location,
+        addressRegion: "Haryana",
+        addressCountry: "IN",
+      },
+    },
+    baseSalary: {
+      "@type": "MonetaryAmount",
+      currency: "INR",
+      value: {
+        "@type": "QuantitativeValue",
+        value: job.payAmount,
+        unitText:
+          job.payType === "HOURLY"
+            ? "HOUR"
+            : job.payType === "DAILY"
+            ? "DAY"
+            : job.payType === "MONTHLY"
+            ? "MONTH"
+            : "TOTAL",
+      },
+    },
+    jobLocationType: job.isRemote ? "TELECOMMUTE" : undefined,
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+      {/* Schema.org JobPosting JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
+      />
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Back Link */}
         <Link

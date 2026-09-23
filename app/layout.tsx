@@ -17,9 +17,41 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Work Adda — Local Work. Local People. Local Growth.",
+  metadataBase: new URL("https://work-adda-new.vercel.app"),
+  title: {
+    default: "Work Adda — Local Work. Local People. Local Growth.",
+    template: "%s | Work Adda",
+  },
   description:
-    "Local employment and task marketplace connecting students, skilled workers, gig seekers, and businesses across Haryana.",
+    "Hyperlocal employment and task marketplace connecting students, skilled workers, and businesses across Fatehabad, Sirsa & Hisar, Haryana. ₹0 platform fee with secure escrow.",
+  keywords: [
+    "Work Adda",
+    "Fatehabad jobs",
+    "Sirsa jobs",
+    "Hisar gigs",
+    "student part time work Haryana",
+    "assignment work",
+    "local helpers Haryana",
+    "zero fee gig marketplace",
+    "UPI escrow payouts",
+  ],
+  authors: [{ name: "Work Adda Team" }],
+  creator: "Work Adda",
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://work-adda-new.vercel.app",
+    siteName: "Work Adda",
+    title: "Work Adda — Hyperlocal Gigs & Work Marketplace in Haryana",
+    description:
+      "Find local gigs, student assignment work, store jobs, and skilled tasks in Fatehabad, Sirsa & Hisar. 100% Escrow Protected with ₹0 Platform Fee.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Work Adda — Local Work. Local People. Local Growth.",
+    description:
+      "Hyperlocal task & employment marketplace in Fatehabad, Sirsa & Hisar, Haryana. ₹0 Platform Fee & Escrow Safeguard.",
+  },
 };
 
 export default function RootLayout({

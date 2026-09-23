@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { MapPin, ShieldCheck, Heart } from "lucide-react";
+import { MapPin, ShieldCheck, Heart, Lock, Building2, UserCheck, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { useLanguage } from "@/context/language-context";
 
@@ -12,22 +12,35 @@ export function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-white pt-12 pb-20 md:pb-12 text-slate-600 text-sm w-full max-w-full overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Brand Info */}
-          <div className="md:col-span-1">
-            <div className="mb-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
+          {/* Col 1: Brand & Legal Entity Info */}
+          <div className="sm:col-span-2 lg:col-span-1 space-y-3">
+            <div>
               <Logo size="sm" />
             </div>
-            <p className="text-xs text-slate-500 leading-relaxed mb-3">
+            <p className="text-xs text-slate-500 leading-relaxed">
               {t("footer.desc")}
             </p>
-            <div className="flex items-center gap-2 text-xs text-slate-500">
+            <div className="flex items-center gap-1.5 text-xs text-slate-500">
               <MapPin className="w-3.5 h-3.5 text-brand-600 shrink-0" />
               <span>{t("brand.active_district_full")}</span>
             </div>
+            {/* Legal Business Identity Box */}
+            <div className="pt-2 text-[11px] text-slate-500 space-y-1 border-t border-slate-100">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800">
+                <Building2 className="w-3.5 h-3.5 text-brand-600 shrink-0" />
+                <span>Work Adda Technologies</span>
+              </div>
+              <p className="text-[10px] text-slate-400">
+                Regd. Enterprise • Fatehabad, Haryana, India
+              </p>
+              <div className="text-[10px] text-slate-400">
+                UDYAM MSME: <span className="font-semibold text-slate-600">UDYAM-HR-04-XXXXXXX</span>
+              </div>
+            </div>
           </div>
 
-          {/* For Workers */}
+          {/* Col 2: For Workers */}
           <div>
             <h4 className="font-bold text-xs uppercase tracking-wider text-slate-900 mb-3">
               {t("footer.for_workers")}
@@ -44,24 +57,24 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/jobs?category=Academic+%26+Assignment+Work" className="hover:text-brand-600 transition">
+                  {language === "hi" ? "असाइनमेंट व नोट्स काम" : "Academic & Assignment Work"}
+                </Link>
+              </li>
+              <li>
                 <Link href="/jobs?jobType=PART_TIME" className="hover:text-brand-600 transition">
-                  {language === "hi" ? "पार्ट-टाइम नौकरियां" : "Part-Time Jobs"}
+                  {language === "hi" ? "पार्ट-टाइम नौकरियां" : "Part-Time Gigs"}
                 </Link>
               </li>
               <li>
-                <Link href="/jobs?category=Delivery" className="hover:text-brand-600 transition">
+                <Link href="/jobs?category=Delivery+%26+Errands" className="hover:text-brand-600 transition">
                   {language === "hi" ? "डिलीवरी व कूरियर काम" : "Delivery & Courier Tasks"}
-                </Link>
-              </li>
-              <li>
-                <Link href="/jobs?category=Events" className="hover:text-brand-600 transition">
-                  {language === "hi" ? "इवेंट व कैटरिंग काम" : "Event & Wedding Staff"}
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* For Employers */}
+          {/* Col 3: For Employers */}
           <div>
             <h4 className="font-bold text-xs uppercase tracking-wider text-slate-900 mb-3">
               {t("footer.for_employers")}
@@ -74,7 +87,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/register" className="hover:text-brand-600 transition">
-                  {language === "hi" ? "व्यापारी पंजीकरण" : "Business Registration"}
+                  {language === "hi" ? "नियोक्ता / छात्र खाता" : "Hirer Registration"}
                 </Link>
               </li>
               <li>
@@ -83,44 +96,110 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/jobs?category=Retail" className="hover:text-brand-600 transition">
-                  {language === "hi" ? "दुकान व रीटेल सहायक" : "Retail & Shop Assistants"}
+                <Link href="/jobs?category=Local+Business+Jobs" className="hover:text-brand-600 transition">
+                  {language === "hi" ? "दुकान व रीटेल सहायक" : "Retail & Store Assistants"}
                 </Link>
               </li>
               <li>
-                <Link href="/jobs?category=Logistics" className="hover:text-brand-600 transition">
-                  {language === "hi" ? "गोदाम व लॉजिस्टिक्स" : "Warehouse Support"}
+                <Link href="/jobs?category=Skilled+Work" className="hover:text-brand-600 transition">
+                  {language === "hi" ? "कुशल कारीगर व रिपेयर" : "Skilled Trades & Repairs"}
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Trust & Safety */}
+          {/* Col 4: Legal & Compliance */}
+          <div>
+            <h4 className="font-bold text-xs uppercase tracking-wider text-slate-900 mb-3">
+              {language === "hi" ? "कानूनी नीतियां" : "Legal & Compliance"}
+            </h4>
+            <ul className="space-y-2 text-xs">
+              <li>
+                <Link href="/privacy" className="hover:text-brand-600 transition flex items-center gap-1">
+                  <span>Privacy Policy (DPDP Act)</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-brand-600 transition">
+                  <span>Terms & Conditions</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/refund-policy" className="hover:text-brand-600 transition">
+                  <span>Refund & Cancellation</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:text-brand-600 transition">
+                  <span>About Us & Mission</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-brand-600 transition">
+                  <span>Contact Support Desk</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Col 5: Trust, Safety & Payment Partners */}
           <div>
             <h4 className="font-bold text-xs uppercase tracking-wider text-slate-900 mb-3">
               {t("footer.trust")}
             </h4>
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>
-                  {language === "hi"
-                    ? "सत्यापित प्रोफाइल व पारदर्शी सुरक्षा"
-                    : "Verified Profiles & Work Completion Escrow"}
-                </span>
+            <div className="space-y-2.5 text-xs">
+              {/* Escrow Guarantee Pill */}
+              <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-xs">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>100% Escrow Safeguard</span>
+                </div>
+                <p className="text-[10px] text-emerald-800 leading-tight">
+                  ₹0 Platform Fee. Funds held until work is verified.
+                </p>
               </div>
-              <p className="text-[11px] text-slate-500 leading-normal">
-                {language === "hi"
-                  ? "वर्क अड्डा ₹0 प्लेटफ़ॉर्म शुल्क (0% कमीशन) के साथ पारदर्शी काम सुनिश्चित करता है।"
-                  : "Work Adda guarantees ₹0 platform fee (0% commission) with zero hidden deductions."}
-              </p>
+
+              {/* Payment Gateway Trust Marks */}
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                  Secured Escrow & Payouts By
+                </span>
+                <div className="flex items-center gap-2">
+                  {/* Razorpay Trust Chip */}
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#0C2340] text-white font-bold text-[10px] tracking-wide">
+                    <span className="text-[#3395FF]">●</span> Razorpay
+                  </span>
+                  {/* UPI Trust Chip */}
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500 text-slate-950 font-black text-[10px]">
+                    UPI Payouts
+                  </span>
+                </div>
+              </div>
+
+              {/* Grievance Link */}
+              <div className="text-[11px] text-slate-500 pt-1">
+                <span>IT Rules Grievance Officer: </span>
+                <Link href="/contact" className="font-bold text-brand-600 hover:underline">
+                  Raman Kumar
+                </Link>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+        {/* Bottom Bar */}
+        <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-3">
           <p>{t("footer.copyright")}</p>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-4 text-slate-500">
+            <Link href="/privacy" className="hover:text-brand-600 transition">Privacy</Link>
+            <span>•</span>
+            <Link href="/terms" className="hover:text-brand-600 transition">Terms</Link>
+            <span>•</span>
+            <Link href="/refund-policy" className="hover:text-brand-600 transition">Refunds</Link>
+            <span>•</span>
+            <Link href="/contact" className="hover:text-brand-600 transition">Support</Link>
+          </div>
+          <div className="flex items-center gap-1 text-slate-500">
             {language === "hi" ? "निर्मित" : "Built with"}{" "}
             <Heart className="w-3.5 h-3.5 text-red-500 fill-current" />{" "}
             {language === "hi" ? "स्थानीय समुदाय के सशक्तिकरण हेतु" : "for local community empowerment"}
