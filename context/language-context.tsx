@@ -97,6 +97,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Auth
     "auth.welcome_back": "Sign In to Work Adda",
     "auth.welcome_desc": "Access your local tasks, applications, and payouts",
+    "auth.continue_with_google": "Continue with Google",
+    "auth.or_divider": "Or continue with",
     "auth.email_phone": "Email Address or Phone Number",
     "auth.password": "Password",
     "auth.sign_in_btn": "Sign In",
@@ -205,6 +207,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Auth
     "auth.welcome_back": "वर्क अड्डा में लॉग इन करें",
     "auth.welcome_desc": "अपने लोकल काम, आवेदन और भुगतान देखें",
+    "auth.continue_with_google": "गूगल के साथ जारी रखें",
+    "auth.or_divider": "या फिर",
     "auth.email_phone": "ईमेल पता या मोबाइल नंबर",
     "auth.password": "पासवर्ड",
     "auth.sign_in_btn": "लॉग इन करें",
