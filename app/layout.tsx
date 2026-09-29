@@ -47,7 +47,7 @@ export const metadata: Metadata = {
       "Find local gigs, student assignment work, store jobs, and skilled tasks in Fatehabad, Sirsa & Hisar. 100% Escrow Protected with ₹0 Platform Fee.",
     images: [
       {
-        url: "https://work-adda-new.vercel.app/opengraph-image",
+        url: "https://work-adda-new.vercel.app/opengraph-image.png",
         width: 1200,
         height: 630,
         alt: "Work Adda — Hyperlocal Task Marketplace",

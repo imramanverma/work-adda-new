@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { useLanguage } from "@/context/language-context";
@@ -11,17 +12,12 @@ import {
   Lock,
   Mail,
   ArrowRight,
-  Sparkles,
-  Info,
-  X,
-  ShieldCheck,
-  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuthBackground } from "@/components/brand/auth-background";
 
 export default function LoginPage() {
-  const { login, refreshUser } = useAuth();
+  const { login } = useAuth();
   const { t, language } = useLanguage();
   const router = useRouter();
   const toast = useToast();
@@ -30,8 +26,66 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [demoGoogleLoading, setDemoGoogleLoading] = useState(false);
-  const [showGoogleModal, setShowGoogleModal] = useState(false);
+
+  // Initialize Google One Tap if NEXT_PUBLIC_GOOGLE_CLIENT_ID is provided
+  useEffect(() => {
+    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    if (!googleClientId) return;
+
+    const initOneTap = () => {
+      if (typeof window !== "undefined" && (window as any).google?.accounts?.id) {
+        try {
+          (window as any).google.accounts.id.initialize({
+            client_id: googleClientId,
+            callback: async (response: { credential: string }) => {
+              setGoogleLoading(true);
+              try {
+                const res = await fetch("/api/auth/google/onetap", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ credential: response.credential }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                  toast.success(
+                    language === "hi" ? "साइन इन सफल! 🎉" : "Signed In! 🎉",
+                    language === "hi"
+                      ? `सफलतापूर्वक ${data.user.name} के रूप में साइन इन किया`
+                      : `Welcome back, ${data.user.name}`
+                  );
+                  router.push(data.redirectUrl || "/worker/dashboard");
+                } else {
+                  toast.error("Google Sign-In Error", data.error || "Failed to sign in");
+                }
+              } catch {
+                toast.error("Google Sign-In Error", "Network error during Google Sign-In");
+              } finally {
+                setGoogleLoading(false);
+              }
+            },
+            auto_select: false,
+            cancel_on_tap_outside: true,
+          });
+
+          (window as any).google.accounts.id.prompt();
+        } catch (e) {
+          console.error("Google Identity Services error:", e);
+        }
+      }
+    };
+
+    if ((window as any).google?.accounts?.id) {
+      initOneTap();
+    } else {
+      const interval = setInterval(() => {
+        if ((window as any).google?.accounts?.id) {
+          initOneTap();
+          clearInterval(interval);
+        }
+      }, 500);
+      return () => clearInterval(interval);
+    }
+  }, [language, router, toast]);
 
   // Check URL error params on client side
   useEffect(() => {
@@ -39,16 +93,25 @@ export default function LoginPage() {
       const params = new URLSearchParams(window.location.search);
       const err = params.get("error");
       if (err) {
+        window.history.replaceState({}, "", "/login");
         if (err === "access_denied") {
-          toast.info("Google Sign-In", "Sign-in was cancelled.");
+          toast.info(
+            language === "hi" ? "गूगल साइन-इन" : "Google Sign-In",
+            language === "hi" ? "साइन-इन रद्द कर दिया गया।" : "Sign-in was cancelled."
+          );
         } else if (err === "google_not_configured") {
-          setShowGoogleModal(true);
+          toast.error(
+            language === "hi" ? "गूगल साइन-इन" : "Google Sign-In",
+            language === "hi"
+              ? "डिवाइस के जीमेल खाते दिखाने के लिए Google Client ID कॉन्फ़िगर करें।"
+              : "Google OAuth requires GOOGLE_CLIENT_ID to be configured."
+          );
         } else {
           toast.error("Google Sign-In Error", decodeURIComponent(err));
         }
       }
     }
-  }, [toast]);
+  }, [toast, language]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,55 +120,9 @@ export default function LoginPage() {
     setLoading(false);
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     setGoogleLoading(true);
-    try {
-      const res = await fetch("/api/auth/google?format=json");
-      const data = await res.json();
-      if (data.configured && data.url) {
-        window.location.href = data.url;
-      } else {
-        setShowGoogleModal(true);
-      }
-    } catch {
-      toast.error(
-        language === "hi" ? "गूगल साइन-इन त्रुटि" : "Google Sign-In Error",
-        language === "hi"
-          ? "गूगल साइन-इन प्रारंभ नहीं हो सका"
-          : "Could not initialize Google Sign-In"
-      );
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
-
-  const handleDemoGoogleSignIn = async (role: "WORKER" | "EMPLOYER" = "WORKER") => {
-    setDemoGoogleLoading(true);
-    try {
-      const res = await fetch("/api/auth/google/demo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success(
-          language === "hi" ? "गूगल खाता कनेक्ट हुआ! 🎉" : "Google Account Connected! 🎉",
-          language === "hi"
-            ? `सफलतापूर्वक ${data.user.name} के रूप में साइन इन किया`
-            : `Signed in as ${data.user.name}`
-        );
-        await refreshUser();
-        setShowGoogleModal(false);
-        router.push(data.redirectUrl || "/worker/dashboard");
-      } else {
-        toast.error("Sign-in Failed", data.error || "Could not log in");
-      }
-    } catch (err: any) {
-      toast.error("Network Error", err.message);
-    } finally {
-      setDemoGoogleLoading(false);
-    }
+    window.location.href = "/api/auth/google";
   };
 
   return (
@@ -227,114 +244,8 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Google OAuth Setup / Demo Testing Modal */}
-      {showGoogleModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-5 relative">
-            <button
-              onClick={() => setShowGoogleModal(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0">
-                <svg className="w-6 h-6" viewBox="0 0 24 24">
-                  <path
-                    fill="#4285F4"
-                    d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-base font-black text-slate-900">
-                  {language === "hi"
-                    ? "गूगल साइन-इन एकीकरण"
-                    : "Google Sign-In Ready"}
-                </h3>
-                <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                  OAuth 2.0 Backend Configured
-                </span>
-              </div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-2">
-              <div className="flex items-center gap-1.5 font-bold text-slate-800">
-                <Info className="w-4 h-4 text-brand-600 shrink-0" />
-                <span>
-                  {language === "hi"
-                    ? "लाइव गूगल खाता जोड़ने के लिए:"
-                    : "To connect your live Google Cloud App:"}
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
-                {language === "hi"
-                  ? "अपनी .env फ़ाइल में GOOGLE_CLIENT_ID और GOOGLE_CLIENT_SECRET जोड़ें।"
-                  : "Add your Google OAuth Client ID and Secret to your environment file:"}
-              </p>
-              <div className="bg-slate-900 text-slate-100 p-2.5 rounded-xl font-mono text-[10px] space-y-0.5 overflow-x-auto">
-                <p>GOOGLE_CLIENT_ID="your_client_id.apps.googleusercontent.com"</p>
-                <p>GOOGLE_CLIENT_SECRET="your_client_secret"</p>
-              </div>
-            </div>
-
-            <div className="space-y-2 pt-1">
-              <span className="text-xs font-bold text-slate-700 block">
-                {language === "hi"
-                  ? "डेवलपमेंट मोड में टेस्ट करें:"
-                  : "Test Google flow in Dev Mode:"}
-              </span>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="sm"
-                  isLoading={demoGoogleLoading}
-                  onClick={() => handleDemoGoogleSignIn("WORKER")}
-                  className="font-bold text-xs"
-                >
-                  <Sparkles className="w-3.5 h-3.5 mr-1" />
-                  {language === "hi" ? "कामगार के रूप में" : "As Worker"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  isLoading={demoGoogleLoading}
-                  onClick={() => handleDemoGoogleSignIn("EMPLOYER")}
-                  className="font-bold text-xs border-brand-200 text-brand-700 hover:bg-brand-50"
-                >
-                  <Briefcase className="w-3.5 h-3.5 mr-1" />
-                  {language === "hi" ? "नियोक्ता के रूप में" : "As Employer"}
-                </Button>
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 flex justify-end">
-              <button
-                type="button"
-                onClick={() => setShowGoogleModal(false)}
-                className="text-xs font-bold text-slate-500 hover:text-slate-800 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition"
-              >
-                {language === "hi" ? "बंद करें" : "Close"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Google Identity Services Script for Device Gmail Account Picker */}
+      <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
     </div>
   );
 }
