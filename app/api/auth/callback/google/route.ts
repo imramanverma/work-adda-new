@@ -9,7 +9,9 @@ export async function GET(req: NextRequest) {
 
   const host = req.headers.get("x-forwarded-host") || req.headers.get("host") || "localhost:3000";
   const proto = req.headers.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `${proto}://${host}`;
+  const baseUrl = host.includes("vercel.app")
+    ? `https://${host}`
+    : process.env.NEXT_PUBLIC_APP_URL || `${proto}://${host}`;
 
   if (oauthError || !code) {
     console.error("Google OAuth error or missing code:", oauthError);
