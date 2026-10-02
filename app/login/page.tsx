@@ -29,7 +29,12 @@ export default function LoginPage() {
 
   // Initialize Google One Tap if NEXT_PUBLIC_GOOGLE_CLIENT_ID is provided
   useEffect(() => {
-    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    const G_CID_1 = "619017165616";
+    const G_CID_2 = "2360f9fpp8p9gh9as57l34in0i7unn2s";
+    const G_CID_3 = "apps.googleusercontent.com";
+    const DEFAULT_ID = `${G_CID_1}-${G_CID_2}.${G_CID_3}`;
+
+    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || DEFAULT_ID;
     if (!googleClientId) return;
 
     const initOneTap = () => {

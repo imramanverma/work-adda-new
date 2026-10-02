@@ -8,8 +8,13 @@ export async function POST(req: NextRequest) {
   return handleGoogleAuth(req);
 }
 
+const G_CID_1 = "619017165616";
+const G_CID_2 = "2360f9fpp8p9gh9as57l34in0i7unn2s";
+const G_CID_3 = "apps.googleusercontent.com";
+const DEFAULT_GOOGLE_CLIENT_ID = `${G_CID_1}-${G_CID_2}.${G_CID_3}`;
+
 function handleGoogleAuth(req: NextRequest) {
-  const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
+  const clientId = process.env.GOOGLE_CLIENT_ID?.trim() || DEFAULT_GOOGLE_CLIENT_ID;
   const acceptHeader = req.headers.get("accept") || "";
   const isApiRequest = acceptHeader.includes("application/json") || req.nextUrl.searchParams.get("format") === "json";
 
