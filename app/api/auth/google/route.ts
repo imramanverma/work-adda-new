@@ -8,23 +8,22 @@ export async function POST(req: NextRequest) {
   return handleGoogleAuth(req);
 }
 
-const G_CID_1 = "619017165616";
-const G_CID_2 = "2360f9fpp8p9gh9as57l34in0i7unn2s";
-const G_CID_3 = "apps.googleusercontent.com";
-const DEFAULT_GOOGLE_CLIENT_ID = `${G_CID_1}-${G_CID_2}.${G_CID_3}`;
-
 function handleGoogleAuth(req: NextRequest) {
-  const clientId = process.env.GOOGLE_CLIENT_ID?.trim() || DEFAULT_GOOGLE_CLIENT_ID;
+  const clientId = (process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "").trim();
   const acceptHeader = req.headers.get("accept") || "";
   const isApiRequest = acceptHeader.includes("application/json") || req.nextUrl.searchParams.get("format") === "json";
 
   const host = req.headers.get("x-forwarded-host") || req.headers.get("host") || "localhost:3000";
   const proto = req.headers.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
-  const baseUrl = host.includes("vercel.app")
-    ? `https://${host}`
-    : process.env.NEXT_PUBLIC_APP_URL || `${proto}://${host}`;
+  
+  // Resolve base URL accurately:
+  // If running locally, strictly use the actual active host:port to match local dev
+  let baseUrl = host.includes("localhost") || host.includes("127.0.0.1")
+    ? `http://${host}`.replace(/\/+$/, "")
+    : ((process.env.NEXT_PUBLIC_APP_URL || "").trim().replace(/\/+$/, "") || `${proto}://${host}`.replace(/\/+$/, ""));
 
   const redirectUri = `${baseUrl}/api/auth/callback/google`;
+  console.log(`[Google OAuth] Request redirect_uri: ${redirectUri}`);
 
   if (!clientId) {
     if (isApiRequest) {
@@ -37,12 +36,19 @@ function handleGoogleAuth(req: NextRequest) {
     return NextResponse.redirect(`${baseUrl}/login?error=google_not_configured`);
   }
 
+  const role = req.nextUrl.searchParams.get("role") || "";
+  const redirectTo = req.nextUrl.searchParams.get("redirect") || "";
+  const statePayload = JSON.stringify({ role, redirectTo, ts: Date.now() });
+  const state = Buffer.from(statePayload).toString("base64url");
+
   const scope = encodeURIComponent("openid email profile");
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
     clientId
   )}&redirect_uri=${encodeURIComponent(
     redirectUri
-  )}&response_type=code&scope=${scope}&access_type=offline&prompt=select_account`;
+  )}&response_type=code&scope=${scope}&access_type=offline&prompt=select_account&state=${encodeURIComponent(
+    state
+  )}`;
 
   if (isApiRequest) {
     return NextResponse.json({

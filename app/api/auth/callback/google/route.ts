@@ -6,12 +6,14 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
   const oauthError = searchParams.get("error");
+  const state = searchParams.get("state");
 
   const host = req.headers.get("x-forwarded-host") || req.headers.get("host") || "localhost:3000";
   const proto = req.headers.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
-  const baseUrl = host.includes("vercel.app")
-    ? `https://${host}`
-    : process.env.NEXT_PUBLIC_APP_URL || `${proto}://${host}`;
+  
+  let baseUrl = host.includes("localhost") || host.includes("127.0.0.1")
+    ? `http://${host}`.replace(/\/+$/, "")
+    : ((process.env.NEXT_PUBLIC_APP_URL || "").trim().replace(/\/+$/, "") || `${proto}://${host}`.replace(/\/+$/, ""));
 
   if (oauthError || !code) {
     console.error("Google OAuth error or missing code:", oauthError);
@@ -20,22 +22,31 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const G_CID_1 = "619017165616";
-  const G_CID_2 = "2360f9fpp8p9gh9as57l34in0i7unn2s";
-  const G_CID_3 = "apps.googleusercontent.com";
-  const DEFAULT_GOOGLE_CLIENT_ID = `${G_CID_1}-${G_CID_2}.${G_CID_3}`;
-
-  const G_SEC_1 = "GOCSPX";
-  const G_SEC_2 = "qGACYaOF2IdQGldbPw9gTrLSLTVZ";
-  const DEFAULT_GOOGLE_CLIENT_SECRET = `${G_SEC_1}-${G_SEC_2}`;
-
-  const clientId = process.env.GOOGLE_CLIENT_ID?.trim() || DEFAULT_GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim() || DEFAULT_GOOGLE_CLIENT_SECRET;
+  const clientId = (process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "").trim();
+  const clientSecret = (process.env.GOOGLE_CLIENT_SECRET || "").trim();
   const redirectUri = `${baseUrl}/api/auth/callback/google`;
 
   if (!clientId || !clientSecret) {
     console.error("Google credentials missing in environment");
     return NextResponse.redirect(`${baseUrl}/login?error=google_credentials_missing`);
+  }
+
+  // Parse state for role or redirect
+  let desiredRole: "WORKER" | "EMPLOYER" | "BOTH" = "WORKER";
+  let targetRedirect = "";
+  if (state) {
+    try {
+      const decodedStr = Buffer.from(state, "base64url").toString("utf-8");
+      const decoded = JSON.parse(decodedStr);
+      if (decoded.role === "EMPLOYER" || decoded.role === "BOTH" || decoded.role === "WORKER") {
+        desiredRole = decoded.role;
+      }
+      if (decoded.redirectTo && typeof decoded.redirectTo === "string" && decoded.redirectTo.startsWith("/")) {
+        targetRedirect = decoded.redirectTo;
+      }
+    } catch {
+      // Fallback if state format differs
+    }
   }
 
   try {
@@ -91,17 +102,47 @@ export async function GET(req: NextRequest) {
           email,
           phone: generatedPhone,
           passwordHash,
-          role: "WORKER",
+          role: desiredRole,
           profileImage: googleUser.picture || null,
           isVerified: Boolean(googleUser.email_verified),
           phoneVerified: false,
-          workerProfile: {
-            create: {
-              bio: "Verified Google account user on Work Adda.",
-              skills: "[]",
-              categories: "[]",
-            },
-          },
+          ...(desiredRole === "EMPLOYER"
+            ? {
+                employerProfile: {
+                  create: {
+                    businessName: googleUser.name ? `${googleUser.name}'s Tasks` : "Individual Poster",
+                    businessType: "Personal / Individual",
+                    posterType: "INDIVIDUAL",
+                    description: "Verified Google account employer on Work Adda.",
+                  },
+                },
+              }
+            : desiredRole === "BOTH"
+            ? {
+                workerProfile: {
+                  create: {
+                    bio: "Verified Google account user on Work Adda.",
+                    skills: "[]",
+                    categories: "[]",
+                  },
+                },
+                employerProfile: {
+                  create: {
+                    businessName: googleUser.name ? `${googleUser.name}'s Tasks` : "Individual Poster",
+                    businessType: "Personal / Individual",
+                    posterType: "INDIVIDUAL",
+                  },
+                },
+              }
+            : {
+                workerProfile: {
+                  create: {
+                    bio: "Verified Google account user on Work Adda.",
+                    skills: "[]",
+                    categories: "[]",
+                  },
+                },
+              }),
         },
         include: {
           workerProfile: true,
@@ -137,12 +178,14 @@ export async function GET(req: NextRequest) {
 
     const token = signToken(sessionUser);
 
-    const redirectPath =
+    const defaultRedirectPath =
       user.role === "ADMIN"
         ? "/admin"
         : user.role === "EMPLOYER"
         ? "/employer/dashboard"
         : "/worker/dashboard";
+
+    const redirectPath = targetRedirect || defaultRedirectPath;
 
     const response = NextResponse.redirect(`${baseUrl}${redirectPath}`);
 

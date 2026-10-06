@@ -1,9 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Script from "next/script";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { useLanguage } from "@/context/language-context";
+import { useToast } from "@/components/ui/toast";
 import {
   Briefcase,
   Building2,
@@ -23,6 +26,8 @@ import { OtpVerificationModal } from "@/components/auth/otp-input";
 import { JOB_POSTER_PROFILES } from "@/lib/constants/categories";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const toast = useToast();
   const { register } = useAuth();
   const { t, language } = useLanguage();
   const [role, setRole] = useState<"WORKER" | "EMPLOYER" | "BOTH">("WORKER");
@@ -40,8 +45,135 @@ export default function RegisterPage() {
     profileImage: "",
   });
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [showOtpModal, setShowOtpModal] = useState(false);
+
+  // Initialize Google One Tap for instant registration
+  useEffect(() => {
+    const DEFAULT_ID = "619017165616-2360f9fpp8p9gh9as57l34in0i7unn2s.apps.googleusercontent.com";
+    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || DEFAULT_ID;
+    if (!googleClientId) return;
+
+    const initOneTap = () => {
+      if (typeof window !== "undefined" && (window as any).google?.accounts?.id) {
+        try {
+          (window as any).google.accounts.id.initialize({
+            client_id: googleClientId,
+            callback: async (response: { credential: string }) => {
+              setGoogleLoading(true);
+              try {
+                const res = await fetch("/api/auth/google/onetap", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ credential: response.credential, role }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                  toast.success(
+                    language === "hi" ? "साइन अप सफल! 🎉" : "Signed Up! 🎉",
+                    language === "hi"
+                      ? `सफलतापूर्वक ${data.user.name} के रूप में साइन अप किया`
+                      : `Welcome, ${data.user.name}`
+                  );
+                  router.push(data.redirectUrl || "/worker/dashboard");
+                } else {
+                  toast.error("Google Sign-In Error", data.error || "Failed to sign in");
+                }
+              } catch {
+                toast.error("Google Sign-In Error", "Network error during Google Sign-In");
+              } finally {
+                setGoogleLoading(false);
+              }
+            },
+            auto_select: false,
+            cancel_on_tap_outside: true,
+          });
+
+          (window as any).google.accounts.id.prompt();
+        } catch (e) {
+          console.error("Google Identity Services error:", e);
+        }
+      }
+    };
+
+    if ((window as any).google?.accounts?.id) {
+      initOneTap();
+    } else {
+      const interval = setInterval(() => {
+        if ((window as any).google?.accounts?.id) {
+          initOneTap();
+          clearInterval(interval);
+        }
+      }, 500);
+      return () => clearInterval(interval);
+    }
+  }, [language, router, toast, role]);
+
+  const handleGoogleSignIn = () => {
+    setGoogleLoading(true);
+
+    const DEFAULT_ID = "619017165616-2360f9fpp8p9gh9as57l34in0i7unn2s.apps.googleusercontent.com";
+    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || DEFAULT_ID;
+
+    // 1. Preferred: Client-Side OAuth Popup flow via GIS (no redirect_uri required, immune to mismatch errors)
+    if (typeof window !== "undefined" && (window as any).google?.accounts?.oauth2) {
+      try {
+        const tokenClient = (window as any).google.accounts.oauth2.initTokenClient({
+          client_id: googleClientId,
+          scope: "openid email profile",
+          callback: async (tokenResponse: any) => {
+            if (tokenResponse.error) {
+              console.warn("Google popup closed or error:", tokenResponse);
+              setGoogleLoading(false);
+              return;
+            }
+            if (tokenResponse.access_token) {
+              try {
+                const res = await fetch("/api/auth/google/onetap", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ accessToken: tokenResponse.access_token, role }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                  toast.success(
+                    language === "hi" ? "साइन अप सफल! 🎉" : "Signed Up! 🎉",
+                    language === "hi"
+                      ? `सफलतापूर्वक ${data.user.name} के रूप में साइन अप किया`
+                      : `Welcome, ${data.user.name}`
+                  );
+                  router.push(data.redirectUrl || "/worker/dashboard");
+                } else {
+                  toast.error("Google Sign-In Error", data.error || "Failed to sign up");
+                }
+              } catch {
+                toast.error("Google Sign-In Error", "Network error during Google Sign-In");
+              } finally {
+                setGoogleLoading(false);
+              }
+            }
+          },
+        });
+        tokenClient.requestAccessToken({ prompt: "select_account" });
+        return;
+      } catch (err) {
+        console.error("GIS token client exception, falling back:", err);
+      }
+    }
+
+    // 2. Fallback to One Tap prompt if initialized
+    if (typeof window !== "undefined" && (window as any).google?.accounts?.id) {
+      try {
+        (window as any).google.accounts.id.prompt();
+        setGoogleLoading(false);
+        return;
+      } catch (e) {}
+    }
+
+    // 3. Fallback to server-side redirect flow
+    window.location.href = `/api/auth/google?role=${encodeURIComponent(role)}`;
+  };
 
   const locations = [
     "Fatehabad",
@@ -198,6 +330,55 @@ export default function RegisterPage() {
             </p>
           </div>
         )}
+
+        {/* Continue with Google Button */}
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          disabled={googleLoading}
+          className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white hover:bg-slate-50 active:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-2xl text-sm font-bold text-slate-700 shadow-xs hover:shadow-sm transition-all duration-150 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed group focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+        >
+          {googleLoading ? (
+            <div className="w-5 h-5 border-2 border-slate-300 border-t-brand-600 rounded-full animate-spin" />
+          ) : (
+            <svg
+              className="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-105"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="#4285F4"
+                d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+              />
+            </svg>
+          )}
+          <span>
+            {language === "hi"
+              ? "गूगल से तुरंत जुड़ें (1-क्लिक)"
+              : "Continue with Google (1-Click)"}
+          </span>
+        </button>
+
+        {/* Visual Divider */}
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200" />
+          </div>
+          <div className="relative px-3 bg-white/90 text-[11px] font-bold uppercase tracking-wider text-slate-400 select-none">
+            {language === "hi" ? "या फॉर्म भरकर रजिस्टर करें" : "or continue with manual form"}
+          </div>
+        </div>
 
         {error && (
           <div className="p-3 text-xs bg-red-50 border border-red-200 text-red-700 rounded-xl">
@@ -374,6 +555,9 @@ export default function RegisterPage() {
           />
         )}
       </div>
+
+      {/* Google Identity Services Script for Device Gmail Account Picker */}
+      <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
     </div>
   );
 }

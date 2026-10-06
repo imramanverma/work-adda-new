@@ -127,6 +127,66 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = () => {
     setGoogleLoading(true);
+
+    const DEFAULT_ID = "619017165616-2360f9fpp8p9gh9as57l34in0i7unn2s.apps.googleusercontent.com";
+    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || DEFAULT_ID;
+
+    // 1. Preferred: Client-Side OAuth Popup flow via GIS (no redirect_uri required, immune to mismatch errors)
+    if (typeof window !== "undefined" && (window as any).google?.accounts?.oauth2) {
+      try {
+        const tokenClient = (window as any).google.accounts.oauth2.initTokenClient({
+          client_id: googleClientId,
+          scope: "openid email profile",
+          callback: async (tokenResponse: any) => {
+            if (tokenResponse.error) {
+              console.warn("Google popup closed or error:", tokenResponse);
+              setGoogleLoading(false);
+              return;
+            }
+            if (tokenResponse.access_token) {
+              try {
+                const res = await fetch("/api/auth/google/onetap", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ accessToken: tokenResponse.access_token }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                  toast.success(
+                    language === "hi" ? "साइन इन सफल! 🎉" : "Signed In! 🎉",
+                    language === "hi"
+                      ? `सफलतापूर्वक ${data.user.name} के रूप में साइन इन किया`
+                      : `Welcome back, ${data.user.name}`
+                  );
+                  router.push(data.redirectUrl || "/worker/dashboard");
+                } else {
+                  toast.error("Google Sign-In Error", data.error || "Failed to sign in");
+                }
+              } catch {
+                toast.error("Google Sign-In Error", "Network error during Google Sign-In");
+              } finally {
+                setGoogleLoading(false);
+              }
+            }
+          },
+        });
+        tokenClient.requestAccessToken({ prompt: "select_account" });
+        return;
+      } catch (err) {
+        console.error("GIS token client exception, falling back:", err);
+      }
+    }
+
+    // 2. Fallback to One Tap prompt if initialized
+    if (typeof window !== "undefined" && (window as any).google?.accounts?.id) {
+      try {
+        (window as any).google.accounts.id.prompt();
+        setGoogleLoading(false);
+        return;
+      } catch (e) {}
+    }
+
+    // 3. Fallback to server-side redirect flow
     window.location.href = "/api/auth/google";
   };
 
