@@ -2,12 +2,19 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MapPin, ShieldCheck, Heart, Lock, Building2, UserCheck, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { useLanguage } from "@/context/language-context";
 
 export function Footer() {
   const { t, language } = useLanguage();
+  const pathname = usePathname();
+
+  // Keep chat interface completely clean and focused without bottom page clutter
+  if (pathname.includes("/messages")) {
+    return null;
+  }
 
   return (
     <footer className="border-t border-slate-200 bg-white pt-12 pb-20 md:pb-12 text-slate-600 text-sm w-full max-w-full overflow-hidden">

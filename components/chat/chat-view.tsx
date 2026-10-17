@@ -41,15 +41,6 @@ interface OptimisticMessage {
   failed?: boolean;
 }
 
-const QUICK_REPLIES = [
-  "📍 Reached the location!",
-  "🕒 What time should we start?",
-  "🚗 On my way now.",
-  "✅ Task completed, please review.",
-  "📞 Please call me if needed.",
-  "👍 Sounds good, got it!",
-];
-
 export function ChatView({ defaultRecipientRole = "EMPLOYER", initialConvId = null }: ChatViewProps) {
   const { user } = useAuth();
   const toast = useToast();
@@ -274,7 +265,7 @@ export function ChatView({ defaultRecipientRole = "EMPLOYER", initialConvId = nu
 
   if (loading) {
     return (
-      <div className="w-full bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden h-[calc(100dvh-5.5rem)] sm:h-[720px] flex items-center justify-center p-8 animate-pulse">
+      <div className="w-full bg-white rounded-none sm:rounded-2xl border-0 sm:border border-slate-200 shadow-none sm:shadow-sm overflow-hidden h-full flex items-center justify-center p-8 animate-pulse">
         <div className="text-center space-y-3">
           <div className="w-12 h-12 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center mx-auto animate-bounce">
             <MessageSquare className="w-6 h-6" />
@@ -287,7 +278,7 @@ export function ChatView({ defaultRecipientRole = "EMPLOYER", initialConvId = nu
   }
 
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden h-[calc(100dvh-5.5rem)] sm:h-[720px] flex flex-col sm:flex-row w-full relative">
+    <div className="bg-white rounded-none sm:rounded-2xl border-0 sm:border border-slate-200/90 shadow-none sm:shadow-sm overflow-hidden h-full flex flex-col sm:flex-row w-full relative">
       {/* ======================================================== */}
       {/* 1. Conversations List Sidebar (Left pane)                */}
       {/* ======================================================== */}
@@ -517,20 +508,6 @@ export function ChatView({ defaultRecipientRole = "EMPLOYER", initialConvId = nu
               </div>
             </div>
 
-            {/* Task Snapshot Banner */}
-            {activeConv.job && (
-              <div className="px-4 py-2 bg-gradient-to-r from-brand-50/80 via-white to-amber-50/80 border-b border-slate-100 text-[11px] text-slate-600 flex items-center justify-between shrink-0">
-                <span className="truncate">
-                  📍 {activeConv.job.location || "Haryana"} &bull; {activeConv.job.category || "Task"}
-                </span>
-                {(activeConv.job.payAmount || activeConv.job.budget) && (
-                  <span className="font-extrabold text-brand-700 shrink-0 ml-2">
-                    {formatCurrency(activeConv.job.payAmount || activeConv.job.budget)}
-                  </span>
-                )}
-              </div>
-            )}
-
             {/* Message Bubble Feed */}
             <div
               ref={messageContainerRef}
@@ -605,23 +582,6 @@ export function ChatView({ defaultRecipientRole = "EMPLOYER", initialConvId = nu
                 })
               )}
               <div ref={messagesEndRef} />
-            </div>
-
-            {/* Quick Reply Chips Carousel */}
-            <div className="px-3 py-1.5 bg-white border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto scrollbar-none shrink-0">
-              <span className="text-[10px] font-bold text-slate-400 shrink-0 uppercase tracking-wider pl-1">
-                Quick:
-              </span>
-              {QUICK_REPLIES.map((reply, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => sendMessageText(reply)}
-                  className="px-2.5 py-1 bg-slate-100 hover:bg-brand-50 hover:text-brand-700 text-slate-700 rounded-full text-[11px] font-medium whitespace-nowrap border border-slate-200 transition shrink-0 active:scale-95"
-                >
-                  {reply}
-                </button>
-              ))}
             </div>
 
             {/* Message Input Box (Mobile-friendly sticky footer) */}

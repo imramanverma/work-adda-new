@@ -45,28 +45,7 @@ function MessagesContent() {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2 sm:py-6">
-      {/* Top Banner on larger screens */}
-      <div className="hidden sm:flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <span className="p-1.5 rounded-xl bg-brand-100/70 text-brand-700">
-              <MessageSquare className="w-5 h-5" />
-            </span>
-            Direct Messages & Task Chat
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Real-time coordination for shifts, directions, requirements, and live task updates.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-emerald-50 text-emerald-800 border border-emerald-200/80 px-3 py-1.5 rounded-xl">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>Encrypted Direct Messaging</span>
-        </div>
-      </div>
-
-      {/* Main High-Performance Chat View */}
+    <div className="w-full max-w-7xl mx-auto h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)] p-0 sm:p-2 md:p-3 -mb-16 md:mb-0 flex flex-col overflow-hidden">
       <ChatView
         defaultRecipientRole={user.role === "EMPLOYER" ? "WORKER" : "EMPLOYER"}
         initialConvId={convId}

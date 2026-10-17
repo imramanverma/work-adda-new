@@ -5,16 +5,7 @@ import { ChatView } from "@/components/chat/chat-view";
 
 export default function WorkerMessagesPage() {
   return (
-    <div className="w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2 sm:py-6">
-      <div className="hidden sm:block mb-4">
-        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-          Messages & Employer Communication
-        </h1>
-        <p className="text-xs text-slate-500 mt-1">
-          Coordinate task locations, timings, and instructions with hiring employers in real-time.
-        </p>
-      </div>
-
+    <div className="w-full max-w-7xl mx-auto h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)] p-0 sm:p-2 md:p-3 -mb-16 md:mb-0 flex flex-col overflow-hidden">
       <ChatView defaultRecipientRole="EMPLOYER" />
     </div>
   );

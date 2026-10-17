@@ -21,6 +21,11 @@ export function MobileNav() {
   const { user } = useAuth();
   const pathname = usePathname();
 
+  // Hide mobile bottom nav on messaging pages to dedicate full screen to the chat box
+  if (pathname.includes("/messages")) {
+    return null;
+  }
+
   const getLinkClasses = (href: string) => {
     const isActive =
       pathname === href ||
