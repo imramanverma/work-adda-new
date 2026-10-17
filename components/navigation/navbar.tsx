@@ -135,7 +135,7 @@ export function Navbar() {
     }
 
     if (type === "MESSAGE" || title.includes("message") || msg.includes("message")) {
-      return user?.role === "EMPLOYER" ? "/employer/messages" : "/worker/messages";
+      return "/messages";
     }
 
     if (type === "REVIEW" || title.includes("review") || title.includes("rating") || msg.includes("rating")) {
@@ -242,7 +242,7 @@ export function Navbar() {
             <div className="flex items-center gap-2">
               {/* Messages Shortcut */}
               <Link
-                href={user.role === "EMPLOYER" ? "/employer/messages" : "/worker/messages"}
+                href="/messages"
                 className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition"
                 title="Messages"
               >

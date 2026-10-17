@@ -195,7 +195,12 @@ export default function JobDetailsPage() {
         }),
       });
       if (res.ok) {
-        router.push("/worker/messages");
+        const data = await res.json();
+        if (data.conversation?.id) {
+          router.push(`/messages?conv=${data.conversation.id}`);
+        } else {
+          router.push("/messages");
+        }
       }
     } catch {}
   };

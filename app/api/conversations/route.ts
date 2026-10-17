@@ -14,27 +14,64 @@ export async function GET(req: NextRequest) {
       },
       include: {
         job: {
-          select: { id: true, title: true, category: true },
+          select: { id: true, title: true, category: true, payAmount: true, payType: true, location: true },
         },
         worker: {
-          select: { id: true, name: true, role: true },
+          select: { id: true, name: true, role: true, profileImage: true, phone: true },
         },
         employer: {
           select: {
             id: true,
             name: true,
-            employerProfile: { select: { businessName: true } },
+            profileImage: true,
+            phone: true,
+            employerProfile: { select: { businessName: true, shopImage: true } },
           },
         },
         messages: {
           orderBy: { createdAt: "desc" },
           take: 1,
+          select: {
+            id: true,
+            message: true,
+            createdAt: true,
+            isRead: true,
+            senderId: true,
+          },
+        },
+        _count: {
+          select: {
+            messages: {
+              where: {
+                senderId: { not: user.id },
+                isRead: false,
+              },
+            },
+          },
         },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ conversations });
+    // Sort by latest message activity (most active chats float to top)
+    conversations.sort((a, b) => {
+      const timeA = a.messages[0]?.createdAt
+        ? new Date(a.messages[0].createdAt).getTime()
+        : new Date(a.createdAt).getTime();
+      const timeB = b.messages[0]?.createdAt
+        ? new Date(b.messages[0].createdAt).getTime()
+        : new Date(b.createdAt).getTime();
+      return timeB - timeA;
+    });
+
+    return NextResponse.json(
+      { conversations },
+      {
+        headers: {
+          "Cache-Control": "private, no-cache, no-store, must-revalidate",
+        },
+      }
+    );
   } catch (err: any) {
     console.error("Fetch conversations error:", err);
     return NextResponse.json({ error: err.message || "Failed to fetch conversations" }, { status: 500 });

@@ -62,6 +62,7 @@ async function runAudit() {
     '/worker/applications',
     '/worker/work',
     '/worker/earnings',
+    '/messages',
     '/worker/messages',
     '/worker/notifications',
     '/employer/dashboard',

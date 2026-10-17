@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -66,7 +66,7 @@ export default function WorkerNotificationsPage() {
       return "/worker/applications";
     }
     if (type === "MESSAGE" || title.includes("message")) {
-      return "/worker/messages";
+      return "/messages";
     }
     return "/worker/dashboard";
   };

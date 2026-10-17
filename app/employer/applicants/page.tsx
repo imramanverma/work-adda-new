@@ -238,7 +238,7 @@ function ApplicantsContent() {
                 {/* 1-Click Hiring & Shortlisting Actions */}
                 <div className="flex md:flex-col items-center md:items-end justify-between md:justify-center gap-2.5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
                   <div className="flex items-center gap-2">
-                    <Link href="/employer/messages">
+                    <Link href="/messages">
                       <Button size="sm" variant="outline">
                         <MessageSquare className="w-3.5 h-3.5 mr-1" /> Chat
                       </Button>

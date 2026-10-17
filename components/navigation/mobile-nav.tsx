@@ -22,7 +22,10 @@ export function MobileNav() {
   const pathname = usePathname();
 
   const getLinkClasses = (href: string) => {
-    const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
+    const isActive =
+      pathname === href ||
+      (href !== "/" && pathname.startsWith(href)) ||
+      (href === "/messages" && pathname.includes("/messages"));
     return `flex flex-col items-center justify-center flex-1 py-1.5 px-1 min-h-[48px] rounded-xl text-[10px] font-bold transition-all select-none ${
       isActive
         ? "text-brand-700 bg-brand-50/80 font-black scale-105"
@@ -74,7 +77,7 @@ export function MobileNav() {
             <Briefcase className="w-4 h-4 mb-0.5" />
             <span>My Gigs</span>
           </Link>
-          <Link href="/worker/messages" className={getLinkClasses("/worker/messages")}>
+          <Link href="/messages" className={getLinkClasses("/messages")}>
             <MessageSquare className="w-4 h-4 mb-0.5" />
             <span>Chat</span>
           </Link>
@@ -109,7 +112,7 @@ export function MobileNav() {
             <Briefcase className="w-4 h-4 mb-0.5" />
             <span>Contracts</span>
           </Link>
-          <Link href="/employer/messages" className={getLinkClasses("/employer/messages")}>
+          <Link href="/messages" className={getLinkClasses("/messages")}>
             <MessageSquare className="w-4 h-4 mb-0.5" />
             <span>Chat</span>
           </Link>
@@ -136,7 +139,7 @@ export function MobileNav() {
             <Briefcase className="w-4 h-4 mb-0.5" />
             <span>My Gigs</span>
           </Link>
-          <Link href="/worker/messages" className={getLinkClasses("/worker/messages")}>
+          <Link href="/messages" className={getLinkClasses("/messages")}>
             <MessageSquare className="w-4 h-4 mb-0.5" />
             <span>Chat</span>
           </Link>

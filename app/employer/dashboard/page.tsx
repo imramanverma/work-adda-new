@@ -330,7 +330,7 @@ export default function EmployerDashboardPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/employer/messages" className="hover:text-brand-600 flex items-center justify-between py-1">
+                  <Link href="/messages" className="hover:text-brand-600 flex items-center justify-between py-1">
                     <span>Candidate & Worker Direct Chat</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </Link>

@@ -331,7 +331,7 @@ export default function WorkerDashboardPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/worker/messages" className="hover:text-brand-600 flex items-center justify-between py-1">
+                  <Link href="/messages" className="hover:text-brand-600 flex items-center justify-between py-1">
                     <span>Chat with Local Employers</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </Link>

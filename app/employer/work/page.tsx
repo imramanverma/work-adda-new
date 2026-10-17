@@ -513,7 +513,7 @@ export default function EmployerWorkPage() {
                   {/* Action Controls */}
                   <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
                     <div className="flex items-center gap-2">
-                      <Link href="/employer/messages">
+                      <Link href="/messages">
                         <Button size="sm" variant="outline">
                           <MessageSquare className="w-3.5 h-3.5 mr-1.5" /> Message Worker
                         </Button>
