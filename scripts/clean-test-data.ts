@@ -9,6 +9,7 @@ const AUTHENTIC_EMAILS = [
   "rameshkumarverma050@gmail.com",
   "robinrukhaya54@gmail.com",
   "ramanverma2007@gmail.com",
+  "workaddalocal@gmail.com",
   "admin@workadda.com",
 ];
 

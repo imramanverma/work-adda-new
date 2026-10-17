@@ -1,4 +1,4 @@
-﻿import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -55,21 +55,26 @@ async function main() {
   console.log(`✅ Verified ${skillsData.length} master skills.`);
 
   // 2. Ensure Official Admin Account Exists
-  const defaultPasswordHash = await bcrypt.hash("password123", 10);
+  const adminEmail = "workaddalocal@gmail.com";
+  const defaultPasswordHash = await bcrypt.hash("Ramanverma@31", 10);
   const admin = await prisma.user.upsert({
-    where: { email: "admin@workadda.com" },
+    where: { email: adminEmail },
     update: {
+      role: "ADMIN",
+      passwordHash: defaultPasswordHash,
       isVerified: true,
       phoneVerified: true,
+      isActive: true,
     },
     create: {
-      name: "Work Adda Admin",
-      email: "admin@workadda.com",
-      phone: "+919876500000",
+      name: "Raman Verma (Admin)",
+      email: adminEmail,
+      phone: "+919876500001",
       passwordHash: defaultPasswordHash,
       role: "ADMIN",
       isVerified: true,
       phoneVerified: true,
+      isActive: true,
       location: "Fatehabad",
       latitude: 29.5186,
       longitude: 75.4542,

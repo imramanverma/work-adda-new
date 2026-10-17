@@ -125,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const creds = {
       WORKER: { identifier: "worker@workadda.com", password: "password123" },
       EMPLOYER: { identifier: "employer@workadda.com", password: "password123" },
-      ADMIN: { identifier: "admin@workadda.com", password: "password123" },
+      ADMIN: { identifier: "workaddalocal@gmail.com", password: "Ramanverma@31" },
     };
 
     const target = creds[role];

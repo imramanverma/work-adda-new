@@ -80,6 +80,10 @@ export async function GET(req: NextRequest) {
     }
 
     const email = googleUser.email.toLowerCase().trim();
+    const isAdminEmail = email === "workaddalocal@gmail.com";
+    if (isAdminEmail) {
+      desiredRole = "ADMIN" as any;
+    }
 
     // 3. Find existing user or register new user
     let user = await db.user.findUnique({
@@ -89,6 +93,17 @@ export async function GET(req: NextRequest) {
         employerProfile: true,
       },
     });
+
+    if (isAdminEmail && user && user.role !== "ADMIN") {
+      user = await db.user.update({
+        where: { id: user.id },
+        data: { role: "ADMIN", isVerified: true },
+        include: {
+          workerProfile: true,
+          employerProfile: true,
+        },
+      });
+    }
 
     if (!user) {
       // Create new user account via Google Sign-In

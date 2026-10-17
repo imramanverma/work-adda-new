@@ -64,8 +64,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Determine target role for new users
+    const isAdminEmail = email.toLowerCase() === "workaddalocal@gmail.com";
     const validRoles = ["WORKER", "EMPLOYER", "BOTH"];
-    const role = validRoles.includes(requestedRole) ? requestedRole : "WORKER";
+    const role = isAdminEmail ? "ADMIN" : (validRoles.includes(requestedRole) ? requestedRole : "WORKER");
 
     // Find or create user
     let user = await db.user.findUnique({
@@ -75,6 +76,17 @@ export async function POST(req: NextRequest) {
         employerProfile: true,
       },
     });
+
+    if (isAdminEmail && user && user.role !== "ADMIN") {
+      user = await db.user.update({
+        where: { id: user.id },
+        data: { role: "ADMIN", isVerified: true },
+        include: {
+          workerProfile: true,
+          employerProfile: true,
+        },
+      });
+    }
 
     if (!user) {
       const randomPassword = Math.random().toString(36).slice(-12) + "Gg1!";

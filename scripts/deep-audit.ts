@@ -38,10 +38,10 @@ async function fetchRoute(path: string, options?: RequestInit) {
   }
 }
 
-async function loginUser(identifier: string) {
+async function loginUser(identifier: string, password = 'password123') {
   const res = await fetchRoute('/api/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ identifier, password: 'password123' }),
+    body: JSON.stringify({ identifier, password }),
   });
   const cookie = res.headers?.get('set-cookie') || '';
   return { status: res.status, cookie, user: res.json?.user, token: res.json?.token };
@@ -127,7 +127,7 @@ async function runAudit() {
   console.log('\n--- 3. Testing Role Logins & Session Cookies ---');
   const workerAuth = await loginUser('worker@workadda.com');
   const employerAuth = await loginUser('employer@workadda.com');
-  const adminAuth = await loginUser('admin@workadda.com');
+  const adminAuth = await loginUser('workaddalocal@gmail.com', 'Ramanverma@31');
 
   if (workerAuth.status === 200 && workerAuth.cookie) {
     record('Auth', 'Worker Login (via identifier)', 'PASS', `Token length: ${workerAuth.token?.length}`);
